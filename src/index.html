@@ -1,17 +1,39 @@
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="styles/styles.css" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cousine&amp;display=block" />
+	</head>
 
-	<link rel="stylesheet" href="styles.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cousine&amp;display=block">
-</head>
+	<body>
+		<div id="toolbar" class="toolbar">
+			<div>
+				<button id="pages-button">
+					<svg id="pages-button-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round">
+						<path d="M20 70v100M60 50v140" />
+						<rect width="120" height="180" x="100" y="30" rx="20" />
+					</svg>
+				</button>
+			</div>
+		</div>
 
-<body class="bg-body group">
-	<div>
-		<textarea placeholder="Start writing..."></textarea>
-	</div>
-</body>
+		<div id="pages-float" class="pages-float float">
+			<div id="pages-list"></div>
+			<div class="divider"></div>
+			<button id="add-page-button">New Page</button>
+		</div>
 
+		<div id="context-menu" class="context-menu float">
+			<button id="context-menu-rename-button">Rename</button>
+			<button id="context-menu-delete-button">Delete</button>
+		</div>
+
+		<main id="main" class="editor">
+			<textarea id="text-area" placeholder="Start writing..."></textarea>
+		</main>
+
+		<script src="scripts/app.js" type="module"></script>
+	</body>
 </html>

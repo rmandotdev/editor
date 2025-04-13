@@ -1,0 +1,135 @@
+* {
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: 100%;
+	vertical-align: baseline;
+	background-color: transparent;
+	border: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+:root {
+	color-scheme: light dark;
+	--background-color: light-dark(white, black);
+	--backgorund-hover-color: light-dark(#ddd, #333);
+	--text-color: light-dark(black, white);
+	--float-bg-color: light-dark(#ededed, #181818);
+	--float-border-color: light-dark(#d8d8d8, #272727);
+}
+
+body {
+	font-family: Cousine;
+}
+
+button {
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 6px;
+	transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+	transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+	transition-duration: .25s;
+	width: 100%;
+	text-align: left;
+}
+
+button:hover {
+	background-color: var(--backgorund-hover-color);
+}
+
+.toolbar {
+	padding: 16px;
+	display: flex;
+	position: absolute;
+	z-index: 10;
+	width: 100%;
+	opacity: 0;
+	transition: opacity 0.5s;
+}
+
+.toolbar:hover {
+	opacity: 1;
+}
+
+#pages-button-svg {
+	width: 24px;
+	height: 24px;
+	background-color: transparent;
+}
+
+textarea {
+	width: 100%;
+	resize: none;
+	outline: none;
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	word-break: break-word;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: var(--text-color);
+	caret-color: #4787ee;
+	background-color: transparent;
+	transition: background-color 0.5s, opacity 0.5s;
+	scrollbar-width: thin;
+	scroll-behavior: smooth;
+	scroll-padding-bottom: 0px;
+	padding: calc(1em + 72px) max(-372px + 50vw, 1em) 5em;
+	height: 100vh;
+}
+
+.float {
+	position: fixed;
+	border-radius: 6px;
+	padding: 8px;
+	border: 1px solid var(--float-border-color);
+	background-color: var(--float-bg-color);
+}
+
+.divider {
+	height: 1px;
+	background-color: var(--float-border-color);
+	margin: 8px -8px;
+}
+
+.pages-float {
+	z-index: 20;
+	left: 16px;
+	top: 60px;
+	width: 230px;
+	display: none;
+}
+
+.pages-float.open {
+	display: block;
+}
+
+.context-menu {
+	display: none;
+	position: absolute;
+	z-index: 30;
+	display: none;
+	padding: 8px;
+	border-radius: 6px;
+	background-color: var(--float-bg-color);
+	border: 1px solid var(--float-border-color);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.context-menu button {
+	width: 100%;
+	text-align: left;
+	padding: 8px;
+	border-radius: 4px;
+	background-color: transparent;
+	transition: background-color 0.25s;
+}
+
+.context-menu button:hover {
+	background-color: var(--backgorund-hover-color);
+}
