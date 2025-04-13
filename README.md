@@ -1,2 +1,2 @@
 # text-area.pages.dev
- Blank page
+Blank page
