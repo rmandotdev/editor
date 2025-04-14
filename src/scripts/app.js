@@ -33,7 +33,7 @@ export function initializeApp() {
 
 		// Load content of the current page
 		/** @type {number} */
-		const currentPage = parseInt(localStorage.getItem('currentPage') || '10', 10) || 0;
+		const currentPage = parseInt(localStorage.getItem('currentPage') || '0', 10) || 0;
 		textarea.value = pages[currentPage].content;
 
 		// Save content to the current page
