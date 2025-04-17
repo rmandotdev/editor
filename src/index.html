@@ -9,23 +9,92 @@
 
 	<body>
 		<div id="toolbar" class="toolbar">
-			<div>
-				<button id="pages-button">
-					<svg id="pages-button-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round">
+			<div class="toolbar-left">
+				<button id="pages-button" class="toolbar-button">
+					<svg
+						class="svg-icon"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 240 240"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="20"
+						stroke-linecap="round"
+					>
 						<path d="M20 70v100M60 50v140" />
 						<rect width="120" height="180" x="100" y="30" rx="20" />
 					</svg>
 				</button>
 			</div>
+			<div class="toolbar-center">
+				<span id="current-page-title"></span>
+			</div>
+			<div class="toolbar-right">
+				<button id="settings-button" class="toolbar-button">
+					<svg
+						class="svg-icon"
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 240 240"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="25"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path
+							d="M122.2 20h-4.4a20 20 0 0 0-20 20v1.8a20 20 0 0 1-10 17.3l-4.3 2.5a20 20 0 0 1-20 0l-1.5-.8a20 20 0 0 0-27.3 7.3l-2.2 3.8a20 20 0 0 0 7.3 27.3l1.5 1a20 20 0 0 1 10 17.2v5.1a20 20 0 0 1-10 17.4l-1.5.9a20 20 0 0 0-7.3 27.3l2.2 3.8a20 20 0 0 0 27.3 7.3l1.5-.8a20 20 0 0 1 20 0l4.3 2.5a20 20 0 0 1 10 17.3v1.8a20 20 0 0 0 20 20h4.4a20 20 0 0 0 20-20v-1.8a20 20 0 0 1 10-17.3l4.3-2.5a20 20 0 0 1 20 0l1.5.8a20 20 0 0 0 27.3-7.3l2.2-3.9a20 20 0 0 0-7.3-27.3l-1.5-.8a20 20 0 0 1-10-17.4v-5a20 20 0 0 1 10-17.4l1.5-.9a20 20 0 0 0 7.3-27.3l-2.2-3.8a20 20 0 0 0-27.3-7.3l-1.5.8a20 20 0 0 1-20 0l-4.3-2.5a20 20 0 0 1-10-17.3V40a20 20 0 0 0-20-20"
+						/>
+						<circle cx="120" cy="120" r="30" />
+					</svg>
+				</button>
+			</div>
 		</div>
 
-		<div id="pages-float" class="pages-float float">
+		<dialog id="settings-modal" class="modal">
+			<form id="settings-form">
+				<div class="settings-group">
+					<label>
+						Text Autocorrection
+						<input type="checkbox" id="text-autocorrection-toggle" />
+					</label>
+				</div>
+				<div class="settings-group">
+					<label>
+						Font Size
+						<input type="number" id="font-size-input" min="8" max="72" value="16" />
+					</label>
+				</div>
+				<div class="settings-group">
+					<label>
+						Font Family
+						<select id="font-family-select">
+							<option value="Cousine">Cousine</option>
+							<option value="Arial">Arial</option>
+							<option value="Times New Roman">Times New Roman</option>
+							<option value="Courier New">Courier New</option>
+						</select>
+					</label>
+				</div>
+				<div class="settings-group">
+					<label>
+						Text Alignment
+						<select id="text-justify-select">
+							<option value="left">Left</option>
+							<option value="center">Center</option>
+							<option value="right">Right</option>
+							<option value="justify">Justify</option>
+						</select>
+					</label>
+				</div>
+			</form>
+		</dialog>
+
+		<div id="pages-float" class="pages-float float hidden">
 			<div id="pages-list"></div>
 			<div class="divider"></div>
 			<button id="add-page-button">New Page</button>
 		</div>
 
-		<div id="context-menu" class="context-menu float">
+		<div id="context-menu" class="context-menu float hidden">
 			<button id="context-menu-rename-button">Rename</button>
 			<button id="context-menu-delete-button">Delete</button>
 		</div>
