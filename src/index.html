@@ -50,40 +50,32 @@
 		</div>
 
 		<dialog id="settings-modal" class="modal">
-			<form id="settings-form">
+			<form id="settings-form" class="modal-form" method="dialog">
 				<div class="settings-group">
-					<label>
-						Text Autocorrection
-						<input type="checkbox" id="text-autocorrection-toggle" />
-					</label>
+					<label for="text-autocorrection-toggle">Text Autocorrection</label>
+					<input type="checkbox" id="text-autocorrection-toggle" />
 				</div>
 				<div class="settings-group">
-					<label>
-						Font Size
-						<input type="number" id="font-size-input" min="8" max="72" value="16" />
-					</label>
+					<label for="font-size-input">Font Size</label>
+					<input type="number" id="font-size-input" min="8" max="72" value="16" />
 				</div>
 				<div class="settings-group">
-					<label>
-						Font Family
-						<select id="font-family-select">
-							<option value="Cousine">Cousine</option>
-							<option value="Arial">Arial</option>
-							<option value="Times New Roman">Times New Roman</option>
-							<option value="Courier New">Courier New</option>
-						</select>
-					</label>
+					<label for="font-family-select">Font Family</label>
+					<select id="font-family-select">
+						<option value="Cousine">Cousine</option>
+						<option value="Arial">Arial</option>
+						<option value="Times New Roman">Times New Roman</option>
+						<option value="Courier New">Courier New</option>
+					</select>
 				</div>
 				<div class="settings-group">
-					<label>
-						Text Alignment
-						<select id="text-justify-select">
-							<option value="left">Left</option>
-							<option value="center">Center</option>
-							<option value="right">Right</option>
-							<option value="justify">Justify</option>
-						</select>
-					</label>
+					<label for="text-justify-select">Text Alignment</label>
+					<select id="text-justify-select">
+						<option value="left">Left</option>
+						<option value="center">Center</option>
+						<option value="right">Right</option>
+						<option value="justify">Justify</option>
+					</select>
 				</div>
 			</form>
 		</dialog>
