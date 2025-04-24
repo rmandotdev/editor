@@ -172,7 +172,6 @@ textarea {
 	left: 50%;
 	transform: translate(-50%, -50%);
 	background: var(--float-bg-color);
-	padding: 1.5rem;
 	border-radius: 8px;
 	border: 1px solid var(--float-border-color);
 	min-width: 300px;
@@ -183,6 +182,7 @@ textarea {
 	display: flex;
 	flex-direction: column;
 	gap: 1.25rem;
+	padding: 1.5rem;
 }
 
 .settings-group {
