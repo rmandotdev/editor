@@ -131,10 +131,16 @@ textarea {
 	display: block;
 }
 
+.page-item {
+	border-width: 2px;
+	border-style: solid;
+	border-color: var(--float-bg-color);
+	border-radius: 4px;
+}
+
 .page-item.selected {
 	background-color: var(--backgorund-hover-color);
-	border: 2px solid var(--accent-color);
-	border-radius: 4px;
+	border-color: var(--accent-color);
 }
 
 .context-menu {
@@ -191,7 +197,17 @@ textarea {
 	gap: 0.5rem;
 }
 
+.toggle-setting {
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.settings-group input[type='checkbox'] {
+	width: 1rem;
+}
+
 .settings-group label {
+	line-height: 1;
 	font-weight: 500;
 }
 

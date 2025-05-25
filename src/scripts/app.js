@@ -45,6 +45,7 @@ export class App {
 
 		this.elements.textarea.addEventListener('input', () => {
 			this.elements.toolbar.style.opacity = '0';
+			this.elements.pagesFloat.classList.remove('open');
 		});
 	}
 
