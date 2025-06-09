@@ -14,7 +14,7 @@
 :root {
   color-scheme: light dark;
   --background-color: light-dark(white, black);
-  --backgorund-hover-color: light-dark(#ddd, #333);
+  --background-hover-color: light-dark(#ddd, #333);
   --text-color: light-dark(black, white);
   --float-bg-color: light-dark(#ededed, #181818);
   --float-border-color: light-dark(#d8d8d8, #272727);
@@ -38,7 +38,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--backgorund-hover-color);
+  background-color: var(--background-hover-color);
 }
 
 .toolbar {
@@ -140,7 +140,7 @@ textarea {
 }
 
 .page-item.selected {
-  background-color: var(--backgorund-hover-color);
+  background-color: var(--background-hover-color);
   border-color: var(--accent-color);
 }
 
@@ -166,7 +166,7 @@ textarea {
 }
 
 .context-menu button:hover {
-  background-color: var(--backgorund-hover-color);
+  background-color: var(--background-hover-color);
 }
 
 .modal::backdrop {
