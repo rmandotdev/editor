@@ -1,14 +1,27 @@
 {
   "name": "editor",
-  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
+    "dev": "bunx next dev",
+    "build": "bunx next build",
+    "start": "bunx serve out",
     "deploy": "bunx wrangler deploy"
+  },
+  "dependencies": {
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "wrangler": "^4.20.1"
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.10",
+    "wrangler": "^4.20.2"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
