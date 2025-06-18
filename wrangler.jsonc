@@ -1,8 +1,13 @@
 {
   "name": "editor",
-  "compatibility_date": "2025-06-10",
+  "compatibility_date": "2025-06-18",
+  "account_id": "9cb2e2e27c4416de8fa3465ed0ee8deb",
+  "workers_dev": true,
+
   "assets": {
-    "directory": "./src",
+    "directory": "./assets",
     "not_found_handling": "404-page"
-  }
+  },
+
+  "observability": { "logs": { "enabled": true } }
 }
