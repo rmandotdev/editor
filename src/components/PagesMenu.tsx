@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { createSignal, JSX, Show } from "solid-js";
 import { Page } from "../types";
 
 interface PagesMenuProps {
@@ -12,58 +12,49 @@ interface PagesMenuProps {
   onClose: () => void;
 }
 
-export const PagesMenu: FunctionComponent<PagesMenuProps> = ({
-  isOpen,
-  pages,
-  currentPageIndex,
-  onPageSelect,
-  onAddPage,
-  onRenamePage,
-  onDeletePage,
-}) => {
-  const [contextMenu, setContextMenu] = useState<{
+const PagesMenu = (props: PagesMenuProps): JSX.Element => {
+  const [contextMenu, setContextMenu] = createSignal<{
     x: number;
     y: number;
     pageIndex: number;
   } | null>(null);
 
-  if (!isOpen) return null;
-
   return (
     <>
-      <div className="pages-float float">
-        <div className="pages-list">
-          {pages.map((page, index) => (
-            <button
-              key={index}
-              className={`page-item ${
-                index === currentPageIndex ? "selected" : ""
-              }`}
-              onClick={() => onPageSelect(index)}
-              onContextMenu={(e) => {
-                e.preventDefault();
-                setContextMenu({ x: e.pageX, y: e.pageY, pageIndex: index });
-              }}
-            >
-              {page.name}
-            </button>
-          ))}
+      <Show when={props.isOpen}>
+        <div class="pages-float float">
+          <div class="pages-list">
+            {props.pages.map((page, index) => (
+              <button
+                class={`page-item ${
+                  index === props.currentPageIndex ? "selected" : ""
+                }`}
+                onClick={() => props.onPageSelect(index)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setContextMenu({ x: e.pageX, y: e.pageY, pageIndex: index });
+                }}
+              >
+                {page.name}
+              </button>
+            ))}
+          </div>
+          <div class="divider" />
+          <button onClick={props.onAddPage}>New Page</button>
         </div>
-        <div className="divider" />
-        <button onClick={onAddPage}>New Page</button>
-      </div>
+      </Show>
 
-      {contextMenu && (
+      <Show when={contextMenu()}>
         <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          pageIndex={contextMenu.pageIndex}
-          pages={pages}
-          onRenamePage={onRenamePage}
-          onDeletePage={onDeletePage}
+          x={contextMenu()?.x || 0}
+          y={contextMenu()?.y || 0}
+          pageIndex={contextMenu()?.pageIndex || 0}
+          pages={props.pages}
+          onRenamePage={props.onRenamePage}
+          onDeletePage={props.onDeletePage}
           onClose={() => setContextMenu(null)}
         />
-      )}
+      </Show>
     </>
   );
 };
@@ -78,33 +69,31 @@ interface ContextMenuProps {
   onClose: () => void;
 }
 
-const ContextMenu: FunctionComponent<ContextMenuProps> = ({
-  x,
-  y,
-  pageIndex,
-  pages,
-  onRenamePage,
-  onDeletePage,
-  onClose,
-}) => {
+const ContextMenu = (props: ContextMenuProps): JSX.Element => {
   return (
-    <div className="context-menu float" style={{ left: x, top: y }}>
+    <div
+      class="context-menu float"
+      style={{ left: `${props.x}px`, top: `${props.y}px` }}
+    >
       <button
         onClick={() => {
-          const newName = prompt("Enter new name:", pages[pageIndex]!.name);
+          const newName = prompt(
+            "Enter new name:",
+            props.pages[props.pageIndex]?.name
+          );
           if (newName) {
-            onRenamePage(pageIndex, newName);
+            props.onRenamePage(props.pageIndex, newName);
           }
-          onClose();
+          props.onClose();
         }}
       >
         Rename
       </button>
-      {pages.length > 1 && (
+      {props.pages.length > 1 && (
         <button
           onClick={() => {
-            onDeletePage(pageIndex);
-            onClose();
+            props.onDeletePage(props.pageIndex);
+            props.onClose();
           }}
         >
           Delete
@@ -113,3 +102,5 @@ const ContextMenu: FunctionComponent<ContextMenuProps> = ({
     </div>
   );
 };
+
+export default PagesMenu;

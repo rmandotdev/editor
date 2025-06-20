@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./src",
     "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"] },
+    "jsxImportSource": "solid-js",
 
     // Best practices
     "strict": true,
@@ -25,15 +25,9 @@
     // Some more
     "allowJs": true,
     "checkJs": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "noEmit": true,
-    "incremental": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true
+    "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["dist", "node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { createSignal } from "solid-js";
 import { usePages } from "../hooks/usePages";
 import { useEditorSettings } from "../hooks/useSettings";
-import { Toolbar } from "./Toolbar";
-import { SettingsModal } from "./SettingsModal";
-import { PagesMenu } from "./PagesMenu";
-import { Editor } from "./Editor";
+import Toolbar from "./Toolbar";
+import SettingsModal from "./SettingsModal";
+import PagesMenu from "./PagesMenu";
+import Editor from "./Editor";
 
-export function App() {
+function App() {
   const {
     pages,
     currentPageIndex,
@@ -18,33 +18,33 @@ export function App() {
   } = usePages();
 
   const { settings, updateSettings } = useEditorSettings();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isPagesMenuOpen, setIsPagesMenuOpen] = useState(false);
-  const [toolbarOpacity, setToolbarOpacity] = useState(1);
+  const [isSettingsOpen, setIsSettingsOpen] = createSignal(false);
+  const [isPagesMenuOpen, setIsPagesMenuOpen] = createSignal(false);
+  const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
-  const currentPage = pages[currentPageIndex];
+  const currentPage = () => pages()[currentPageIndex()];
 
   return (
     <>
       <Toolbar
-        opacity={toolbarOpacity}
-        currentPageTitle={currentPage?.name || ""}
+        opacity={toolbarOpacity()}
+        currentPageTitle={currentPage()?.name || ""}
         onMouseMove={() => setToolbarOpacity(1)}
-        onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen)}
+        onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
       />
 
       <SettingsModal
-        isOpen={isSettingsOpen}
-        settings={settings}
+        isOpen={isSettingsOpen()}
+        settings={settings()}
         onSettingsChange={updateSettings}
         onClose={() => setIsSettingsOpen(false)}
       />
 
       <PagesMenu
-        isOpen={isPagesMenuOpen}
-        pages={pages}
-        currentPageIndex={currentPageIndex}
+        isOpen={isPagesMenuOpen()}
+        pages={pages()}
+        currentPageIndex={currentPageIndex()}
         onPageSelect={setCurrentPageIndex}
         onAddPage={addPage}
         onRenamePage={renamePage}
@@ -53,13 +53,13 @@ export function App() {
       />
 
       <Editor
-        content={currentPage?.content || ""}
+        content={currentPage()?.content || ""}
         onChange={(content) => {
           updatePageContent(content);
           setToolbarOpacity(0);
           setIsPagesMenuOpen(false);
         }}
-        settings={settings}
+        settings={settings()}
       />
     </>
   );

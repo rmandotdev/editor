@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { EditorSettings } from "../types";
+import { createSignal, onMount } from "solid-js";
+import type { EditorSettings } from "../types";
 
 const DEFAULT_SETTINGS: EditorSettings = {
   autocorrect: true,
@@ -9,17 +9,18 @@ const DEFAULT_SETTINGS: EditorSettings = {
 };
 
 export function useEditorSettings() {
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [settings, setSettings] =
+    createSignal<EditorSettings>(DEFAULT_SETTINGS);
 
-  useEffect(() => {
+  onMount(() => {
     const storedSettings = localStorage.getItem("editor-settings");
     if (storedSettings) {
       setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) });
     }
-  }, []);
+  });
 
   const updateSettings = (newSettings: Partial<EditorSettings>) => {
-    const updatedSettings = { ...settings, ...newSettings };
+    const updatedSettings = { ...settings(), ...newSettings };
     setSettings(updatedSettings);
     localStorage.setItem("editor-settings", JSON.stringify(updatedSettings));
   };

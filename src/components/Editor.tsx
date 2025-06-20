@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { JSX } from "solid-js";
 import { EditorSettings } from "../types";
 
 interface EditorProps {
@@ -7,25 +7,23 @@ interface EditorProps {
   settings: EditorSettings;
 }
 
-export const Editor: FunctionComponent<EditorProps> = ({
-  content,
-  onChange,
-  settings,
-}) => {
+const Editor = (props: EditorProps): JSX.Element => {
   return (
-    <main className="editor">
+    <main class="editor">
       <textarea
         id="text-area"
-        value={content}
-        onChange={(e) => onChange(e.target.value)}
+        value={props.content}
+        onInput={(e) => props.onChange((e.target as HTMLTextAreaElement).value)}
         placeholder="Start writing..."
-        spellCheck={settings.autocorrect}
+        spellcheck={props.settings.autocorrect}
         style={{
-          fontSize: `${settings.fontSize}px`,
-          fontFamily: settings.fontFamily,
-          textAlign: settings.textAlign,
+          "font-size": `${props.settings.fontSize}px`,
+          "font-family": props.settings.fontFamily,
+          "text-align": props.settings.textAlign,
         }}
       />
     </main>
   );
 };
+
+export default Editor;

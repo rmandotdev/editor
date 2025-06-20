@@ -1,3 +1,3 @@
-# Blank page / Text editor
+# Text editor
 
 https://editor.rman.dev

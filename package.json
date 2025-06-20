@@ -3,25 +3,19 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bunx next dev",
-    "build": "bunx next build",
-    "start": "bunx serve out",
-    "deploy": "bunx wrangler deploy"
+    "build": "bunx astro build",
+    "deploy": "bunx wrangler deploy",
+    "dev": "bunx wrangler dev"
   },
   "dependencies": {
-    "next": "^15.3.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.6.2"
+    "solid-js": "^1.9.7"
   },
   "devDependencies": {
+    "@astrojs/cloudflare": "^12.6.0",
+    "@astrojs/solid-js": "^5.1.0",
     "@types/bun": "latest",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "wrangler": "^4.20.2"
+    "astro": "^5.10.0",
+    "wrangler": "^4.20.5"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

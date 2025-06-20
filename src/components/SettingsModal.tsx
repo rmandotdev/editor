@@ -1,4 +1,4 @@
-import { FunctionComponent, useRef, useEffect } from "react";
+import { JSX, createEffect } from "solid-js";
 import { EditorSettings } from "../types";
 
 interface SettingsModalProps {
@@ -8,68 +8,69 @@ interface SettingsModalProps {
   onClose: () => void;
 }
 
-export const SettingsModal: FunctionComponent<SettingsModalProps> = ({
-  isOpen,
-  settings,
-  onSettingsChange,
-  onClose,
-}) => {
-  if (!isOpen) return null;
+const SettingsModal = (props: SettingsModalProps): JSX.Element | null => {
+  let dialogRef: HTMLDialogElement | undefined;
 
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  createEffect(() => {
+    if (!dialogRef) return;
+    if (props.isOpen && !dialogRef.open) {
+      dialogRef.showModal();
+    } else if (!props.isOpen && dialogRef.open) {
+      dialogRef.close();
+    }
+  });
 
-  useEffect(() => {
-    const dialogElement = dialogRef.current;
-    if (!dialogElement) return;
-    if (isOpen) dialogElement.showModal();
-  }, [isOpen]);
-
-  const handleBackdropClick = (event: React.MouseEvent<HTMLDialogElement>) => {
-    const dialogElement = dialogRef.current;
-    if (dialogElement && event.target === dialogElement) {
-      onClose();
+  const handleBackdropClick = (event: MouseEvent) => {
+    if (dialogRef && event.target === dialogRef) {
+      props.onClose();
     }
   };
 
   return (
     <dialog
       id="settings-modal"
-      className="modal"
+      class="modal"
       ref={dialogRef}
-      onClose={onClose}
+      onClose={props.onClose}
       onClick={handleBackdropClick}
     >
-      <form id="settings-form" className="modal-form" method="dialog">
-        <div className="settings-group toggle-setting">
-          <label htmlFor="text-autocorrection-toggle">
-            Text Autocorrection
-          </label>
+      <form id="settings-form" class="modal-form" method="dialog">
+        <div class="settings-group toggle-setting">
+          <label for="text-autocorrection-toggle">Text Autocorrection</label>
           <input
             id="text-autocorrection-toggle"
             type="checkbox"
-            checked={settings.autocorrect}
-            onChange={(e) =>
-              onSettingsChange({ autocorrect: e.target.checked })
+            checked={props.settings.autocorrect}
+            onInput={(e) =>
+              props.onSettingsChange({
+                autocorrect: (e.target as HTMLInputElement).checked,
+              })
             }
           />
         </div>
-        <div className="settings-group">
+        <div class="settings-group">
           <label>Font Size</label>
           <input
             type="number"
             min="8"
             max="72"
-            value={settings.fontSize}
-            onChange={(e) =>
-              onSettingsChange({ fontSize: parseInt(e.target.value, 10) })
+            value={props.settings.fontSize}
+            onInput={(e) =>
+              props.onSettingsChange({
+                fontSize: parseInt((e.target as HTMLInputElement).value, 10),
+              })
             }
           />
         </div>
-        <div className="settings-group">
+        <div class="settings-group">
           <label>Font Family</label>
           <select
-            value={settings.fontFamily}
-            onChange={(e) => onSettingsChange({ fontFamily: e.target.value })}
+            value={props.settings.fontFamily}
+            onInput={(e) =>
+              props.onSettingsChange({
+                fontFamily: (e.target as HTMLSelectElement).value,
+              })
+            }
           >
             <option value="Cousine">Cousine</option>
             <option value="Arial">Arial</option>
@@ -77,13 +78,14 @@ export const SettingsModal: FunctionComponent<SettingsModalProps> = ({
             <option value="Courier New">Courier New</option>
           </select>
         </div>
-        <div className="settings-group">
+        <div class="settings-group">
           <label>Text Alignment</label>
           <select
-            value={settings.textAlign}
-            onChange={(e) =>
-              onSettingsChange({
-                textAlign: e.target.value as EditorSettings["textAlign"],
+            value={props.settings.textAlign}
+            onInput={(e) =>
+              props.onSettingsChange({
+                textAlign: (e.target as HTMLSelectElement)
+                  .value as EditorSettings["textAlign"],
               })
             }
           >
@@ -97,3 +99,5 @@ export const SettingsModal: FunctionComponent<SettingsModalProps> = ({
     </dialog>
   );
 };
+
+export default SettingsModal;
