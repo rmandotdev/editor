@@ -17,6 +17,14 @@ export function useEditorSettings() {
     if (storedSettings) {
       setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) });
     }
+
+    window.addEventListener("storage", (event) => {
+      if (!event.newValue) return;
+      if (event.key === "editor-settings") {
+        const newSettings = JSON.parse(event.newValue) as EditorSettings;
+        setSettings(newSettings);
+      }
+    });
   });
 
   const updateSettings = (newSettings: Partial<EditorSettings>) => {

@@ -1,5 +1,5 @@
-import { createSignal, JSX, Show } from "solid-js";
-import { Page } from "../types";
+import { createSignal, type JSX, Show } from "solid-js";
+import type { Page } from "../types";
 
 interface PagesMenuProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ const PagesMenu = (props: PagesMenuProps): JSX.Element => {
   return (
     <>
       <Show when={props.isOpen}>
-        <div class="pages-float float">
+        <div class="pages-float float" onClick={() => setContextMenu(null)}>
           <div class="pages-list">
             {props.pages.map((page, index) => (
               <button
@@ -30,6 +30,11 @@ const PagesMenu = (props: PagesMenuProps): JSX.Element => {
                   index === props.currentPageIndex ? "selected" : ""
                 }`}
                 onClick={() => props.onPageSelect(index)}
+                onMouseDown={(e) => {
+                  if (e.button === 0) {
+                    props.onPageSelect(index);
+                  }
+                }}
                 onContextMenu={(e) => {
                   e.preventDefault();
                   setContextMenu({ x: e.pageX, y: e.pageY, pageIndex: index });
@@ -79,7 +84,7 @@ const ContextMenu = (props: ContextMenuProps): JSX.Element => {
         onClick={() => {
           const newName = prompt(
             "Enter new name:",
-            props.pages[props.pageIndex]?.name
+            props.pages[props.pageIndex]!.name
           );
           if (newName) {
             props.onRenamePage(props.pageIndex, newName);

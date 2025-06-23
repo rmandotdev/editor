@@ -1,5 +1,5 @@
-import { JSX, createEffect } from "solid-js";
-import { EditorSettings } from "../types";
+import { type JSX, createEffect } from "solid-js";
+import type { EditorSettings } from "../types";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -84,8 +84,7 @@ const SettingsModal = (props: SettingsModalProps): JSX.Element | null => {
             value={props.settings.textAlign}
             onInput={(e) =>
               props.onSettingsChange({
-                textAlign: (e.target as HTMLSelectElement)
-                  .value as EditorSettings["textAlign"],
+                textAlign: e.target.value as EditorSettings["textAlign"],
               })
             }
           >

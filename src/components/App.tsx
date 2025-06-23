@@ -28,10 +28,15 @@ function App() {
     <>
       <Toolbar
         opacity={toolbarOpacity()}
-        currentPageTitle={currentPage()?.name || ""}
+        pageIndex={currentPageIndex()}
+        currentPageTitle={
+          currentPage()?.name ||
+          "<something has broken - this page does not exist>"
+        }
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
+        onRenamePage={renamePage}
       />
 
       <SettingsModal
@@ -56,7 +61,11 @@ function App() {
         content={currentPage()?.content || ""}
         onChange={(content) => {
           updatePageContent(content);
-          setToolbarOpacity(0);
+          if (currentPage()?.content) {
+            setToolbarOpacity(0);
+          } else {
+            setToolbarOpacity(1);
+          }
           setIsPagesMenuOpen(false);
         }}
         settings={settings()}

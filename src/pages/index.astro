@@ -1,6 +1,10 @@
 ---
 import "../styles/globals.css";
 import App from "../components/App";
+
+const canonical = "https://editor.rman.dev";
+const title = "Simple text editor";
+const description = "Simple text editor by GameRoMan";
 ---
 
 <html lang="en">
@@ -12,19 +16,26 @@ import App from "../components/App";
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
 
-    <title>Simple text editor</title>
+    <title>{title}</title>
+    <meta name="description" content={description} />
 
-    <meta name="description" content="Simple text editor by GameRoMan" />
-    <meta property="og:title" content="Simple text editor" />
-    <meta property="og:description" content="Simple text editor by GameRoMan" />
-    <meta property="og:url" content="https://editor.rman.dev" />
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
 
-    <meta name="twitter:title" content="Simple text editor" />
-    <meta
-      name="twitter:description"
-      content="Simple text editor by GameRoMan"
+    <!-- Twitter -->
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="canonical" href={canonical} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cousine&display=swap"
+      rel="stylesheet"
     />
-    <link rel="canonical" href="https://editor.rman.dev" />
   </head>
 
   <body>

@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "editor",
-  "compatibility_date": "2025-06-22",
+  "compatibility_date": "2025-07-12",
   "account_id": "9cb2e2e27c4416de8fa3465ed0ee8deb",
 
   "assets": {
