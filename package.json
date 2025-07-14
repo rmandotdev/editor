@@ -14,8 +14,8 @@
     "@astrojs/cloudflare": "^12.6.0",
     "@astrojs/solid-js": "^5.1.0",
     "@types/bun": "latest",
-    "astro": "^5.11.0",
-    "wrangler": "^4.24.3"
+    "astro": "^5.12.4",
+    "wrangler": "^4.26.0"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
