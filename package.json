@@ -15,7 +15,7 @@
     "@astrojs/solid-js": "^5.1.0",
     "@types/bun": "latest",
     "astro": "^5.12.8",
-    "wrangler": "^4.27.0"
+    "wrangler": "^4.28.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.2"
