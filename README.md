@@ -1,3 +1,3 @@
 # Text editor
 
-https://editor.rman.dev
+<https://editor.rman.dev>
