@@ -1,5 +1,6 @@
 import { createSignal, type JSX, Show } from "solid-js";
-import type { Page } from "../types";
+
+import type { Page } from "~/types";
 
 interface PagesMenuProps {
   isOpen: boolean;

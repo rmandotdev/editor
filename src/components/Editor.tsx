@@ -1,5 +1,6 @@
 import { type JSX } from "solid-js";
-import type { EditorSettings } from "../types";
+
+import type { EditorSettings } from "~/types";
 
 interface EditorProps {
   content: string;

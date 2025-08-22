@@ -1,5 +1,6 @@
 import { type JSX, createEffect } from "solid-js";
-import type { EditorSettings } from "../types";
+
+import type { EditorSettings } from "~/types";
 
 interface SettingsModalProps {
   isOpen: boolean;

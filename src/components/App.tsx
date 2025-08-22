@@ -1,6 +1,8 @@
 import { createSignal } from "solid-js";
-import { usePages } from "../hooks/usePages";
-import { useEditorSettings } from "../hooks/useSettings";
+
+import { usePages } from "~/hooks/usePages";
+import { useEditorSettings } from "~/hooks/useSettings";
+
 import Toolbar from "./Toolbar";
 import SettingsModal from "./SettingsModal";
 import PagesMenu from "./PagesMenu";
