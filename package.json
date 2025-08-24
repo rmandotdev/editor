@@ -8,14 +8,14 @@
     "dev": "bunx astro dev"
   },
   "dependencies": {
-    "solid-js": "^1.9.7"
+    "solid-js": "^1.9.9"
   },
   "devDependencies": {
-    "@astrojs/cloudflare": "^12.6.2",
+    "@astrojs/cloudflare": "^12.6.5",
     "@astrojs/solid-js": "^5.1.0",
     "@types/bun": "latest",
-    "astro": "^5.12.8",
-    "wrangler": "^4.28.0"
+    "astro": "^5.13.3",
+    "wrangler": "^4.32.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.2"
