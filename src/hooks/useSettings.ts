@@ -1,5 +1,5 @@
 import { createSignal, onMount } from "solid-js";
-import type { EditorSettings } from "../types";
+import type { EditorSettings } from "~/types";
 
 const DEFAULT_SETTINGS: EditorSettings = {
   autocorrect: true,

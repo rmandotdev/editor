@@ -20,21 +20,21 @@ function App() {
   } = usePages();
 
   const { settings, updateSettings } = useEditorSettings();
+
   const [isSettingsOpen, setIsSettingsOpen] = createSignal(false);
   const [isPagesMenuOpen, setIsPagesMenuOpen] = createSignal(false);
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
   const currentPage = () => pages()[currentPageIndex()];
 
+  const PAGES_BROKEN = "<something has broken - this page does not exist>";
+
   return (
     <>
       <Toolbar
         opacity={toolbarOpacity()}
         pageIndex={currentPageIndex()}
-        currentPageTitle={
-          currentPage()?.name ||
-          "<something has broken - this page does not exist>"
-        }
+        currentPageTitle={currentPage()?.name ?? PAGES_BROKEN}
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
