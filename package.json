@@ -11,11 +11,9 @@
     "solid-js": "^1.9.9"
   },
   "devDependencies": {
-    "@astrojs/cloudflare": "^12.6.5",
-    "@astrojs/solid-js": "^5.1.0",
-    "@types/bun": "latest",
-    "astro": "^5.13.3",
-    "wrangler": "^4.32.0"
+    "@astrojs/solid-js": "^5.1.1",
+    "astro": "^5.13.9",
+    "wrangler": "^4.38.0"
   },
   "peerDependencies": {
     "typescript": "^5.9.2"
