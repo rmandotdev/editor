@@ -4,7 +4,7 @@ export interface Page {
 }
 
 export interface EditorSettings {
-  autocorrect: boolean;
+  spellcheck: boolean;
   fontSize: number;
   fontFamily:
     | "Cousine"

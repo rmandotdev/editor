@@ -33,34 +33,34 @@ function App() {
     <>
       <Toolbar
         opacity={toolbarOpacity()}
-        pageIndex={currentPageIndex()}
+        currentPageIndex={currentPageIndex()}
         currentPageTitle={currentPage()?.name ?? PAGES_BROKEN}
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
-        onRenamePage={renamePage}
+        renamePage={renamePage}
       />
 
       <SettingsModal
         isOpen={isSettingsOpen()}
         settings={settings()}
-        onSettingsChange={updateSettings}
-        onClose={() => setIsSettingsOpen(false)}
+        updateSettings={updateSettings}
+        closeSettingsModal={() => setIsSettingsOpen(false)}
       />
 
       <PagesMenu
         isOpen={isPagesMenuOpen()}
         pages={pages()}
         currentPageIndex={currentPageIndex()}
-        onPageSelect={setCurrentPageIndex}
+        selectPage={setCurrentPageIndex}
         onAddPage={addPage}
-        onRenamePage={renamePage}
-        onDeletePage={deletePage}
-        onClose={() => setIsPagesMenuOpen(false)}
+        renamePage={renamePage}
+        deletePage={deletePage}
       />
 
       <Editor
-        content={currentPage()?.content || ""}
+        content={currentPage()?.content ?? PAGES_BROKEN}
+        settings={settings()}
         onChange={(content) => {
           updatePageContent(content);
           if (currentPage()?.content) {
@@ -70,7 +70,6 @@ function App() {
           }
           setIsPagesMenuOpen(false);
         }}
-        settings={settings()}
       />
     </>
   );

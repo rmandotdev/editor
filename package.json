@@ -8,14 +8,14 @@
     "dev": "bunx astro dev"
   },
   "dependencies": {
-    "solid-js": "^1.9.9"
+    "@tailwindcss/vite": "^4.1.13",
+    "solid-js": "^1.9.9",
+    "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
     "@astrojs/solid-js": "^5.1.1",
     "astro": "^5.13.9",
+    "typescript": "^5.9.2",
     "wrangler": "^4.38.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.9.2"
   }
 }
