@@ -1,5 +1,5 @@
 import { createSignal, Show, For } from "solid-js";
-import type { JSXElement } from "solid-js";
+import type { JSXElement, Setter } from "solid-js";
 
 import type { Page } from "~/types";
 
@@ -39,7 +39,7 @@ const PagesList = (props: {
   pages: Page[];
   currentPageIndex: number;
   selectPage: (index: number) => void;
-  setContextMenu: (arg: ContexMenuState) => void;
+  setContextMenu: Setter<ContexMenuState>;
 }) => (
   <div class="max-h-[min(calc(100vh_-_150px),calc(38px_*_8))] overflow-y-auto">
     <For each={props.pages}>
@@ -66,8 +66,8 @@ const Pages = (props: {
   currentPageIndex: number;
   pages: Page[];
   selectPage: (index: number) => void;
-  setContextMenu: (arg: ContexMenuState) => void;
-  onAddPage: () => void;
+  setContextMenu: Setter<ContexMenuState>;
+  newPage: () => void;
 }): JSXElement => (
   <div
     class="
@@ -84,7 +84,7 @@ const Pages = (props: {
       setContextMenu={props.setContextMenu}
     />
     <Divider />
-    <Button label="New Page" onClick={props.onAddPage} />
+    <Button label="New Page" onClick={props.newPage} />
   </div>
 );
 
@@ -119,7 +119,7 @@ const PagesMenu = (props: {
   isOpen: boolean;
   pages: Page[];
   currentPageIndex: number;
-  onAddPage: () => void;
+  newPage: () => void;
   selectPage: (index: number) => void;
   renamePage: (index: number, newName: string) => void;
   deletePage: (index: number) => void;
@@ -156,7 +156,7 @@ const PagesMenu = (props: {
     <Show when={props.isOpen}>
       <Pages
         currentPageIndex={props.currentPageIndex}
-        onAddPage={props.onAddPage}
+        newPage={props.newPage}
         selectPage={props.selectPage}
         pages={props.pages}
         setContextMenu={setContextMenu}

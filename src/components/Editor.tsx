@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js";
+import type { JSX } from "solid-js";
 
 import type { EditorSettings } from "~/types";
 
@@ -6,7 +6,7 @@ const Editor = (props: {
   content: string;
   onChange: (content: string) => void;
   settings: EditorSettings;
-}): JSXElement => {
+}): JSX.Element => {
   return (
     <main>
       <textarea

@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js";
-import type { JSXElement } from "solid-js";
+import type { JSX } from "solid-js";
 
 import Button from "./Button";
 
@@ -13,7 +13,7 @@ const ContextMenu = (props: {
   x: number;
   y: number;
   items: ContextMenuItem[];
-}): JSXElement => {
+}): JSX.Element => {
   return (
     <div
       class="absolute z-30 bg-[color:var(--float-bg-color)] border border-[color:var(--float-border-color)]

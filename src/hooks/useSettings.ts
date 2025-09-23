@@ -34,6 +34,7 @@ export function useEditorSettings() {
     const updatedSettings = { ...settings(), ...newSettings };
     setSettings(updatedSettings);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
+    return updatedSettings;
   };
 
   return { settings, updateSettings };

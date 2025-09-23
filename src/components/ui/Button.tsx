@@ -1,11 +1,11 @@
 import { splitProps } from "solid-js";
-import type { JSX, JSXElement } from "solid-js";
+import type { JSX } from "solid-js";
 
 type ButtonAttributes = JSX.ButtonHTMLAttributes<HTMLButtonElement>;
 
 type LabeledOrNot =
   | { label: string; children?: null }
-  | { label?: null; children?: JSXElement };
+  | { label?: null; children?: JSX.Element };
 
 const base = `cursor-pointer transition-colors ease-in-out duration-[0.25s] w-full text-left p-2 rounded-md hover:bg-[color:var(--background-hover-color)]`;
 

@@ -3,14 +3,18 @@ export interface Page {
   content: string;
 }
 
-export interface EditorSettings {
-  spellcheck: boolean;
-  fontSize: number;
-  fontFamily:
+export namespace EditorSettings {
+  export type FontFamily =
     | "Cousine"
     | "Arial"
     | "Times New Roman"
-    | "Courier New"
-    | (string & {});
-  textAlign: "left" | "center" | "right" | "justify";
+    | "Courier New";
+  export type TextAlign = "left" | "center" | "right" | "justify";
+}
+
+export interface EditorSettings {
+  spellcheck: boolean;
+  fontSize: number;
+  fontFamily: EditorSettings.FontFamily;
+  textAlign: EditorSettings.TextAlign;
 }

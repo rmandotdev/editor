@@ -23,6 +23,7 @@ function App() {
 
   const [isSettingsOpen, setIsSettingsOpen] = createSignal(false);
   const [isPagesMenuOpen, setIsPagesMenuOpen] = createSignal(false);
+
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
   const currentPage = () => pages()[currentPageIndex()];
@@ -53,7 +54,7 @@ function App() {
         pages={pages()}
         currentPageIndex={currentPageIndex()}
         selectPage={setCurrentPageIndex}
-        onAddPage={addPage}
+        newPage={addPage}
         renamePage={renamePage}
         deletePage={deletePage}
       />

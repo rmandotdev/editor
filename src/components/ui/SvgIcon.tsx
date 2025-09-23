@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js";
+import type { JSX } from "solid-js";
 
 const SvgIcon = (props: {
   "stroke-width"?: number | undefined;
@@ -12,8 +12,8 @@ const SvgIcon = (props: {
     | "miter-clip"
     | undefined;
 
-  children: JSXElement;
-}): JSXElement => (
+  children: JSX.Element;
+}): JSX.Element => (
   <svg
     class="size-6 bg-transparent"
     xmlns="http://www.w3.org/2000/svg"
