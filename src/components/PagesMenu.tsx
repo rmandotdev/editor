@@ -19,7 +19,7 @@ const PageButton = (props: {
       variant="page"
       class={
         props.isCurrentPage
-          ? "bg-[color:var(--background-hover-color)] border-[color:var(--accent-color)]"
+          ? "bg-[#ddd] dark:bg-[#333] border-blue-500"
           : "bg-[var(--float-bg-color)] border-[color:var(--float-bg-color)]"
       }
       onClick={props.onClick}

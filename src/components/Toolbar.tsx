@@ -66,7 +66,7 @@ const ToolbarCenter = (props: {
   renamePage: (index: number, newName: string) => void;
 }): JSXElement => (
   <div
-    class={`text-center content-center flex-1 text-[color:var(--text-color)] [font-family:"Cousine",monospace];`}
+    class={`text-center content-center flex-1 text-black dark:text-white [font-family:"Cousine",monospace]`}
   >
     <PageTitle
       currentPageIndex={props.currentPageIndex}

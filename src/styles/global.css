@@ -3,7 +3,6 @@
 @layer base {
   * {
     @apply min-w-0
-    [font-family:inherit]
     text-[100%]/[normal]
     align-baseline;
   }
@@ -12,13 +11,8 @@
 :root {
   color-scheme: light dark;
 
-  --background-color: light-dark(white, black);
-  --background-hover-color: light-dark(#ddd, #333);
-  --text-color: light-dark(black, white);
   --float-bg-color: light-dark(#ededed, #181818);
   --float-border-color: light-dark(#d8d8d8, #272727);
-
-  --accent-color: #4787ee;
 }
 
 body {

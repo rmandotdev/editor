@@ -60,7 +60,7 @@ const SettingsGroup = <TSelectValue extends string>(
           {(props) => (
             <input
               class="border border-solid border-[color:var(--float-border-color)]
-                     bg-[color:var(--float-bg-color)] text-[color:var(--text-color)]
+                     bg-[color:var(--float-bg-color)] text-black dark:text-white
                      rounded w-full p-1"
               type="number"
               min={props.min}
@@ -74,7 +74,7 @@ const SettingsGroup = <TSelectValue extends string>(
           {(props) => (
             <select
               class="border border-solid border-[color:var(--float-border-color)]
-                     bg-[color:var(--float-bg-color)] text-[color:var(--text-color)]
+                     bg-[color:var(--float-bg-color)] text-black dark:text-white
                      rounded w-full p-1 min-w-30"
               value={props.value}
               onInput={(e) => props.updateValue(e.target.value as TSelectValue)}

@@ -11,8 +11,8 @@ const Editor = (props: {
     <main>
       <textarea
         class="w-full resize-none [outline:none] absolute h-screen overflow-y-auto overflow-x-hidden
-               [word-break:break-word] text-[color:var(--text-color)] caret-[#4787ee]
-               bg-transparent delay-[0.5s] [scrollbar-width:thin] scroll-smooth
+               [word-break:break-word] text-black dark:text-white caret-blue-500
+               bg-transparent delay-500 [scrollbar-width:thin] scroll-smooth
                [padding:calc(min(1em,20vh)_+_72px)_max(-372px_+_50vw,1em)_min(5em,15vh)]
                scroll-pb-0 left-0 top-0"
         style={{
