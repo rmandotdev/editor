@@ -11,6 +11,7 @@
 
 :root {
   color-scheme: light dark;
+
   --background-color: light-dark(white, black);
   --background-hover-color: light-dark(#ddd, #333);
   --text-color: light-dark(black, white);
@@ -26,39 +27,4 @@ body {
 
 textarea {
   transition: background-color 0.5s, opacity 0.5s;
-}
-
-.settings-group {
-  @apply flex flex-col
-  gap-2;
-}
-
-.toggle-setting {
-  @apply flex-row
-  justify-between;
-}
-
-.settings-group label {
-  @apply leading-none
-  font-medium;
-}
-
-.settings-group input[type="checkbox"] {
-  @apply w-4;
-}
-
-.settings-group input[type="number"],
-.settings-group select {
-  @apply border
-  border-[color:var(--float-border-color)]
-  bg-[color:var(--float-bg-color)]
-  text-[color:var(--text-color)]
-  rounded
-  w-full
-  p-1
-  border-solid;
-}
-
-.settings-group select {
-  @apply min-w-[120px];
 }

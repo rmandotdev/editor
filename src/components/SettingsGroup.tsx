@@ -34,11 +34,12 @@ const SettingsGroup = <TSelectValue extends string>(
 ): JSX.Element => {
   return (
     <div
-      class={`settings-group ${
-        props.variant === "checkbox" ? "toggle-setting" : ""
-      }`}
+      class={`flex flex-col gap-2
+        ${props.variant === "checkbox" ? "flex-row justify-between" : ""}
+      `}
     >
       <label
+        class="leading-none font-medium"
         for={props.variant === "checkbox" ? `${props.key}-toggle` : undefined}
       >
         {props.label}
@@ -48,6 +49,7 @@ const SettingsGroup = <TSelectValue extends string>(
           {(props) => (
             <input
               id={`${props.key}-toggle`}
+              class="w-4"
               type="checkbox"
               checked={props.value}
               onInput={(e) => props.updateValue(e.target.checked)}
@@ -57,6 +59,9 @@ const SettingsGroup = <TSelectValue extends string>(
         <Match when={props.variant === "number" && props} keyed>
           {(props) => (
             <input
+              class="border border-solid border-[color:var(--float-border-color)]
+                     bg-[color:var(--float-bg-color)] text-[color:var(--text-color)]
+                     rounded w-full p-1"
               type="number"
               min={props.min}
               max={props.max}
@@ -68,6 +73,9 @@ const SettingsGroup = <TSelectValue extends string>(
         <Match when={props.variant === "select" && props} keyed>
           {(props) => (
             <select
+              class="border border-solid border-[color:var(--float-border-color)]
+                     bg-[color:var(--float-bg-color)] text-[color:var(--text-color)]
+                     rounded w-full p-1 min-w-30"
               value={props.value}
               onInput={(e) => props.updateValue(e.target.value as TSelectValue)}
             >
