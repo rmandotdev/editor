@@ -8,6 +8,5 @@ export default defineConfig({
   output: "static",
   integrations: [solid()],
   vite: { plugins: [tailwindcss()] },
-
   site: "https://editor.rman.dev",
 });
