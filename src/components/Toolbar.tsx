@@ -95,7 +95,7 @@ const Toolbar = (props: {
 }): JSXElement => {
   return (
     <div
-      class="justify-between flex absolute z-10 w-[calc(100%_-_10px)] opacity-0 transition-opacity duration-[0.5s] p-4 hover:opacity-100;"
+      class="justify-between flex absolute z-10 w-[calc(100%_-_10px)] opacity-0 transition-opacity duration-500 p-4 hover:opacity-100;"
       style={{ opacity: props.opacity }}
       onMouseMove={props.onMouseMove}
     >

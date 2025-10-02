@@ -59,8 +59,8 @@ const SettingsGroup = <TSelectValue extends string>(
         <Match when={props.variant === "number" && props} keyed>
           {(props) => (
             <input
-              class="border border-solid border-[color:var(--float-border-color)]
-                     bg-[color:var(--float-bg-color)] text-black dark:text-white
+              class="border border-solid border-[#d8d8d8] dark:border-[#272727]
+                     bg-[#ededed] dark:bg-[#181818] text-black dark:text-white
                      rounded w-full p-1"
               type="number"
               min={props.min}
@@ -73,8 +73,8 @@ const SettingsGroup = <TSelectValue extends string>(
         <Match when={props.variant === "select" && props} keyed>
           {(props) => (
             <select
-              class="border border-solid border-[color:var(--float-border-color)]
-                     bg-[color:var(--float-bg-color)] text-black dark:text-white
+              class="border border-solid border-[#d8d8d8] dark:border-[#272727]
+                     bg-[#ededed] dark:bg-[#181818] text-black dark:text-white
                      rounded w-full p-1 min-w-30"
               value={props.value}
               onInput={(e) => props.updateValue(e.target.value as TSelectValue)}

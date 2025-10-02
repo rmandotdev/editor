@@ -16,7 +16,7 @@ const ContextMenu = (props: {
 }): JSX.Element => {
   return (
     <div
-      class="absolute z-30 bg-[color:var(--float-bg-color)] border border-[color:var(--float-border-color)]
+      class="absolute z-30 bg-[#ededed] dark:bg-[#181818] border border-[#d8d8d8] dark:border-[#272727]
             shadow-[0_4px_6px_rgba(0,0,0,0.1)] p-2 rounded-md border-solid"
       style={{ left: `${props.x}px`, top: `${props.y}px` }}
     >

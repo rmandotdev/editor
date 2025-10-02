@@ -7,11 +7,11 @@ type LabeledOrNot =
   | { label: string; children?: null }
   | { label?: null; children?: JSX.Element };
 
-const base = `cursor-pointer transition-colors ease-in-out duration-[0.25s] w-full text-left p-2 rounded-md hover:bg-[#ddd] dark:hover:bg-[#333]`;
+const base = `cursor-pointer w-full text-left p-2 rounded-md hover:bg-[#ddd] dark:hover:bg-[#333] text-black dark:text-white`;
 
 const variants = {
   default: "",
-  "context-menu": `rounded bg-transparent transition-[background-color]`,
+  "context-menu": `rounded bg-transparent`,
   page: "rounded border-2 border-solid",
   toolbar: "size-10",
 };

@@ -2,23 +2,10 @@
 
 @layer base {
   * {
-    @apply min-w-0
-    text-[100%]/[normal]
-    align-baseline;
+    @apply text-[100%]/[normal];
   }
 }
 
-:root {
-  color-scheme: light dark;
-
-  --float-bg-color: light-dark(#ededed, #181818);
-  --float-border-color: light-dark(#d8d8d8, #272727);
-}
-
-body {
-  @apply [font-family:Cousine];
-}
-
-textarea {
-  transition: background-color 0.5s, opacity 0.5s;
+@theme {
+  --font-cousine: "Cousine";
 }

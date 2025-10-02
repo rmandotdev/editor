@@ -20,7 +20,7 @@ const PageButton = (props: {
       class={
         props.isCurrentPage
           ? "bg-[#ddd] dark:bg-[#333] border-blue-500"
-          : "bg-[var(--float-bg-color)] border-[color:var(--float-bg-color)]"
+          : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818]"
       }
       onClick={props.onClick}
       onMouseDown={(e) => {
@@ -71,7 +71,7 @@ const Pages = (props: {
 }): JSXElement => (
   <div
     class="
-    fixed border border-[color:var(--float-border-color)] bg-[color:var(--float-bg-color)] p-2 rounded-md border-solid
+    fixed border border-[#d8d8d8] dark:border-[#272727] bg-[#ededed] dark:bg-[#181818] p-2 rounded-md border-solid
 
     z-20 w-[230px] left-4 top-[60px]
     "
