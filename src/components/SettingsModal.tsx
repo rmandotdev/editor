@@ -1,15 +1,65 @@
-import { type JSX, createEffect } from "solid-js";
+import type { JSX } from "solid-js";
+
+import { createEffect } from "solid-js";
 
 import type { EditorSettings } from "~/types";
 
-interface SettingsModalProps {
+import SettingsGroup from "./SettingsGroup";
+
+const SettingsForm = (props: {
+  settings: EditorSettings;
+  updateSettings: (settings: Partial<EditorSettings>) => void;
+}): JSX.Element => (
+  <form class="flex flex-col gap-5 p-6" method="dialog">
+    <SettingsGroup
+      variant="checkbox"
+      key="spellcheck"
+      label="Text Spellcheck"
+      value={props.settings.spellcheck}
+      updateValue={(spellcheck) => props.updateSettings({ spellcheck })}
+    />
+
+    <SettingsGroup
+      variant="number"
+      label="Font Size"
+      value={props.settings.fontSize}
+      updateValue={(fontSize) => props.updateSettings({ fontSize })}
+    />
+
+    <SettingsGroup<EditorSettings.FontFamily>
+      variant="select"
+      label="Font Family"
+      value={props.settings.fontFamily}
+      options={[
+        { value: "Cousine" },
+        { value: "Arial" },
+        { value: "Times New Roman" },
+        { value: "Courier New" },
+      ]}
+      updateValue={(fontFamily) => props.updateSettings({ fontFamily })}
+    />
+
+    <SettingsGroup<EditorSettings.TextAlign>
+      variant="select"
+      label="Text Alignment"
+      value={props.settings.textAlign}
+      options={[
+        { value: "left", label: "Left" },
+        { value: "center", label: "Center" },
+        { value: "right", label: "Right" },
+        { value: "justify", label: "Justify" },
+      ]}
+      updateValue={(textAlign) => props.updateSettings({ textAlign })}
+    />
+  </form>
+);
+
+const SettingsModal = (props: {
   isOpen: boolean;
   settings: EditorSettings;
-  onSettingsChange: (settings: Partial<EditorSettings>) => void;
-  onClose: () => void;
-}
-
-const SettingsModal = (props: SettingsModalProps): JSX.Element | null => {
+  updateSettings: (settings: Partial<EditorSettings>) => void;
+  closeSettingsModal: () => void;
+}): JSX.Element => {
   let dialogRef: HTMLDialogElement | undefined;
 
   createEffect(() => {
@@ -23,79 +73,23 @@ const SettingsModal = (props: SettingsModalProps): JSX.Element | null => {
 
   const handleBackdropClick = (event: MouseEvent) => {
     if (dialogRef && event.target === dialogRef) {
-      props.onClose();
+      props.closeSettingsModal();
     }
   };
 
   return (
     <dialog
-      id="settings-modal"
-      class="modal"
+      class="fixed -translate-x-2/4 -translate-y-2/4 bg-[#ededed] dark:bg-[#181818] text-black dark:text-white
+            border border-[#d8d8d8] dark:border-[#272727] min-w-[300px] shadow-[0_2px_10px_rgba(0,0,0,0.1)]
+            rounded-lg border-solid left-2/4 top-2/4 backdrop:[background:rgba(0,0,0,0.5)]"
       ref={dialogRef}
-      onClose={props.onClose}
+      onClose={props.closeSettingsModal}
       onClick={handleBackdropClick}
     >
-      <form id="settings-form" class="modal-form" method="dialog">
-        <div class="settings-group toggle-setting">
-          <label for="text-autocorrection-toggle">Text Autocorrection</label>
-          <input
-            id="text-autocorrection-toggle"
-            type="checkbox"
-            checked={props.settings.autocorrect}
-            onInput={(e) =>
-              props.onSettingsChange({
-                autocorrect: (e.target as HTMLInputElement).checked,
-              })
-            }
-          />
-        </div>
-        <div class="settings-group">
-          <label>Font Size</label>
-          <input
-            type="number"
-            min="8"
-            max="72"
-            value={props.settings.fontSize}
-            onInput={(e) =>
-              props.onSettingsChange({
-                fontSize: parseInt((e.target as HTMLInputElement).value, 10),
-              })
-            }
-          />
-        </div>
-        <div class="settings-group">
-          <label>Font Family</label>
-          <select
-            value={props.settings.fontFamily}
-            onInput={(e) =>
-              props.onSettingsChange({
-                fontFamily: (e.target as HTMLSelectElement).value,
-              })
-            }
-          >
-            <option value="Cousine">Cousine</option>
-            <option value="Arial">Arial</option>
-            <option value="Times New Roman">Times New Roman</option>
-            <option value="Courier New">Courier New</option>
-          </select>
-        </div>
-        <div class="settings-group">
-          <label>Text Alignment</label>
-          <select
-            value={props.settings.textAlign}
-            onInput={(e) =>
-              props.onSettingsChange({
-                textAlign: e.target.value as EditorSettings["textAlign"],
-              })
-            }
-          >
-            <option value="left">Left</option>
-            <option value="center">Center</option>
-            <option value="right">Right</option>
-            <option value="justify">Justify</option>
-          </select>
-        </div>
-      </form>
+      <SettingsForm
+        settings={props.settings}
+        updateSettings={props.updateSettings}
+      />
     </dialog>
   );
 };

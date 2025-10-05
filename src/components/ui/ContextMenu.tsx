@@ -1,0 +1,34 @@
+import { For, Show } from "solid-js";
+import type { JSX } from "solid-js";
+
+import Button from "./Button";
+
+type ContextMenuItem = {
+  label: string;
+  onClick: () => void;
+  show?: boolean;
+};
+
+const ContextMenu = (props: {
+  x: number;
+  y: number;
+  items: ContextMenuItem[];
+}): JSX.Element => {
+  return (
+    <div
+      class="absolute z-30 bg-[#ededed] dark:bg-[#181818] border border-[#d8d8d8] dark:border-[#272727]
+            shadow-[0_4px_6px_rgba(0,0,0,0.1)] p-2 rounded-md border-solid"
+      style={{ left: `${props.x}px`, top: `${props.y}px` }}
+    >
+      <For each={props.items}>
+        {(item) => (
+          <Show when={item.show ?? true}>
+            <Button label={item.label} onClick={item.onClick} />
+          </Show>
+        )}
+      </For>
+    </div>
+  );
+};
+
+export default ContextMenu;
