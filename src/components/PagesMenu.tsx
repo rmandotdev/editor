@@ -1,5 +1,5 @@
 import { createSignal, Show, For } from "solid-js";
-import type { JSXElement, Setter } from "solid-js";
+import type { JSX, Setter } from "solid-js";
 
 import type { Page } from "~/types";
 
@@ -12,7 +12,7 @@ const PageButton = (props: {
   isCurrentPage: boolean;
   onClick: () => void;
   onContextMenu: (e: MouseEvent) => void;
-}): JSXElement => {
+}): JSX.Element => {
   return (
     <Button
       label={props.label}
@@ -68,7 +68,7 @@ const Pages = (props: {
   selectPage: (index: number) => void;
   setContextMenu: Setter<ContexMenuState>;
   newPage: () => void;
-}): JSXElement => (
+}): JSX.Element => (
   <div
     class="
     fixed border border-[#d8d8d8] dark:border-[#272727] bg-[#ededed] dark:bg-[#181818] p-2 rounded-md border-solid
@@ -123,7 +123,7 @@ const PagesMenu = (props: {
   selectPage: (index: number) => void;
   renamePage: (index: number, newName: string) => void;
   deletePage: (index: number) => void;
-}): JSXElement => {
+}): JSX.Element => {
   const [contextMenu, setContextMenu] = createSignal<ContexMenuState>(null);
 
   const onRenamePage = () => {

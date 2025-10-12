@@ -2,11 +2,11 @@ import type { JSX } from "solid-js";
 
 import type { EditorSettings } from "~/types";
 
-const Editor = (props: {
+function Editor(props: {
   content: string;
   onChange: (content: string) => void;
   settings: EditorSettings;
-}): JSX.Element => {
+}): JSX.Element {
   return (
     <main>
       <textarea
@@ -27,6 +27,6 @@ const Editor = (props: {
       />
     </main>
   );
-};
+}
 
 export default Editor;
