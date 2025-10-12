@@ -1,26 +1,12 @@
 ---
 import Layout from "~/layouts/Layout.astro";
 
-import Head from "~/components/Head.astro";
-
 import App from "~/components/App";
 
 const title = "Simple text editor";
 const description = "Simple text editor by GameRoMan";
-const canonical = "https://editor.rman.dev";
 ---
 
-<Layout>
-  <Head title={title} description={description} canonical={canonical}>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cousine&display=swap"
-      rel="stylesheet"
-    />
-  </Head>
-
-  <body>
-    <App client:load />
-  </body>
+<Layout {title} {description}>
+  <App client:load />
 </Layout>
