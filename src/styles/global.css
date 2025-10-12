@@ -6,6 +6,10 @@
   }
 }
 
+:root {
+  color-scheme: light dark;
+}
+
 @theme {
   --font-cousine: "Cousine";
 }
