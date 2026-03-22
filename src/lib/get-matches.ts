@@ -1,14 +1,18 @@
-function getMatches(text: string, term: string): number[] {
+function getMatches(
+  text: string,
+  term: string,
+  caseSensitive = false,
+): number[] {
   if (!term) return [];
   const matchesList: number[] = [];
-  const lowerText = text.toLowerCase();
-  const lowerTerm = term.toLowerCase();
+  const searchText = caseSensitive ? text : text.toLowerCase();
+  const searchTerm = caseSensitive ? term : term.toLowerCase();
   let pos = 0;
-  let found = lowerText.indexOf(lowerTerm, pos);
+  let found = searchText.indexOf(searchTerm, pos);
   while (found !== -1) {
     matchesList.push(found);
     pos = found + 1;
-    found = lowerText.indexOf(lowerTerm, pos);
+    found = searchText.indexOf(searchTerm, pos);
   }
   return matchesList;
 }

@@ -29,6 +29,7 @@ function App() {
 
   const [searchTerm, setSearchTerm] = createSignal("");
   const [currentMatchIndex, setCurrentMatchIndex] = createSignal(0);
+  const [caseSensitive, setCaseSensitive] = createSignal(false);
 
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
@@ -38,7 +39,9 @@ function App() {
 
   const content = () => currentPage()?.content ?? "";
 
-  const matches = createMemo(() => getMatches(content(), searchTerm()));
+  const matches = createMemo(() =>
+    getMatches(content(), searchTerm(), caseSensitive()),
+  );
 
   const handleNavigate = (direction: Direction) => {
     const matchCount = matches().length;
@@ -141,12 +144,15 @@ function App() {
         onNavigate={handleNavigate}
         onReplace={handleReplace}
         onReplaceAll={handleReplaceAll}
+        caseSensitive={caseSensitive()}
+        onCaseSensitiveChange={setCaseSensitive}
       />
 
       <Editor
         content={content()}
         settings={settings()}
         searchTerm={searchTerm()}
+        caseSensitive={caseSensitive()}
         currentMatchIndex={matches().length > 0 ? currentMatchIndex() : -1}
         onChange={(newContent) => {
           updatePageContent(newContent);

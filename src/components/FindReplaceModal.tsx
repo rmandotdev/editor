@@ -13,6 +13,8 @@ interface FindReplaceModalProps {
   onReplaceAll: (replacement: string) => void;
   matchCount: number;
   currentMatchIndex: number;
+  caseSensitive: boolean;
+  onCaseSensitiveChange: (value: boolean) => void;
 }
 
 const SearchIcon = (): JSX.Element => (
@@ -139,6 +141,18 @@ const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
                        hover:bg-[#eee] dark:hover:bg-[#333]"
               >
                 ↓
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  props.onCaseSensitiveChange(!props.caseSensitive)
+                }
+                class="px-2 py-1 text-xs font-mono bg-[#f5f5f5] dark:bg-[#2a2a2a] border border-[#ddd] 
+                       dark:border-[#444] rounded text-black dark:text-white cursor-pointer
+                       hover:bg-[#eee] dark:hover:bg-[#333]"
+                title="Match Case"
+              >
+                Aa
               </button>
             </div>
             <Show when={props.searchTerm}>

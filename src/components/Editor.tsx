@@ -12,6 +12,7 @@ interface EditorProps {
   onChange: (content: string) => void;
   settings: EditorSettings;
   searchTerm?: string;
+  caseSensitive?: boolean;
   currentMatchIndex?: number;
 }
 
@@ -69,11 +70,9 @@ function Editor(props: EditorProps): JSX.Element {
     if (!props.searchTerm || !text) return escapeHtml(text);
 
     const escaped = escapeHtml(text);
-    const searchEscaped = props.searchTerm.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&",
-    );
-    const regex = new RegExp(`(${searchEscaped})`, "gi");
+    const searchEscaped = RegExp.escape(props.searchTerm);
+    const flags = props.caseSensitive ? "" : "i";
+    const regex = new RegExp(`(${searchEscaped})`, `g${flags}`);
 
     return escaped.replace(
       regex,
@@ -88,8 +87,36 @@ function Editor(props: EditorProps): JSX.Element {
   };
 
   createEffect(() => {
+    if (!editorRef) return;
+    const searchTerm = props.searchTerm;
+    const selection = window.getSelection();
+    let savedOffset = 0;
+    let hadSelection = false;
+
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(editorRef);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      savedOffset = preCaretRange.toString().length;
+      hadSelection = true;
+    }
+
+    const html = renderContent();
+    editorRef.innerHTML = html;
+
+    if (searchTerm && hadSelection) {
+      setCaretPosition(editorRef, savedOffset);
+    }
+  });
+
+  createEffect(() => {
     if (editorRef && props.searchTerm) {
-      const matches = getMatches(props.content, props.searchTerm);
+      const matches = getMatches(
+        props.content,
+        props.searchTerm,
+        props.caseSensitive,
+      );
       if (matches.length > 0 && props.currentMatchIndex !== undefined) {
         const match = matches[props.currentMatchIndex];
         if (match) {
@@ -117,7 +144,6 @@ function Editor(props: EditorProps): JSX.Element {
           "text-align": props.settings.textAlign,
         }}
         data-placeholder="Start writing..."
-        innerHTML={renderContent()}
       />
       <style>{`
         [contenteditable]:empty:before {
@@ -129,17 +155,21 @@ function Editor(props: EditorProps): JSX.Element {
   );
 }
 
-function getMatches(content: string, searchTerm: string): Match[] {
+function getMatches(
+  content: string,
+  searchTerm: string,
+  caseSensitive = false,
+): Match[] {
   if (!searchTerm) return [];
   const matches: Match[] = [];
-  const lowerContent = content.toLowerCase();
-  const lowerTerm = searchTerm.toLowerCase();
+  const searchContent = caseSensitive ? content : content.toLowerCase();
+  const search = caseSensitive ? searchTerm : searchTerm.toLowerCase();
   let pos = 0;
-  let found = lowerContent.indexOf(lowerTerm, pos);
+  let found = searchContent.indexOf(search, pos);
   while (found !== -1) {
     matches.push({ start: found, end: found + searchTerm.length });
     pos = found + 1;
-    found = lowerContent.indexOf(lowerTerm, pos);
+    found = searchContent.indexOf(search, pos);
   }
   return matches;
 }
