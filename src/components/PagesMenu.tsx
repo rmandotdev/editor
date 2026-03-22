@@ -413,13 +413,14 @@ const Pages = (props: {
       dragOverPosition={props.dragOverPosition}
       onSelectPage={props.onSelectPage}
       onToggleFolder={props.onToggleFolder}
-      onContextMenu={(e, item) =>
+      onContextMenu={(e, item) => {
+        e.preventDefault();
         props.setContextMenu({
           x: e.pageX,
           y: e.pageY,
           itemId: item.id,
-        })
-      }
+        });
+      }}
       onDragStart={props.onDragStart}
       onDragOver={props.onDragOver}
       onDragOverFolder={props.onDragOverFolder}
