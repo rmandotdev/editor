@@ -1,8 +1,11 @@
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 
 import { usePages } from "#hooks/usePages";
 import { useEditorSettings } from "#hooks/useSettings";
+import { getMatches } from "#lib/get-matches";
 import Editor from "./Editor";
+import type { Direction } from "./FindReplaceModal";
+import FindReplaceModal from "./FindReplaceModal";
 import PagesMenu from "./PagesMenu";
 import SettingsModal from "./SettingsModal";
 import Toolbar from "./Toolbar";
@@ -22,12 +25,80 @@ function App() {
 
   const [isSettingsOpen, setIsSettingsOpen] = createSignal(false);
   const [isPagesMenuOpen, setIsPagesMenuOpen] = createSignal(false);
+  const [isSearchOpen, setIsSearchOpen] = createSignal(false);
+
+  const [searchTerm, setSearchTerm] = createSignal("");
+  const [currentMatchIndex, setCurrentMatchIndex] = createSignal(0);
 
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
   const currentPage = () => pages()[currentPageIndex()];
 
   const PAGES_BROKEN = "<something has broken - this page does not exist>";
+
+  const content = () => currentPage()?.content ?? "";
+
+  const matches = createMemo(() => getMatches(content(), searchTerm()));
+
+  const handleNavigate = (direction: Direction) => {
+    const matchCount = matches().length;
+    if (matchCount === 0) return;
+
+    let newIndex = currentMatchIndex();
+    if (direction === "next") {
+      newIndex = (newIndex + 1) % matchCount;
+    } else {
+      newIndex = (newIndex - 1 + matchCount) % matchCount;
+    }
+    setCurrentMatchIndex(newIndex);
+  };
+
+  const handleReplace = (replacement: string) => {
+    const matchPositions = matches();
+    if (matchPositions.length === 0 || !searchTerm()) return;
+
+    const idx = currentMatchIndex();
+    const pos = matchPositions[idx];
+    if (pos === undefined) return;
+
+    const text = content();
+    const newContent =
+      text.slice(0, pos) + replacement + text.slice(pos + searchTerm().length);
+    updatePageContent(newContent);
+
+    const newMatches = getMatches(newContent, searchTerm());
+    if (newMatches.length > 0) {
+      setCurrentMatchIndex(Math.min(idx, newMatches.length - 1));
+    }
+  };
+
+  const handleReplaceAll = (replacement: string) => {
+    if (!searchTerm()) return;
+    const text = content();
+    const newContent = text.replace(
+      new RegExp(RegExp.escape(searchTerm()), "g"),
+      replacement,
+    );
+    updatePageContent(newContent);
+    setCurrentMatchIndex(0);
+  };
+
+  const handleSearchTermChange = (term: string) => {
+    setSearchTerm(term);
+    setCurrentMatchIndex(0);
+  };
+
+  const handleOpenSearch = () => {
+    setIsSearchOpen(true);
+    setSearchTerm("");
+    setCurrentMatchIndex(0);
+  };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+    setSearchTerm("");
+    setCurrentMatchIndex(0);
+  };
 
   return (
     <>
@@ -38,6 +109,7 @@ function App() {
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
+        onSearchClick={handleOpenSearch}
         renamePage={renamePage}
       />
 
@@ -58,12 +130,27 @@ function App() {
         deletePage={deletePage}
       />
 
+      <FindReplaceModal
+        isOpen={isSearchOpen()}
+        content={content()}
+        searchTerm={searchTerm()}
+        matchCount={matches().length}
+        currentMatchIndex={currentMatchIndex()}
+        onClose={handleCloseSearch}
+        onSearchTermChange={handleSearchTermChange}
+        onNavigate={handleNavigate}
+        onReplace={handleReplace}
+        onReplaceAll={handleReplaceAll}
+      />
+
       <Editor
-        content={currentPage()?.content ?? PAGES_BROKEN}
+        content={content()}
         settings={settings()}
-        onChange={(content) => {
-          updatePageContent(content);
-          if (currentPage()?.content) {
+        searchTerm={searchTerm()}
+        currentMatchIndex={matches().length > 0 ? currentMatchIndex() : -1}
+        onChange={(newContent) => {
+          updatePageContent(newContent);
+          if (newContent) {
             setToolbarOpacity(0);
           } else {
             setToolbarOpacity(1);
