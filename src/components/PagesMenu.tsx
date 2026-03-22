@@ -1,7 +1,8 @@
 import type { JSX, Setter } from "solid-js";
-import { createSignal, For, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 
 import type { Page } from "#types";
+import TreeList from "./TreeList";
 import Button from "./ui/Button";
 import ContextMenu from "./ui/ContextMenu";
 import Divider from "./ui/Divider";
@@ -11,366 +12,6 @@ type ContextMenuState = {
   y: number;
   itemId: string;
 } | null;
-
-const DragHandleIcon = (): JSX.Element => (
-  <svg
-    class="w-4 h-4 cursor-grab text-gray-400 hover:text-gray-600 shrink-0"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-label="Drag handle"
-  >
-    <circle cx="9" cy="6" r="1.5" />
-    <circle cx="15" cy="6" r="1.5" />
-    <circle cx="9" cy="12" r="1.5" />
-    <circle cx="15" cy="12" r="1.5" />
-    <circle cx="9" cy="18" r="1.5" />
-    <circle cx="15" cy="18" r="1.5" />
-  </svg>
-);
-
-const FolderSvgIcon = (props: { isOpen: boolean }): JSX.Element => (
-  <svg
-    class="w-4 h-4 shrink-0"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-  >
-    <title>Folder</title>
-    <path
-      d={
-        props.isOpen
-          ? "M5 19a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1M5 19h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2z"
-          : "M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-      }
-    />
-  </svg>
-);
-
-const ChevronSvgIcon = (props: { isOpen: boolean }): JSX.Element => (
-  <svg
-    class="w-4 h-4 shrink-0 transition-transform"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    style={{ transform: props.isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
-  >
-    <title>Expand</title>
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
-const PageItem = (props: {
-  item: Page;
-  isSelected: boolean;
-  isDragOver: boolean;
-  dragOverPosition: "before" | "after" | null;
-  onClick: () => void;
-  onContextMenu: (e: MouseEvent) => void;
-  onDragStart: (e: DragEvent) => void;
-  onDragOver: (e: DragEvent, position: "before" | "after") => void;
-  onDragLeave: (e: DragEvent) => void;
-  onDrop: (e: DragEvent) => void;
-  onDragEnd: () => void;
-}): JSX.Element => (
-  <div
-    class="relative"
-    onDragOver={(e) => {
-      e.preventDefault();
-      const rect = e.currentTarget.getBoundingClientRect();
-      const midY = rect.top + rect.height / 2;
-      props.onDragOver(e, e.clientY < midY ? "before" : "after");
-    }}
-    onDragLeave={props.onDragLeave}
-    onDrop={props.onDrop}
-  >
-    <Show when={props.isDragOver && props.dragOverPosition === "before"}>
-      <div class="absolute top-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
-    </Show>
-    <Show when={props.isDragOver && props.dragOverPosition === "after"}>
-      <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
-    </Show>
-    <div
-      class={`flex items-center gap-1 ${props.isDragOver ? "opacity-50" : ""}`}
-      draggable={true}
-      onDragStart={props.onDragStart}
-      onDragEnd={props.onDragEnd}
-    >
-      <DragHandleIcon />
-      <Button
-        label={props.item.name}
-        variant="page"
-        class={
-          props.isSelected
-            ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
-            : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
-        }
-        onClick={props.onClick}
-        onMouseDown={(e) => {
-          if (e.button === 0) {
-            props.onClick();
-          }
-        }}
-        onContextMenu={props.onContextMenu}
-      />
-    </div>
-  </div>
-);
-
-const FolderItem = (props: {
-  item: Page;
-  isSelected: boolean;
-  isOpen: boolean;
-  isDragOver: boolean;
-  isDragOverFolder: boolean;
-  dragOverPosition: "before" | "after" | null;
-  onToggle: () => void;
-  onContextMenu: (e: MouseEvent) => void;
-  onDragStart: (e: DragEvent) => void;
-  onDragOver: (e: DragEvent, position: "before" | "after") => void;
-  onDragOverFolder: (e: DragEvent) => void;
-  onDragLeaveFolder: () => void;
-  onDragLeave: (e: DragEvent) => void;
-  onDrop: (e: DragEvent) => void;
-  onDropFolder: (e: DragEvent) => void;
-  onDragEnd: () => void;
-  children?: JSX.Element;
-}): JSX.Element => (
-  <div>
-    <div
-      class="relative"
-      onDragOver={(e) => {
-        e.preventDefault();
-        const rect = e.currentTarget.getBoundingClientRect();
-        const midY = rect.top + rect.height / 2;
-        props.onDragOver(e, e.clientY < midY ? "before" : "after");
-      }}
-      onDragLeave={props.onDragLeave}
-      onDrop={props.onDrop}
-    >
-      <Show
-        when={
-          props.isDragOver &&
-          !props.isDragOverFolder &&
-          props.dragOverPosition === "before"
-        }
-      >
-        <div class="absolute top-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
-      </Show>
-      <Show
-        when={
-          props.isDragOver &&
-          !props.isDragOverFolder &&
-          props.dragOverPosition === "after"
-        }
-      >
-        <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
-      </Show>
-      <div
-        class={`flex items-center gap-1 ${props.isDragOver && !props.isDragOverFolder ? "opacity-50" : ""}`}
-        draggable={true}
-        onDragStart={props.onDragStart}
-        onDragEnd={props.onDragEnd}
-      >
-        <DragHandleIcon />
-        <Button
-          label={props.item.name}
-          variant="page"
-          class={
-            props.isSelected
-              ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
-              : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
-          }
-          onClick={props.onToggle}
-          onMouseDown={(e) => {
-            if (e.button === 0) {
-              props.onToggle();
-            }
-          }}
-          onContextMenu={props.onContextMenu}
-        >
-          <div class="flex items-center gap-1">
-            <ChevronSvgIcon isOpen={props.isOpen} />
-            <FolderSvgIcon isOpen={props.isOpen} />
-          </div>
-        </Button>
-      </div>
-    </div>
-    <div
-      class={`ml-4 mt-1 min-h-2 rounded ${props.isDragOverFolder ? "bg-blue-100 dark:bg-blue-900 border-2 border-dashed border-blue-400" : ""}`}
-      onDragOver={props.onDragOverFolder}
-      onDragLeave={props.onDragLeaveFolder}
-      onDrop={props.onDropFolder}
-    >
-      <Show when={props.isOpen && props.children}>{props.children}</Show>
-    </div>
-  </div>
-);
-
-const TreeItemView = (props: {
-  item: Page;
-  pages: Page[];
-  currentPageId: string;
-  openFolders: Set<string>;
-  dragItemId: string | null;
-  dragOverItemId: string | null;
-  dragOverPosition: "before" | "after" | null;
-  onSelectPage: (pageId: string) => void;
-  onToggleFolder: (folderId: string) => void;
-  onContextMenu: (e: MouseEvent, item: Page) => void;
-  onDragStart: (e: DragEvent, item: Page) => void;
-  onDragOver: (
-    e: DragEvent,
-    itemId: string,
-    position: "before" | "after",
-  ) => void;
-  onDragOverFolder: (e: DragEvent, folderId: string) => void;
-  onDragLeave: (e: DragEvent) => void;
-  onDragLeaveFolder: () => void;
-  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
-  onDropFolder: (e: DragEvent, folderId: string) => void;
-  onDragEnd: () => void;
-}): JSX.Element => {
-  const hasChildren = () => (props.item.children?.length ?? 0) > 0;
-  const isFolder = () => hasChildren();
-  const isOpen = () => props.openFolders.has(props.item.id);
-  const isSelected = () => props.currentPageId === props.item.id;
-
-  return (
-    <Show
-      when={isFolder()}
-      fallback={
-        <PageItem
-          item={props.item}
-          isSelected={isSelected()}
-          isDragOver={
-            props.dragOverItemId === props.item.id &&
-            props.dragItemId !== props.item.id
-          }
-          dragOverPosition={
-            props.dragOverItemId === props.item.id
-              ? props.dragOverPosition
-              : null
-          }
-          onClick={() => {
-            props.onSelectPage(props.item.id);
-          }}
-          onContextMenu={(e) => props.onContextMenu(e, props.item)}
-          onDragStart={(e) => props.onDragStart(e, props.item)}
-          onDragOver={(e, pos) => props.onDragOver(e, props.item.id, pos)}
-          onDragLeave={props.onDragLeave}
-          onDrop={(e) =>
-            props.onDrop(e, props.item, props.dragOverPosition || "after")
-          }
-          onDragEnd={props.onDragEnd}
-        />
-      }
-    >
-      <FolderItem
-        item={props.item}
-        isSelected={isSelected()}
-        isOpen={isOpen()}
-        isDragOver={
-          props.dragOverItemId === props.item.id &&
-          props.dragItemId !== props.item.id
-        }
-        isDragOverFolder={props.dragOverItemId === `folder-${props.item.id}`}
-        dragOverPosition={
-          props.dragOverItemId === props.item.id ? props.dragOverPosition : null
-        }
-        onToggle={() => props.onToggleFolder(props.item.id)}
-        onContextMenu={(e) => props.onContextMenu(e, props.item)}
-        onDragStart={(e) => props.onDragStart(e, props.item)}
-        onDragOver={(e, pos) => props.onDragOver(e, props.item.id, pos)}
-        onDragOverFolder={(e) => props.onDragOverFolder(e, props.item.id)}
-        onDragLeaveFolder={props.onDragLeaveFolder}
-        onDragLeave={(e) => props.onDragLeave(e)}
-        onDrop={(e) =>
-          props.onDrop(e, props.item, props.dragOverPosition || "after")
-        }
-        onDropFolder={(e) => props.onDropFolder(e, props.item.id)}
-        onDragEnd={props.onDragEnd}
-      >
-        <For each={props.item.children}>
-          {(child) => (
-            <TreeItemView
-              item={child}
-              pages={props.pages}
-              currentPageId={props.currentPageId}
-              openFolders={props.openFolders}
-              dragItemId={props.dragItemId}
-              dragOverItemId={props.dragOverItemId}
-              dragOverPosition={props.dragOverPosition}
-              onSelectPage={props.onSelectPage}
-              onToggleFolder={props.onToggleFolder}
-              onContextMenu={props.onContextMenu}
-              onDragStart={props.onDragStart}
-              onDragOver={props.onDragOver}
-              onDragOverFolder={props.onDragOverFolder}
-              onDragLeave={(e) => props.onDragLeave(e)}
-              onDragLeaveFolder={props.onDragLeaveFolder}
-              onDrop={props.onDrop}
-              onDropFolder={props.onDropFolder}
-              onDragEnd={props.onDragEnd}
-            />
-          )}
-        </For>
-      </FolderItem>
-    </Show>
-  );
-};
-
-const TreeList = (props: {
-  pages: Page[];
-  currentPageId: string;
-  openFolders: Set<string>;
-  dragItemId: string | null;
-  dragOverItemId: string | null;
-  dragOverPosition: "before" | "after" | null;
-  onSelectPage: (pageId: string) => void;
-  onToggleFolder: (folderId: string) => void;
-  onContextMenu: (e: MouseEvent, item: Page) => void;
-  onDragStart: (e: DragEvent, item: Page) => void;
-  onDragOver: (
-    e: DragEvent,
-    itemId: string,
-    position: "before" | "after",
-  ) => void;
-  onDragOverFolder: (e: DragEvent, folderId: string) => void;
-  onDragLeave: (e: DragEvent) => void;
-  onDragLeaveFolder: () => void;
-  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
-  onDropFolder: (e: DragEvent, folderId: string) => void;
-  onDragEnd: () => void;
-}): JSX.Element => (
-  <div class="max-h-[min(calc(100vh-150px),calc(38px*8))] overflow-y-auto">
-    <For each={props.pages}>
-      {(item) => (
-        <TreeItemView
-          item={item}
-          pages={props.pages}
-          currentPageId={props.currentPageId}
-          openFolders={props.openFolders}
-          dragItemId={props.dragItemId}
-          dragOverItemId={props.dragOverItemId}
-          dragOverPosition={props.dragOverPosition}
-          onSelectPage={props.onSelectPage}
-          onToggleFolder={props.onToggleFolder}
-          onContextMenu={props.onContextMenu}
-          onDragStart={props.onDragStart}
-          onDragOver={props.onDragOver}
-          onDragOverFolder={props.onDragOverFolder}
-          onDragLeave={props.onDragLeave}
-          onDragLeaveFolder={props.onDragLeaveFolder}
-          onDrop={props.onDrop}
-          onDropFolder={props.onDropFolder}
-          onDragEnd={props.onDragEnd}
-        />
-      )}
-    </For>
-  </div>
-);
 
 const Pages = (props: {
   pages: Page[];
@@ -388,19 +29,16 @@ const Pages = (props: {
     itemId: string,
     position: "before" | "after",
   ) => void;
-  onDragOverFolder: (e: DragEvent, folderId: string) => void;
+  onDragOverNestable: (e: DragEvent, folderId: string) => void;
   onDragLeave: (e: DragEvent) => void;
-  onDragLeaveFolder: () => void;
+  onDragLeaveNestable: () => void;
   onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
-  onDropFolder: (e: DragEvent, folderId: string) => void;
+  onDropNestable: (e: DragEvent, folderId: string) => void;
   onDragEnd: () => void;
   newPage: () => void;
 }): JSX.Element => (
   <div
-    class="
-    fixed bg-[#ededed] dark:bg-[#181818] p-2
-    z-20 w-57.5 left-4 top-15
-    "
+    class="fixed bg-[#ededed] dark:bg-[#181818] p-2 z-20 w-57.5 left-4 top-15"
     onClick={() => props.setContextMenu(null)}
   >
     <TreeList
@@ -422,11 +60,11 @@ const Pages = (props: {
       }}
       onDragStart={props.onDragStart}
       onDragOver={props.onDragOver}
-      onDragOverFolder={props.onDragOverFolder}
+      onDragOverNestable={props.onDragOverNestable}
       onDragLeave={props.onDragLeave}
-      onDragLeaveFolder={props.onDragLeaveFolder}
+      onDragLeaveNestable={props.onDragLeaveNestable}
       onDrop={props.onDrop}
-      onDropFolder={props.onDropFolder}
+      onDropNestable={props.onDropNestable}
       onDragEnd={props.onDragEnd}
     />
     <Divider />
@@ -499,6 +137,7 @@ const PagesMenu = (props: {
   renameItem: (itemId: string, newName: string) => void;
   deleteItem: (itemId: string) => void;
   moveItem: (itemId: string, direction: "up" | "down" | "in" | "out") => void;
+  setPages: (pages: Page[]) => void;
 }): JSX.Element => {
   const [contextMenu, setContextMenu] = createSignal<ContextMenuState>(null);
   const [openFolders, setOpenFolders] = createSignal<Set<string>>(new Set());
@@ -641,10 +280,10 @@ const PagesMenu = (props: {
     setDragOverPosition(position);
   };
 
-  const handleDragOverFolder = (e: DragEvent, folderId: string) => {
+  const handleDragOverNestable = (e: DragEvent, folderId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragOverItemId(`folder-${folderId}`);
+    setDragOverItemId(`nest-${folderId}`);
     setDragOverPosition(null);
   };
 
@@ -657,9 +296,9 @@ const PagesMenu = (props: {
     }, 50);
   };
 
-  const handleDragLeaveFolder = () => {
+  const handleDragLeaveNestable = () => {
     setTimeout(() => {
-      if (!dragOverItemId()?.startsWith("folder-")) {
+      if (dragOverItemId()?.startsWith("nest-")) {
         setDragOverItemId(null);
       }
     }, 50);
@@ -686,42 +325,55 @@ const PagesMenu = (props: {
 
     props.selectPageByTreeItem(draggedId);
 
-    const draggedParent = getParentItems(draggedId);
     const targetParent = getParentItems(targetItem.id);
     if (!targetParent) {
       handleDragEnd();
       return;
     }
 
-    if (draggedParent === targetParent) {
-      props.moveItem(draggedId, position === "before" ? "up" : "down");
-      handleDragEnd();
-      return;
-    }
+    const newPages = structuredClone(props.pages);
+    const draggedItemCopy = structuredClone(draggedItem);
 
-    const targetIdx = getItemIndex(targetItem.id);
-    props.moveItem(draggedId, "out");
-
-    const newParent = getParentItems(draggedId);
-    if (newParent) {
-      const newIdx = getItemIndex(draggedId);
-      const movesNeeded =
-        position === "before" ? newIdx - targetIdx : newIdx - targetIdx - 1;
-      if (movesNeeded > 0) {
-        for (let i = 0; i < movesNeeded; i++) {
-          props.moveItem(draggedId, "up");
+    const removeItem = (items: Page[]): Page | null => {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item) continue;
+        if (item.id === draggedId) {
+          return items.splice(i, 1)[0] ?? null;
         }
-      } else if (movesNeeded < 0) {
-        for (let i = 0; i < -movesNeeded; i++) {
-          props.moveItem(draggedId, "down");
+        if (item.children) {
+          const found = removeItem(item.children);
+          if (found) return found;
         }
       }
-    }
+      return null;
+    };
 
+    removeItem(newPages);
+
+    const targetIdx = getItemIndex(targetItem.id);
+    const insertIdx = position === "before" ? targetIdx : targetIdx + 1;
+
+    const insertInto = (items: Page[]): boolean => {
+      for (const item of items) {
+        if (item.id === targetItem.id) {
+          const parentArr = items;
+          parentArr.splice(insertIdx, 0, draggedItemCopy);
+          return true;
+        }
+        if (item.children) {
+          if (insertInto(item.children)) return true;
+        }
+      }
+      return false;
+    };
+
+    insertInto(newPages);
+    props.setPages(newPages);
     handleDragEnd();
   };
 
-  const handleDropFolder = (e: DragEvent, folderId: string) => {
+  const handleDropNestable = (e: DragEvent, folderId: string) => {
     e.preventDefault();
     e.stopPropagation();
     const draggedId = dragItemId();
@@ -738,32 +390,42 @@ const PagesMenu = (props: {
 
     props.selectPageByTreeItem(draggedId);
 
-    const folderItem = findItemInTree(props.pages, folderId);
-    if (!folderItem || (folderItem.children?.length ?? 0) === 0) {
-      handleDragEnd();
-      return;
-    }
+    const draggedItemCopy = structuredClone(draggedItem);
+    const newPages = structuredClone(props.pages);
 
-    const currentParent = getParentItems(draggedId);
-    if (currentParent && currentParent[0]?.id === folderId) {
-      handleDragEnd();
-      return;
-    }
-
-    props.moveItem(draggedId, "in");
-
-    const folderIndex = getItemIndex(folderId);
-    if (folderIndex >= 0) {
-      const targetItemBeforeFolder = currentParent
-        ? currentParent[folderIndex - 1]
-        : null;
-      if (targetItemBeforeFolder) {
-        for (let i = 0; i < folderIndex; i++) {
-          props.moveItem(draggedId, "up");
+    const removeItem = (items: Page[]): Page | null => {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (!item) continue;
+        if (item.id === draggedId) {
+          return items.splice(i, 1)[0] ?? null;
+        }
+        if (item.children) {
+          const found = removeItem(item.children);
+          if (found) return found;
         }
       }
-    }
+      return null;
+    };
 
+    removeItem(newPages);
+
+    const insertInto = (items: Page[]): boolean => {
+      for (const item of items) {
+        if (item.id === folderId) {
+          if (!item.children) item.children = [];
+          item.children.push(draggedItemCopy);
+          return true;
+        }
+        if (item.children) {
+          if (insertInto(item.children)) return true;
+        }
+      }
+      return false;
+    };
+
+    insertInto(newPages);
+    props.setPages(newPages);
     handleDragEnd();
   };
 
@@ -787,11 +449,11 @@ const PagesMenu = (props: {
         setContextMenu={setContextMenu}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
-        onDragOverFolder={handleDragOverFolder}
+        onDragOverNestable={handleDragOverNestable}
         onDragLeave={handleDragLeave}
-        onDragLeaveFolder={handleDragLeaveFolder}
+        onDragLeaveNestable={handleDragLeaveNestable}
         onDrop={handleDrop}
-        onDropFolder={handleDropFolder}
+        onDropNestable={handleDropNestable}
         onDragEnd={handleDragEnd}
         newPage={props.addPage}
       />

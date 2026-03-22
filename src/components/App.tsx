@@ -13,6 +13,7 @@ import Toolbar from "./Toolbar";
 function App() {
   const {
     pages,
+    setPages,
     currentPageId,
     setCurrentPageId,
     addPage,
@@ -155,6 +156,7 @@ function App() {
         renameItem={renameItem}
         deleteItem={deleteItem}
         moveItem={moveItem}
+        setPages={setPages}
       />
 
       <FindReplaceModal

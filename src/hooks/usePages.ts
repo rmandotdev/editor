@@ -50,7 +50,7 @@ export function usePages() {
     targetId: string,
     updater: (item: Page) => Page,
   ): void => {
-    const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+    const newPages = structuredClone(pages());
     const update = (items: Page[]): boolean => {
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
@@ -69,7 +69,7 @@ export function usePages() {
   };
 
   const removeFromTree = (targetId: string): Page | null => {
-    const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+    const newPages = structuredClone(pages());
     let removed: Page | null = null;
     const remove = (items: Page[]): boolean => {
       for (let i = 0; i < items.length; i++) {
@@ -91,7 +91,7 @@ export function usePages() {
   };
 
   const addToTree = (parentId: string | null, item: Page): void => {
-    const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+    const newPages = structuredClone(pages());
     if (parentId === null) {
       newPages.push(item);
       setPages(newPages);
@@ -230,7 +230,7 @@ export function usePages() {
       if (targetFolder) {
         const removed = removeFromTree(itemId);
         if (removed) {
-          const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+          const newPages = structuredClone(pages());
           const add = (items: Page[]): boolean => {
             for (const it of items) {
               if (it.id === targetFolder.id) {
@@ -249,10 +249,10 @@ export function usePages() {
         }
       }
     } else if (direction === "out") {
-      const itemCopy = JSON.parse(JSON.stringify(item)) as Page;
+      const itemCopy = structuredClone(item);
       removeFromTree(itemId);
 
-      const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+      const newPages = structuredClone(pages());
       const findAndInsert = (items: Page[]): boolean => {
         for (let i = 0; i < items.length; i++) {
           const currentItem = items[i];
@@ -273,7 +273,7 @@ export function usePages() {
   };
 
   const updateParentSiblings = (newSiblings: Page[], oldSiblings: Page[]) => {
-    const newPages = JSON.parse(JSON.stringify(pages())) as Page[];
+    const newPages = structuredClone(pages());
     const oldFirst = oldSiblings[0];
     const update = (items: Page[]): boolean => {
       for (let i = 0; i < items.length; i++) {
@@ -312,6 +312,7 @@ export function usePages() {
 
   return {
     pages,
+    setPages,
     currentPageId,
     setCurrentPageId,
     addPage,
