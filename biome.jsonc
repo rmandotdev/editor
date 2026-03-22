@@ -9,7 +9,8 @@
         "useKeyWithClickEvents": "off"
       },
       "style": { "noNonNullAssertion": "error" },
-      "complexity": { "noVoid": "error" }
+      "complexity": { "noVoid": "error" },
+      "suspicious": { "noExplicitAny": "error" }
     }
   },
   "css": { "parser": { "tailwindDirectives": true } }

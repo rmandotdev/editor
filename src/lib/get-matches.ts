@@ -22,4 +22,4 @@ function getMatches(
   return matches;
 }
 
-export { getMatches, type Match };
+export { getMatches };

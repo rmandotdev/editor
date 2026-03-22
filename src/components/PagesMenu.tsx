@@ -1,6 +1,13 @@
 import type { JSX, Setter } from "solid-js";
 import { createSignal, Show } from "solid-js";
-
+import {
+  findIndexInParent,
+  findItemInTree,
+  findParentOf,
+  moveItemAfter,
+  moveItemBefore,
+  moveItemInto,
+} from "#lib/page-tree";
 import type { Page } from "#types";
 import TreeList from "./TreeList";
 import Button from "./ui/Button";
@@ -117,17 +124,6 @@ const PagesContextMenu = (props: {
   </Show>
 );
 
-const findItemInTree = (items: Page[], targetId: string): Page | null => {
-  for (const item of items) {
-    if (item.id === targetId) return item;
-    if (item.children) {
-      const found = findItemInTree(item.children, targetId);
-      if (found) return found;
-    }
-  }
-  return null;
-};
-
 const PagesMenu = (props: {
   isOpen: boolean;
   pages: Page[];
@@ -176,32 +172,14 @@ const PagesMenu = (props: {
     setContextMenu(null);
   };
 
-  const getParentItems = (itemId: string): Page[] | null => {
-    const findParent = (
-      items: Page[],
-      targetId: string,
-      parent: Page[] | null,
-    ): Page[] | null => {
-      for (const item of items) {
-        if (item.id === targetId) return parent;
-        if (item.children) {
-          const found = findParent(item.children, targetId, item.children);
-          if (found !== null) return found;
-        }
-      }
-      return null;
-    };
-    return findParent(props.pages, itemId, null);
-  };
-
   const getItemIndex = (itemId: string): number => {
-    const parent = getParentItems(itemId);
+    const parent = findParentOf(props.pages, itemId);
     if (!parent) return -1;
-    return parent.findIndex((item) => item.id === itemId);
+    return findIndexInParent(parent, itemId);
   };
 
   const getPrevSibling = (itemId: string): Page | null => {
-    const parent = getParentItems(itemId);
+    const parent = findParentOf(props.pages, itemId);
     if (!parent) return null;
     const idx = getItemIndex(itemId);
     if (idx <= 0) return null;
@@ -245,7 +223,7 @@ const PagesMenu = (props: {
   const canMoveDown = () => {
     const c = contextMenu();
     if (!c) return false;
-    const parent = getParentItems(c.itemId);
+    const parent = findParentOf(props.pages, c.itemId);
     if (!parent) return false;
     return getItemIndex(c.itemId) < parent.length - 1;
   };
@@ -260,7 +238,7 @@ const PagesMenu = (props: {
   const canMoveOut = () => {
     const c = contextMenu();
     if (!c) return false;
-    return getParentItems(c.itemId) !== null;
+    return findParentOf(props.pages, c.itemId) !== null;
   };
 
   const handleDragStart = (e: DragEvent, item: Page) => {
@@ -325,51 +303,23 @@ const PagesMenu = (props: {
 
     props.selectPageByTreeItem(draggedId);
 
-    const targetParent = getParentItems(targetItem.id);
-    if (!targetParent) {
-      handleDragEnd();
-      return;
+    const draggedParent = findParentOf(props.pages, draggedId);
+    const targetParent = findParentOf(props.pages, targetItem.id);
+
+    if (draggedParent === targetParent) {
+      const newPages =
+        position === "before"
+          ? moveItemBefore(props.pages, draggedId, targetItem.id)
+          : moveItemAfter(props.pages, draggedId, targetItem.id);
+      props.setPages(newPages);
+    } else {
+      const newPages =
+        position === "before"
+          ? moveItemBefore(props.pages, draggedId, targetItem.id)
+          : moveItemAfter(props.pages, draggedId, targetItem.id);
+      props.setPages(newPages);
     }
 
-    const newPages = structuredClone(props.pages);
-    const draggedItemCopy = structuredClone(draggedItem);
-
-    const removeItem = (items: Page[]): Page | null => {
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (!item) continue;
-        if (item.id === draggedId) {
-          return items.splice(i, 1)[0] ?? null;
-        }
-        if (item.children) {
-          const found = removeItem(item.children);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-
-    removeItem(newPages);
-
-    const targetIdx = getItemIndex(targetItem.id);
-    const insertIdx = position === "before" ? targetIdx : targetIdx + 1;
-
-    const insertInto = (items: Page[]): boolean => {
-      for (const item of items) {
-        if (item.id === targetItem.id) {
-          const parentArr = items;
-          parentArr.splice(insertIdx, 0, draggedItemCopy);
-          return true;
-        }
-        if (item.children) {
-          if (insertInto(item.children)) return true;
-        }
-      }
-      return false;
-    };
-
-    insertInto(newPages);
-    props.setPages(newPages);
     handleDragEnd();
   };
 
@@ -389,42 +339,7 @@ const PagesMenu = (props: {
     }
 
     props.selectPageByTreeItem(draggedId);
-
-    const draggedItemCopy = structuredClone(draggedItem);
-    const newPages = structuredClone(props.pages);
-
-    const removeItem = (items: Page[]): Page | null => {
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (!item) continue;
-        if (item.id === draggedId) {
-          return items.splice(i, 1)[0] ?? null;
-        }
-        if (item.children) {
-          const found = removeItem(item.children);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-
-    removeItem(newPages);
-
-    const insertInto = (items: Page[]): boolean => {
-      for (const item of items) {
-        if (item.id === folderId) {
-          if (!item.children) item.children = [];
-          item.children.push(draggedItemCopy);
-          return true;
-        }
-        if (item.children) {
-          if (insertInto(item.children)) return true;
-        }
-      }
-      return false;
-    };
-
-    insertInto(newPages);
+    const newPages = moveItemInto(props.pages, draggedId, folderId);
     props.setPages(newPages);
     handleDragEnd();
   };
