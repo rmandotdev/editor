@@ -1,4 +1,4 @@
-import { createSignal, type JSX, Show } from "solid-js";
+import { createEffect, createSignal, type JSX, Show } from "solid-js";
 
 type Direction = "next" | "prev";
 
@@ -20,8 +20,7 @@ interface FindReplaceModalProps {
 const SearchIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
+    class="size-4"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -38,8 +37,7 @@ const SearchIcon = (): JSX.Element => (
 const CloseIcon = (): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
+    class="size-4"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -55,6 +53,7 @@ const CloseIcon = (): JSX.Element => (
 
 const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
   const [replaceText, setReplaceText] = createSignal("");
+  let findInputRef: HTMLInputElement | undefined;
 
   const handleFindKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -77,10 +76,17 @@ const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
     props.onClose();
   };
 
+  createEffect(() => {
+    if (props.isOpen && findInputRef) {
+      findInputRef.focus();
+      findInputRef.select();
+    }
+  });
+
   return (
     <Show when={props.isOpen}>
       <div
-        class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white dark:bg-[#1a1a1a] 
+        class="fixed top-14 right-4 z-50 bg-white dark:bg-[#1a1a1a] 
                border border-[#ccc] dark:border-[#444] rounded-lg shadow-xl p-4 min-w-80"
       >
         <div class="flex justify-between items-center mb-3">
@@ -110,6 +116,7 @@ const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
                   <SearchIcon />
                 </span>
                 <input
+                  ref={findInputRef}
                   id="find-input"
                   type="text"
                   value={props.searchTerm}
@@ -121,7 +128,6 @@ const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
                          rounded px-8 py-1 text-black dark:text-white text-sm outline-none
                          focus:border-blue-500"
                   placeholder="Search..."
-                  autofocus
                 />
               </div>
               <button

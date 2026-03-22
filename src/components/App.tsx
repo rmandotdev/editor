@@ -1,4 +1,4 @@
-import { createMemo, createSignal } from "solid-js";
+import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 import { usePages } from "#hooks/usePages";
 import { useEditorSettings } from "#hooks/useSettings";
@@ -104,6 +104,21 @@ function App() {
     setCurrentMatchIndex(0);
   };
 
+  onMount(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "F3" ||
+        (e.ctrlKey && e.key === "f") ||
+        (e.ctrlKey && e.key === "h")
+      ) {
+        e.preventDefault();
+        handleOpenSearch();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    onCleanup(() => window.removeEventListener("keydown", handleKeyDown));
+  });
+
   return (
     <>
       <Toolbar
@@ -155,6 +170,7 @@ function App() {
         searchTerm={searchTerm()}
         caseSensitive={caseSensitive()}
         currentMatchIndex={matches().length > 0 ? currentMatchIndex() : -1}
+        isSearchOpen={isSearchOpen()}
         onChange={(newContent) => {
           updatePageContent(newContent);
           if (newContent) {

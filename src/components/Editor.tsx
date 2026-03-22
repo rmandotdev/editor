@@ -14,6 +14,7 @@ interface EditorProps {
   searchTerm?: string;
   caseSensitive?: boolean;
   currentMatchIndex?: number;
+  isSearchOpen?: boolean;
 }
 
 function escapeHtml(text: string): string {
@@ -106,7 +107,7 @@ function Editor(props: EditorProps): JSX.Element {
       editorRef.innerHTML = html;
     }
 
-    if (hadSelection) {
+    if (document.activeElement === editorRef && hadSelection) {
       setCaretPosition(editorRef, savedOffset);
     }
   });
@@ -120,7 +121,7 @@ function Editor(props: EditorProps): JSX.Element {
       );
       if (matches.length > 0 && props.currentMatchIndex !== undefined) {
         const match = matches[props.currentMatchIndex];
-        if (match) {
+        if (match && document.activeElement === editorRef) {
           setCaretPosition(editorRef, match.start);
         }
       }
@@ -150,6 +151,18 @@ function Editor(props: EditorProps): JSX.Element {
         [contenteditable]:empty:before {
           content: attr(data-placeholder);
           color: #999;
+        }
+        mark {
+          background-color: #fde047;
+          border-radius: 2px;
+          padding: 0 2px;
+          margin: 0 -1px;
+          box-decoration-break: clone;
+        }
+        @media (prefers-color-scheme: dark) {
+          mark {
+            background-color: #ca8a04;
+          }
         }
       `}</style>
     </main>
