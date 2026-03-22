@@ -1,20 +1,25 @@
-function getMatches(
-  text: string,
-  term: string,
-  caseSensitive = false,
-): number[] {
-  if (!term) return [];
-  const matchesList: number[] = [];
-  const searchText = caseSensitive ? text : text.toLowerCase();
-  const searchTerm = caseSensitive ? term : term.toLowerCase();
-  let pos = 0;
-  let found = searchText.indexOf(searchTerm, pos);
-  while (found !== -1) {
-    matchesList.push(found);
-    pos = found + 1;
-    found = searchText.indexOf(searchTerm, pos);
-  }
-  return matchesList;
+interface Match {
+  start: number;
+  end: number;
 }
 
-export { getMatches };
+function getMatches(
+  content: string,
+  searchTerm: string,
+  caseSensitive = false,
+): Match[] {
+  if (!searchTerm) return [];
+  const matches: Match[] = [];
+  const searchContent = caseSensitive ? content : content.toLowerCase();
+  const search = caseSensitive ? searchTerm : searchTerm.toLowerCase();
+  let pos = 0;
+  let found = searchContent.indexOf(search, pos);
+  while (found !== -1) {
+    matches.push({ start: found, end: found + searchTerm.length });
+    pos = found + searchTerm.length;
+    found = searchContent.indexOf(search, pos);
+  }
+  return matches;
+}
+
+export { getMatches, type Match };

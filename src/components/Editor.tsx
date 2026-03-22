@@ -1,11 +1,7 @@
 import { createEffect, type JSX } from "solid-js";
-
+import { getMatches } from "#lib/get-matches";
 import type { EditorSettings } from "#types";
-
-interface Match {
-  start: number;
-  end: number;
-}
+import { escapeHtml } from "#lib/escape-html";
 
 interface EditorProps {
   content: string;
@@ -15,15 +11,6 @@ interface EditorProps {
   caseSensitive?: boolean;
   currentMatchIndex?: number;
   isSearchOpen?: boolean;
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 function setCaretPosition(element: HTMLDivElement, position: number) {
@@ -167,25 +154,6 @@ function Editor(props: EditorProps): JSX.Element {
       `}</style>
     </main>
   );
-}
-
-function getMatches(
-  content: string,
-  searchTerm: string,
-  caseSensitive = false,
-): Match[] {
-  if (!searchTerm) return [];
-  const matches: Match[] = [];
-  const searchContent = caseSensitive ? content : content.toLowerCase();
-  const search = caseSensitive ? searchTerm : searchTerm.toLowerCase();
-  let pos = 0;
-  let found = searchContent.indexOf(search, pos);
-  while (found !== -1) {
-    matches.push({ start: found, end: found + searchTerm.length });
-    pos = found + 1;
-    found = searchContent.indexOf(search, pos);
-  }
-  return matches;
 }
 
 export default Editor;

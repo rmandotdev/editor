@@ -61,7 +61,7 @@ function App() {
     if (matchPositions.length === 0 || !searchTerm()) return;
 
     const idx = currentMatchIndex();
-    const pos = matchPositions[idx];
+    const pos = matchPositions[idx]?.start;
     if (pos === undefined) return;
 
     const text = content();
