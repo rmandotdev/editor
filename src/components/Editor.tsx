@@ -1,7 +1,7 @@
 import { createEffect, type JSX } from "solid-js";
+import { escapeHtml } from "#lib/escape-html";
 import { getMatches } from "#lib/get-matches";
 import type { EditorSettings } from "#types";
-import { escapeHtml } from "#lib/escape-html";
 
 interface EditorProps {
   content: string;
