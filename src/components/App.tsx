@@ -69,7 +69,7 @@ function App() {
       text.slice(0, pos) + replacement + text.slice(pos + searchTerm().length);
     updatePageContent(newContent);
 
-    const newMatches = getMatches(newContent, searchTerm());
+    const newMatches = getMatches(newContent, searchTerm(), caseSensitive());
     if (newMatches.length > 0) {
       setCurrentMatchIndex(Math.min(idx, newMatches.length - 1));
     }
@@ -78,8 +78,9 @@ function App() {
   const handleReplaceAll = (replacement: string) => {
     if (!searchTerm()) return;
     const text = content();
+    const flags = caseSensitive() ? "g" : "gi";
     const newContent = text.replace(
-      new RegExp(RegExp.escape(searchTerm()), "g"),
+      new RegExp(RegExp.escape(searchTerm()), flags),
       replacement,
     );
     updatePageContent(newContent);

@@ -7,7 +7,8 @@
         "recommended": true,
         "noStaticElementInteractions": "off",
         "useKeyWithClickEvents": "off"
-      }
+      },
+      "style": { "noNonNullAssertion": "error" }
     }
   },
   "css": { "parser": { "tailwindDirectives": true } }

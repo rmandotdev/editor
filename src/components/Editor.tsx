@@ -70,7 +70,7 @@ function Editor(props: EditorProps): JSX.Element {
     if (!props.searchTerm || !text) return escapeHtml(text);
 
     const escaped = escapeHtml(text);
-    const searchEscaped = RegExp.escape(props.searchTerm);
+    const searchEscaped = RegExp.escape(escapeHtml(props.searchTerm));
     const flags = props.caseSensitive ? "" : "i";
     const regex = new RegExp(`(${searchEscaped})`, `g${flags}`);
 
@@ -88,7 +88,6 @@ function Editor(props: EditorProps): JSX.Element {
 
   createEffect(() => {
     if (!editorRef) return;
-    const searchTerm = props.searchTerm;
     const selection = window.getSelection();
     let savedOffset = 0;
     let hadSelection = false;
@@ -103,9 +102,11 @@ function Editor(props: EditorProps): JSX.Element {
     }
 
     const html = renderContent();
-    editorRef.innerHTML = html;
+    if (html !== editorRef.innerHTML) {
+      editorRef.innerHTML = html;
+    }
 
-    if (searchTerm && hadSelection) {
+    if (hadSelection) {
       setCaretPosition(editorRef, savedOffset);
     }
   });
