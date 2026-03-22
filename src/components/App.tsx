@@ -12,13 +12,16 @@ import Toolbar from "./Toolbar";
 
 function App() {
   const {
-    pages,
-    currentPageIndex,
-    setCurrentPageIndex,
+    tree,
+    currentPageId,
+    setCurrentPageId,
     addPage,
+    addFolder,
+    renameItem,
+    deleteItem,
+    moveItem,
     updatePageContent,
-    renamePage,
-    deletePage,
+    getCurrentPage,
   } = usePages();
 
   const { settings, updateSettings } = useEditorSettings();
@@ -33,7 +36,7 @@ function App() {
 
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
-  const currentPage = () => pages()[currentPageIndex()];
+  const currentPage = () => getCurrentPage();
 
   const PAGES_BROKEN = "<something has broken - this page does not exist>";
 
@@ -104,6 +107,17 @@ function App() {
     setCurrentMatchIndex(0);
   };
 
+  const selectPageByTreeItem = (itemId: string) => {
+    const item =
+      tree().find((t) => t.id === itemId) ||
+      tree()
+        .flatMap((t) => t.children || [])
+        .find((c) => c.id === itemId);
+    if (item?.type === "page" && item.pageId) {
+      setCurrentPageId(item.pageId);
+    }
+  };
+
   onMount(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -123,13 +137,14 @@ function App() {
     <>
       <Toolbar
         opacity={toolbarOpacity()}
-        currentPageIndex={currentPageIndex()}
+        currentPageId={currentPageId()}
         currentPageTitle={currentPage()?.name ?? PAGES_BROKEN}
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
         onSearchClick={handleOpenSearch}
-        renamePage={renamePage}
+        renameItem={renameItem}
+        tree={tree()}
       />
 
       <SettingsModal
@@ -141,12 +156,14 @@ function App() {
 
       <PagesMenu
         isOpen={isPagesMenuOpen()}
-        pages={pages()}
-        currentPageIndex={currentPageIndex()}
-        selectPage={setCurrentPageIndex}
-        newPage={addPage}
-        renamePage={renamePage}
-        deletePage={deletePage}
+        tree={tree()}
+        currentPageId={currentPageId()}
+        selectPageByTreeItem={selectPageByTreeItem}
+        addPage={() => addPage()}
+        addFolder={() => addFolder()}
+        renameItem={renameItem}
+        deleteItem={deleteItem}
+        moveItem={moveItem}
       />
 
       <FindReplaceModal
