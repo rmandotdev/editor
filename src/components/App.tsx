@@ -12,11 +12,10 @@ import Toolbar from "./Toolbar";
 
 function App() {
   const {
-    tree,
+    pages,
     currentPageId,
     setCurrentPageId,
     addPage,
-    addFolder,
     renameItem,
     deleteItem,
     moveItem,
@@ -108,14 +107,7 @@ function App() {
   };
 
   const selectPageByTreeItem = (itemId: string) => {
-    const item =
-      tree().find((t) => t.id === itemId) ||
-      tree()
-        .flatMap((t) => t.children || [])
-        .find((c) => c.id === itemId);
-    if (item?.type === "page" && item.pageId) {
-      setCurrentPageId(item.pageId);
-    }
+    setCurrentPageId(itemId);
   };
 
   onMount(() => {
@@ -144,7 +136,7 @@ function App() {
         onSettingsClick={() => setIsSettingsOpen(true)}
         onSearchClick={handleOpenSearch}
         renameItem={renameItem}
-        tree={tree()}
+        pages={pages()}
       />
 
       <SettingsModal
@@ -156,11 +148,10 @@ function App() {
 
       <PagesMenu
         isOpen={isPagesMenuOpen()}
-        tree={tree()}
+        pages={pages()}
         currentPageId={currentPageId()}
         selectPageByTreeItem={selectPageByTreeItem}
         addPage={() => addPage()}
-        addFolder={() => addFolder()}
         renameItem={renameItem}
         deleteItem={deleteItem}
         moveItem={moveItem}

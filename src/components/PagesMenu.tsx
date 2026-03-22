@@ -1,7 +1,7 @@
 import type { JSX, Setter } from "solid-js";
 import { createSignal, For, Show } from "solid-js";
 
-import type { TreeItem } from "#types";
+import type { Page } from "#types";
 import Button from "./ui/Button";
 import ContextMenu from "./ui/ContextMenu";
 import Divider from "./ui/Divider";
@@ -10,7 +10,6 @@ type ContextMenuState = {
   x: number;
   y: number;
   itemId: string;
-  itemType: "folder" | "page";
 } | null;
 
 const DragHandleIcon = (): JSX.Element => (
@@ -63,7 +62,7 @@ const ChevronSvgIcon = (props: { isOpen: boolean }): JSX.Element => (
 );
 
 const PageItem = (props: {
-  item: TreeItem;
+  item: Page;
   isSelected: boolean;
   isDragOver: boolean;
   dragOverPosition: "before" | "after" | null;
@@ -120,7 +119,7 @@ const PageItem = (props: {
 );
 
 const FolderItem = (props: {
-  item: TreeItem;
+  item: Page;
   isSelected: boolean;
   isOpen: boolean;
   isDragOver: boolean;
@@ -210,8 +209,8 @@ const FolderItem = (props: {
 );
 
 const TreeItemView = (props: {
-  item: TreeItem;
-  tree: TreeItem[];
+  item: Page;
+  pages: Page[];
   currentPageId: string;
   openFolders: Set<string>;
   dragItemId: string | null;
@@ -219,8 +218,8 @@ const TreeItemView = (props: {
   dragOverPosition: "before" | "after" | null;
   onSelectPage: (pageId: string) => void;
   onToggleFolder: (folderId: string) => void;
-  onContextMenu: (e: MouseEvent, item: TreeItem) => void;
-  onDragStart: (e: DragEvent, item: TreeItem) => void;
+  onContextMenu: (e: MouseEvent, item: Page) => void;
+  onDragStart: (e: DragEvent, item: Page) => void;
   onDragOver: (
     e: DragEvent,
     itemId: string,
@@ -229,18 +228,14 @@ const TreeItemView = (props: {
   onDragOverFolder: (e: DragEvent, folderId: string) => void;
   onDragLeave: (e: DragEvent) => void;
   onDragLeaveFolder: () => void;
-  onDrop: (e: DragEvent, item: TreeItem, position: "before" | "after") => void;
+  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
   onDropFolder: (e: DragEvent, folderId: string) => void;
   onDragEnd: () => void;
 }): JSX.Element => {
-  const isFolder = () => props.item.type === "folder";
+  const hasChildren = () => (props.item.children?.length ?? 0) > 0;
+  const isFolder = () => hasChildren();
   const isOpen = () => props.openFolders.has(props.item.id);
-  const isSelected = () => {
-    if (props.item.type === "page" && props.item.pageId) {
-      return props.currentPageId === props.item.pageId;
-    }
-    return false;
-  };
+  const isSelected = () => props.currentPageId === props.item.id;
 
   return (
     <Show
@@ -259,9 +254,7 @@ const TreeItemView = (props: {
               : null
           }
           onClick={() => {
-            if (props.item.pageId) {
-              props.onSelectPage(props.item.pageId);
-            }
+            props.onSelectPage(props.item.id);
           }}
           onContextMenu={(e) => props.onContextMenu(e, props.item)}
           onDragStart={(e) => props.onDragStart(e, props.item)}
@@ -303,7 +296,7 @@ const TreeItemView = (props: {
           {(child) => (
             <TreeItemView
               item={child}
-              tree={props.tree}
+              pages={props.pages}
               currentPageId={props.currentPageId}
               openFolders={props.openFolders}
               dragItemId={props.dragItemId}
@@ -329,7 +322,7 @@ const TreeItemView = (props: {
 };
 
 const TreeList = (props: {
-  tree: TreeItem[];
+  pages: Page[];
   currentPageId: string;
   openFolders: Set<string>;
   dragItemId: string | null;
@@ -337,8 +330,8 @@ const TreeList = (props: {
   dragOverPosition: "before" | "after" | null;
   onSelectPage: (pageId: string) => void;
   onToggleFolder: (folderId: string) => void;
-  onContextMenu: (e: MouseEvent, item: TreeItem) => void;
-  onDragStart: (e: DragEvent, item: TreeItem) => void;
+  onContextMenu: (e: MouseEvent, item: Page) => void;
+  onDragStart: (e: DragEvent, item: Page) => void;
   onDragOver: (
     e: DragEvent,
     itemId: string,
@@ -347,16 +340,16 @@ const TreeList = (props: {
   onDragOverFolder: (e: DragEvent, folderId: string) => void;
   onDragLeave: (e: DragEvent) => void;
   onDragLeaveFolder: () => void;
-  onDrop: (e: DragEvent, item: TreeItem, position: "before" | "after") => void;
+  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
   onDropFolder: (e: DragEvent, folderId: string) => void;
   onDragEnd: () => void;
 }): JSX.Element => (
   <div class="max-h-[min(calc(100vh-150px),calc(38px*8))] overflow-y-auto">
-    <For each={props.tree}>
+    <For each={props.pages}>
       {(item) => (
         <TreeItemView
           item={item}
-          tree={props.tree}
+          pages={props.pages}
           currentPageId={props.currentPageId}
           openFolders={props.openFolders}
           dragItemId={props.dragItemId}
@@ -380,7 +373,7 @@ const TreeList = (props: {
 );
 
 const Pages = (props: {
-  tree: TreeItem[];
+  pages: Page[];
   currentPageId: string;
   openFolders: Set<string>;
   dragItemId: string | null;
@@ -389,7 +382,7 @@ const Pages = (props: {
   onSelectPage: (pageId: string) => void;
   onToggleFolder: (folderId: string) => void;
   setContextMenu: Setter<ContextMenuState>;
-  onDragStart: (e: DragEvent, item: TreeItem) => void;
+  onDragStart: (e: DragEvent, item: Page) => void;
   onDragOver: (
     e: DragEvent,
     itemId: string,
@@ -398,11 +391,10 @@ const Pages = (props: {
   onDragOverFolder: (e: DragEvent, folderId: string) => void;
   onDragLeave: (e: DragEvent) => void;
   onDragLeaveFolder: () => void;
-  onDrop: (e: DragEvent, item: TreeItem, position: "before" | "after") => void;
+  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
   onDropFolder: (e: DragEvent, folderId: string) => void;
   onDragEnd: () => void;
   newPage: () => void;
-  newFolder: () => void;
 }): JSX.Element => (
   <div
     class="
@@ -413,7 +405,7 @@ const Pages = (props: {
     onClick={() => props.setContextMenu(null)}
   >
     <TreeList
-      tree={props.tree}
+      pages={props.pages}
       currentPageId={props.currentPageId}
       openFolders={props.openFolders}
       dragItemId={props.dragItemId}
@@ -426,7 +418,6 @@ const Pages = (props: {
           x: e.pageX,
           y: e.pageY,
           itemId: item.id,
-          itemType: item.type,
         })
       }
       onDragStart={props.onDragStart}
@@ -441,7 +432,6 @@ const Pages = (props: {
     <Divider />
     <div class="flex gap-2">
       <Button label="New Page" onClick={props.newPage} />
-      <Button label="New Folder" onClick={props.newFolder} />
     </div>
   </div>
 );
@@ -474,12 +464,12 @@ const PagesContextMenu = (props: {
             show: props.canMoveDown,
           },
           {
-            label: "Move Into Folder",
+            label: "Move Into Page",
             onClick: props.onMoveIn,
             show: props.canMoveIn,
           },
           {
-            label: "Move Out of Folder",
+            label: "Move Out of Page",
             onClick: props.onMoveOut,
             show: props.canMoveOut,
           },
@@ -489,10 +479,7 @@ const PagesContextMenu = (props: {
   </Show>
 );
 
-const findItemInTree = (
-  items: TreeItem[],
-  targetId: string,
-): TreeItem | null => {
+const findItemInTree = (items: Page[], targetId: string): Page | null => {
   for (const item of items) {
     if (item.id === targetId) return item;
     if (item.children) {
@@ -505,11 +492,10 @@ const findItemInTree = (
 
 const PagesMenu = (props: {
   isOpen: boolean;
-  tree: TreeItem[];
+  pages: Page[];
   currentPageId: string;
   selectPageByTreeItem: (itemId: string) => void;
   addPage: () => void;
-  addFolder: () => void;
   renameItem: (itemId: string, newName: string) => void;
   deleteItem: (itemId: string) => void;
   moveItem: (itemId: string, direction: "up" | "down" | "in" | "out") => void;
@@ -535,7 +521,7 @@ const PagesMenu = (props: {
   const onRename = () => {
     const c = contextMenu();
     if (!c) return;
-    const item = findItemInTree(props.tree, c.itemId);
+    const item = findItemInTree(props.pages, c.itemId);
     if (!item) return;
     const newName = prompt("Enter new name:", item.name);
     if (newName) {
@@ -551,12 +537,12 @@ const PagesMenu = (props: {
     setContextMenu(null);
   };
 
-  const getParentItems = (itemId: string): TreeItem[] | null => {
+  const getParentItems = (itemId: string): Page[] | null => {
     const findParent = (
-      items: TreeItem[],
+      items: Page[],
       targetId: string,
-      parent: TreeItem[] | null,
-    ): TreeItem[] | null => {
+      parent: Page[] | null,
+    ): Page[] | null => {
       for (const item of items) {
         if (item.id === targetId) return parent;
         if (item.children) {
@@ -566,7 +552,7 @@ const PagesMenu = (props: {
       }
       return null;
     };
-    return findParent(props.tree, itemId, null);
+    return findParent(props.pages, itemId, null);
   };
 
   const getItemIndex = (itemId: string): number => {
@@ -575,7 +561,7 @@ const PagesMenu = (props: {
     return parent.findIndex((item) => item.id === itemId);
   };
 
-  const getPrevSibling = (itemId: string): TreeItem | null => {
+  const getPrevSibling = (itemId: string): Page | null => {
     const parent = getParentItems(itemId);
     if (!parent) return null;
     const idx = getItemIndex(itemId);
@@ -629,7 +615,7 @@ const PagesMenu = (props: {
     const c = contextMenu();
     if (!c) return false;
     const prev = getPrevSibling(c.itemId);
-    return prev !== null && prev.type === "folder";
+    return prev !== null && (prev.children?.length ?? 0) > 0;
   };
 
   const canMoveOut = () => {
@@ -638,7 +624,7 @@ const PagesMenu = (props: {
     return getParentItems(c.itemId) !== null;
   };
 
-  const handleDragStart = (e: DragEvent, item: TreeItem) => {
+  const handleDragStart = (e: DragEvent, item: Page) => {
     setDragItemId(item.id);
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "move";
@@ -663,7 +649,6 @@ const PagesMenu = (props: {
   };
 
   const handleDragLeave = (_e: DragEvent) => {
-    // Small delay to prevent flickering
     setTimeout(() => {
       if (dragOverItemId() === dragItemId()) {
         setDragOverItemId(null);
@@ -682,7 +667,7 @@ const PagesMenu = (props: {
 
   const handleDrop = (
     e: DragEvent,
-    targetItem: TreeItem,
+    targetItem: Page,
     position: "before" | "after",
   ) => {
     e.preventDefault();
@@ -693,19 +678,13 @@ const PagesMenu = (props: {
       return;
     }
 
-    const draggedItem = findItemInTree(props.tree, draggedId);
+    const draggedItem = findItemInTree(props.pages, draggedId);
     if (!draggedItem) {
       handleDragEnd();
       return;
     }
 
-    if (
-      draggedItem.type === "page" &&
-      targetItem.type === "page" &&
-      draggedItem.pageId
-    ) {
-      props.selectPageByTreeItem(draggedItem.pageId);
-    }
+    props.selectPageByTreeItem(draggedId);
 
     const targetParent = getParentItems(targetItem.id);
     if (!targetParent) {
@@ -749,18 +728,16 @@ const PagesMenu = (props: {
       return;
     }
 
-    const draggedItem = findItemInTree(props.tree, draggedId);
+    const draggedItem = findItemInTree(props.pages, draggedId);
     if (!draggedItem) {
       handleDragEnd();
       return;
     }
 
-    if (draggedItem.type === "page" && draggedItem.pageId) {
-      props.selectPageByTreeItem(draggedItem.pageId);
-    }
+    props.selectPageByTreeItem(draggedId);
 
-    const folderItem = findItemInTree(props.tree, folderId);
-    if (!folderItem || folderItem.type !== "folder") {
+    const folderItem = findItemInTree(props.pages, folderId);
+    if (!folderItem || (folderItem.children?.length ?? 0) === 0) {
       handleDragEnd();
       return;
     }
@@ -797,7 +774,7 @@ const PagesMenu = (props: {
   return (
     <Show when={props.isOpen}>
       <Pages
-        tree={props.tree}
+        pages={props.pages}
         currentPageId={props.currentPageId}
         openFolders={openFolders()}
         dragItemId={dragItemId()}
@@ -815,7 +792,6 @@ const PagesMenu = (props: {
         onDropFolder={handleDropFolder}
         onDragEnd={handleDragEnd}
         newPage={props.addPage}
-        newFolder={props.addFolder}
       />
 
       <PagesContextMenu

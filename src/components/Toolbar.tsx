@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 
-import type { TreeItem } from "#types";
+import type { Page } from "#types";
 import Button from "./ui/Button";
 import SvgIcon from "./ui/SvgIcon";
 
@@ -26,25 +26,10 @@ const ToolbarLeft = (props: { onPagesClick: () => void }): JSX.Element => (
   </div>
 );
 
-const findTreeItemByPageId = (
-  items: TreeItem[],
-  pageId: string,
-): TreeItem | null => {
-  for (const item of items) {
-    if (item.type === "page" && item.pageId === pageId) return item;
-    if (item.children) {
-      const found = findTreeItemByPageId(item.children, pageId);
-      if (found) return found;
-    }
-  }
-  return null;
-};
-
 const PageTitle = (props: {
   currentPageTitle: string;
-  currentPageId: string;
-  tree: TreeItem[];
   renameItem: (itemId: string, newName: string) => void;
+  currentPageId: string;
 }): JSX.Element => {
   const makeEditable = (span: HTMLSpanElement) => {
     span.contentEditable = "true";
@@ -53,10 +38,7 @@ const PageTitle = (props: {
   const handleRenameEnd = (span: HTMLSpanElement) => {
     const newName = span.textContent || props.currentPageTitle;
     span.textContent = newName;
-    const treeItem = findTreeItemByPageId(props.tree, props.currentPageId);
-    if (treeItem) {
-      props.renameItem(treeItem.id, newName);
-    }
+    props.renameItem(props.currentPageId, newName);
     span.contentEditable = "false";
   };
 
@@ -81,7 +63,6 @@ const PageTitle = (props: {
 const ToolbarCenter = (props: {
   currentPageTitle: string;
   currentPageId: string;
-  tree: TreeItem[];
   renameItem: (itemId: string, newName: string) => void;
 }): JSX.Element => (
   <div
@@ -90,7 +71,6 @@ const ToolbarCenter = (props: {
     <PageTitle
       currentPageId={props.currentPageId}
       currentPageTitle={props.currentPageTitle}
-      tree={props.tree}
       renameItem={props.renameItem}
     />
   </div>
@@ -126,7 +106,7 @@ const Toolbar = (props: {
   opacity: number;
   currentPageTitle: string;
   currentPageId: string;
-  tree: TreeItem[];
+  pages: Page[];
   onMouseMove: () => void;
   onPagesClick: () => void;
   onSettingsClick: () => void;
@@ -144,7 +124,6 @@ const Toolbar = (props: {
       <ToolbarCenter
         currentPageId={props.currentPageId}
         currentPageTitle={props.currentPageTitle}
-        tree={props.tree}
         renameItem={props.renameItem}
       />
 
