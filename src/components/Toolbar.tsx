@@ -76,8 +76,26 @@ const ToolbarCenter = (props: {
   </div>
 );
 
-const ToolbarRight = (props: { onSettingsClick: () => void }): JSX.Element => (
-  <div>
+const SearchSvgIcon = (): JSX.Element => (
+  <SvgIcon
+    stroke-width={2}
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="11" cy="11" r="8" />
+    <path d="m21 21-4.3-4.3" />
+  </SvgIcon>
+);
+
+const ToolbarRight = (props: {
+  onSettingsClick: () => void;
+  onSearchClick: () => void;
+}): JSX.Element => (
+  <div class="flex gap-2">
+    <Button variant="toolbar" onClick={props.onSearchClick}>
+      <SearchSvgIcon />
+    </Button>
     <Button variant="toolbar" onClick={props.onSettingsClick}>
       <SettingsSvgIcon />
     </Button>
@@ -91,6 +109,7 @@ const Toolbar = (props: {
   onMouseMove: () => void;
   onPagesClick: () => void;
   onSettingsClick: () => void;
+  onSearchClick: () => void;
   renamePage: (index: number, newName: string) => void;
 }): JSX.Element => {
   return (
@@ -107,7 +126,10 @@ const Toolbar = (props: {
         renamePage={props.renamePage}
       />
 
-      <ToolbarRight onSettingsClick={props.onSettingsClick} />
+      <ToolbarRight
+        onSettingsClick={props.onSettingsClick}
+        onSearchClick={props.onSearchClick}
+      />
     </div>
   );
 };

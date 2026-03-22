@@ -52,17 +52,23 @@ export function usePages() {
   const updatePageContent = (content: string) => {
     const idx = currentPageIndex();
     if (idx >= 0 && idx < pages().length) {
-      const newPages = [...pages()];
-      newPages[idx] = { ...newPages[idx]!, content };
-      setPages(newPages);
+      const currentPage = pages()[idx];
+      if (currentPage) {
+        const newPages = [...pages()];
+        newPages[idx] = { ...currentPage, content };
+        setPages(newPages);
+      }
     }
   };
 
   const renamePage = (index: number, newName: string) => {
     if (index >= 0 && index < pages().length) {
-      const newPages = [...pages()];
-      newPages[index] = { ...newPages[index]!, name: newName.trim() };
-      setPages(newPages);
+      const currentPage = pages()[index];
+      if (currentPage) {
+        const newPages = [...pages()];
+        newPages[index] = { ...currentPage, name: newName.trim() };
+        setPages(newPages);
+      }
     }
   };
 
