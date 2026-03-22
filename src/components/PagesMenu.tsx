@@ -398,8 +398,7 @@ const Pages = (props: {
 }): JSX.Element => (
   <div
     class="
-    fixed border border-[#d8d8d8] dark:border-[#272727] bg-[#ededed] dark:bg-[#181818] p-2 rounded-md border-solid
-
+    fixed bg-[#ededed] dark:bg-[#181818] p-2
     z-20 w-57.5 left-4 top-15
     "
     onClick={() => props.setContextMenu(null)}
@@ -687,33 +686,35 @@ const PagesMenu = (props: {
 
     props.selectPageByTreeItem(draggedId);
 
+    const draggedParent = getParentItems(draggedId);
     const targetParent = getParentItems(targetItem.id);
     if (!targetParent) {
       handleDragEnd();
       return;
     }
 
-    const draggedParent = getParentItems(draggedId);
-    const targetIdx = getItemIndex(targetItem.id);
-
-    if (
-      draggedParent &&
-      draggedParent === targetParent &&
-      draggedId === targetItem.id
-    ) {
+    if (draggedParent === targetParent) {
+      props.moveItem(draggedId, position === "before" ? "up" : "down");
       handleDragEnd();
       return;
     }
 
-    if (position === "before") {
-      props.moveItem(draggedId, "out");
-      for (let i = 0; i < targetIdx; i++) {
-        props.moveItem(draggedId, "up");
-      }
-    } else {
-      props.moveItem(draggedId, "out");
-      for (let i = 0; i <= targetIdx; i++) {
-        props.moveItem(draggedId, "down");
+    const targetIdx = getItemIndex(targetItem.id);
+    props.moveItem(draggedId, "out");
+
+    const newParent = getParentItems(draggedId);
+    if (newParent) {
+      const newIdx = getItemIndex(draggedId);
+      const movesNeeded =
+        position === "before" ? newIdx - targetIdx : newIdx - targetIdx - 1;
+      if (movesNeeded > 0) {
+        for (let i = 0; i < movesNeeded; i++) {
+          props.moveItem(draggedId, "up");
+        }
+      } else if (movesNeeded < 0) {
+        for (let i = 0; i < -movesNeeded; i++) {
+          props.moveItem(draggedId, "down");
+        }
       }
     }
 
