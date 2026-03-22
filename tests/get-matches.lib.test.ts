@@ -30,6 +30,10 @@ describe("getMatches", () => {
     expect(getMatches("hello world", "xyz", true)).toEqual([]);
   });
 
+  it("should find overlapping matches in banana", () => {
+    expect(getMatches("banana", "ana")).toEqual([{ start: 1, end: 4 }]);
+  });
+
   it("should find multiple matches", () => {
     expect(getMatches("hello hello HELLO", "hello")).toEqual([
       { start: 0, end: 5 },
