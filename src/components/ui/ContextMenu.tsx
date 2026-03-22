@@ -1,5 +1,5 @@
-import { For, Show } from "solid-js";
 import type { JSX } from "solid-js";
+import { For, Show } from "solid-js";
 
 import Button from "./Button";
 

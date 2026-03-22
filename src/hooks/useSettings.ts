@@ -1,6 +1,6 @@
 import { createSignal, onMount } from "solid-js";
 
-import type { EditorSettings } from "~/types";
+import type { EditorSettings } from "#types";
 
 const STORAGE_KEY = "editor-settings";
 

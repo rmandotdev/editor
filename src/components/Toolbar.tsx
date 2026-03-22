@@ -66,7 +66,7 @@ const ToolbarCenter = (props: {
   renamePage: (index: number, newName: string) => void;
 }): JSX.Element => (
   <div
-    class={`text-center content-center flex-1 text-black dark:text-white [font-family:"Cousine",monospace]`}
+    class={`text-center content-center flex-1 text-black dark:text-white font-["Cousine",monospace]`}
   >
     <PageTitle
       currentPageIndex={props.currentPageIndex}
@@ -95,7 +95,7 @@ const Toolbar = (props: {
 }): JSX.Element => {
   return (
     <div
-      class="justify-between flex absolute z-10 w-[calc(100%_-_10px)] opacity-0 transition-opacity duration-500 p-4 hover:opacity-100;"
+      class="justify-between flex absolute z-10 w-[calc(100%-10px)] opacity-0 transition-opacity duration-500 p-4 hover:opacity-100;"
       style={{ opacity: props.opacity }}
       onMouseMove={props.onMouseMove}
     >

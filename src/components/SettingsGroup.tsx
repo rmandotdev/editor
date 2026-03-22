@@ -1,4 +1,4 @@
-import { Match, Switch, type JSX } from "solid-js";
+import { type JSX, Match, Switch } from "solid-js";
 
 type SettingGroupConfigMap<SelectVal extends string = string> = {
   checkbox: { value: boolean; key: string };
@@ -10,12 +10,12 @@ type SettingGroupConfigVariant = keyof SettingGroupConfigMap;
 
 type SettingGroupOptions<
   TVariant extends SettingGroupConfigVariant,
-  TSelectValue extends string
+  TSelectValue extends string,
 > = SettingGroupConfigMap<TSelectValue>[TVariant] & {
   variant: TVariant;
   label: string;
   updateValue: (
-    value: SettingGroupConfigMap<TSelectValue>[TVariant]["value"]
+    value: SettingGroupConfigMap<TSelectValue>[TVariant]["value"],
   ) => void;
 };
 
@@ -30,7 +30,7 @@ type SettingGroupProps<TSelectValue extends string> =
   SettingGroupPropsMap<TSelectValue>[SettingGroupConfigVariant];
 
 const SettingsGroup = <TSelectValue extends string>(
-  props: SettingGroupProps<TSelectValue>
+  props: SettingGroupProps<TSelectValue>,
 ): JSX.Element => {
   return (
     <div

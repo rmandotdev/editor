@@ -1,5 +1,5 @@
-import { splitProps } from "solid-js";
 import type { JSX } from "solid-js";
+import { splitProps } from "solid-js";
 
 type ButtonAttributes = JSX.ButtonHTMLAttributes<HTMLButtonElement>;
 

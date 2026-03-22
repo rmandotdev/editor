@@ -1,10 +1,10 @@
 ---
-import "~/styles/global.css";
+import "#styles";
 
 interface Props {
   title: string;
   description: string;
-  children: any;
+  children: unknown;
 }
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -24,18 +24,15 @@ const { title, description } = Astro.props;
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
 
-    <!-- Twitter -->
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
     <link rel="canonical" href={canonical} />
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -44,7 +41,7 @@ const { title, description } = Astro.props;
     />
   </head>
 
-  <body class="font-cousine bg-[#fff] dark:bg-[#121212]">
+  <body class="font-cousine bg-white dark:bg-[#121212]">
     <slot />
   </body>
 </html>

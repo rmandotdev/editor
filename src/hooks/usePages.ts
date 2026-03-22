@@ -1,6 +1,6 @@
-import { createSignal, createEffect, onMount } from "solid-js";
+import { createEffect, createSignal, onMount } from "solid-js";
 
-import type { Page } from "~/types";
+import type { Page } from "#types";
 
 const DEFAULT_PAGE: Page = { name: "Page 1", content: "" };
 

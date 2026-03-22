@@ -1,11 +1,11 @@
-import { createSignal, Show, For } from "solid-js";
 import type { JSX, Setter } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 
-import type { Page } from "~/types";
+import type { Page } from "#types";
 
 import Button from "./ui/Button";
-import Divider from "./ui/Divider";
 import ContextMenu from "./ui/ContextMenu";
+import Divider from "./ui/Divider";
 
 const PageButton = (props: {
   label: string;
@@ -41,7 +41,7 @@ const PagesList = (props: {
   selectPage: (index: number) => void;
   setContextMenu: Setter<ContexMenuState>;
 }) => (
-  <div class="max-h-[min(calc(100vh_-_150px),calc(38px_*_8))] overflow-y-auto">
+  <div class="max-h-[min(calc(100vh-150px),calc(38px*8))] overflow-y-auto">
     <For each={props.pages}>
       {(page, index) => (
         <PageButton
@@ -73,7 +73,7 @@ const Pages = (props: {
     class="
     fixed border border-[#d8d8d8] dark:border-[#272727] bg-[#ededed] dark:bg-[#181818] p-2 rounded-md border-solid
 
-    z-20 w-[230px] left-4 top-[60px]
+    z-20 w-57.5 left-4 top-15
     "
     onClick={() => props.setContextMenu(null)}
   >

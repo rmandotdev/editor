@@ -1,12 +1,9 @@
 ---
-import Layout from "~/layouts/Layout.astro";
-
-import App from "~/components/App";
+import App from "#app";
+import Layout from "#layout";
 
 const title = "Simple text editor";
-const description = "Simple text editor by GameRoMan";
+const description = "Simple text editor by Roman";
 ---
 
-<Layout {title} {description}>
-  <App client:load />
-</Layout>
+<Layout {title} {description}> <App client:load /> </Layout>

@@ -23,6 +23,7 @@ const SvgIcon = (props: {
     stroke-width={props["stroke-width"]}
     stroke-linecap={props["stroke-linecap"]}
     stroke-linejoin={props["stroke-linejoin"]}
+    aria-hidden="true"
   >
     {props.children}
   </svg>
