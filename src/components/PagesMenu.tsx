@@ -95,6 +95,7 @@ const PagesContextMenu = (props: {
   canMoveDown: boolean;
   canMoveIn: boolean;
   canMoveOut: boolean;
+  canDelete: boolean;
 }) => (
   <Show when={props.contextMenu()}>
     {(contextMenu) => (
@@ -108,7 +109,7 @@ const PagesContextMenu = (props: {
             show: true,
           },
           { label: "Rename", onClick: props.onRename, show: true },
-          { label: "Delete", onClick: props.onDelete, show: true },
+          { label: "Delete", onClick: props.onDelete, show: props.canDelete },
           { label: "Move Up", onClick: props.onMoveUp, show: props.canMoveUp },
           {
             label: "Move Down",
@@ -258,6 +259,14 @@ const PagesMenu = (props: {
     return findParentItemAndArray(props.pages, c.itemId) !== null;
   };
 
+  const canDelete = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    const parent = findParentOf(props.pages, c.itemId);
+    if (parent !== props.pages) return true;
+    return props.pages.length > 1;
+  };
+
   const handleDragStart = (e: DragEvent, item: Page) => {
     setDragItemId(item.id);
     if (e.dataTransfer) {
@@ -403,6 +412,7 @@ const PagesMenu = (props: {
         canMoveDown={canMoveDown()}
         canMoveIn={canMoveIn()}
         canMoveOut={canMoveOut()}
+        canDelete={canDelete()}
       />
     </Show>
   );
