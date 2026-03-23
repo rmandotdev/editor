@@ -77,7 +77,7 @@ const Pages = (props: {
     />
     <Divider />
     <div class="flex gap-2">
-      <Button label="New Page" onClick={props.newPage} />
+      <Button label="New Page" onClick={() => props.newPage()} />
     </div>
   </div>
 );
