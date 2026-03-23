@@ -116,7 +116,18 @@ describe("moveItemBefore", () => {
 });
 
 describe("moveItemAfter", () => {
-  it("should move item to end (after target)", () => {
+  it("should move item down one position", () => {
+    const tree = [
+      { id: "a", name: "A", content: "" },
+      { id: "b", name: "B", content: "" },
+      { id: "c", name: "C", content: "" },
+    ];
+
+    const result = moveItemAfter(structuredClone(tree), "a", "b");
+    expect(result.map((i) => i.id)).toEqual(["b", "a", "c"]);
+  });
+
+  it("should move item down two positions", () => {
     const tree = [
       { id: "a", name: "A", content: "" },
       { id: "b", name: "B", content: "" },

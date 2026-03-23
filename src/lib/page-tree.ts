@@ -102,7 +102,19 @@ function moveItemBefore(
   const item = removeItemFromTree(newItems, itemId);
   if (!item) return newItems;
 
-  targetParent.splice(insertIdx, 0, item);
+  const itemParent = findParentOf(items, itemId);
+  const sameParent =
+    itemParent && findParentOf(items, beforeItemId) === itemParent;
+
+  let finalIdx = insertIdx;
+  if (sameParent) {
+    const itemIdx = findIndexInParent(itemParent, itemId);
+    if (itemIdx >= 0 && itemIdx < insertIdx) {
+      finalIdx = insertIdx - 1;
+    }
+  }
+
+  targetParent.splice(finalIdx, 0, item);
   return newItems;
 }
 
@@ -148,7 +160,19 @@ function moveItemAfter(
   const item = removeItemFromTree(newItems, itemId);
   if (!item) return newItems;
 
-  targetParent.splice(afterIdx + 1, 0, item);
+  const itemParent = findParentOf(items, itemId);
+  const sameParent =
+    itemParent && findParentOf(items, afterItemId) === itemParent;
+
+  let insertIdx = afterIdx + 1;
+  if (sameParent) {
+    const itemIdx = findIndexInParent(itemParent, itemId);
+    if (itemIdx >= 0 && itemIdx < afterIdx) {
+      insertIdx = afterIdx;
+    }
+  }
+
+  targetParent.splice(insertIdx, 0, item);
   return newItems;
 }
 
