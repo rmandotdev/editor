@@ -13,12 +13,15 @@ import Toolbar from "./Toolbar";
 function App() {
   const {
     pages,
-    currentPageIndex,
-    setCurrentPageIndex,
+    setPages,
+    currentPageId,
+    setCurrentPageId,
     addPage,
+    renameItem,
+    deleteItem,
+    moveItem,
     updatePageContent,
-    renamePage,
-    deletePage,
+    getCurrentPage,
   } = usePages();
 
   const { settings, updateSettings } = useEditorSettings();
@@ -33,7 +36,7 @@ function App() {
 
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
 
-  const currentPage = () => pages()[currentPageIndex()];
+  const currentPage = () => getCurrentPage();
 
   const PAGES_BROKEN = "<something has broken - this page does not exist>";
 
@@ -104,6 +107,10 @@ function App() {
     setCurrentMatchIndex(0);
   };
 
+  const selectPageByTreeItem = (itemId: string) => {
+    setCurrentPageId(itemId);
+  };
+
   onMount(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -123,13 +130,14 @@ function App() {
     <>
       <Toolbar
         opacity={toolbarOpacity()}
-        currentPageIndex={currentPageIndex()}
+        currentPageId={currentPageId()}
         currentPageTitle={currentPage()?.name ?? PAGES_BROKEN}
         onMouseMove={() => setToolbarOpacity(1)}
         onPagesClick={() => setIsPagesMenuOpen(!isPagesMenuOpen())}
         onSettingsClick={() => setIsSettingsOpen(true)}
         onSearchClick={handleOpenSearch}
-        renamePage={renamePage}
+        renameItem={renameItem}
+        pages={pages()}
       />
 
       <SettingsModal
@@ -142,11 +150,13 @@ function App() {
       <PagesMenu
         isOpen={isPagesMenuOpen()}
         pages={pages()}
-        currentPageIndex={currentPageIndex()}
-        selectPage={setCurrentPageIndex}
-        newPage={addPage}
-        renamePage={renamePage}
-        deletePage={deletePage}
+        currentPageId={currentPageId()}
+        selectPageByTreeItem={selectPageByTreeItem}
+        addPage={addPage}
+        renameItem={renameItem}
+        deleteItem={deleteItem}
+        moveItem={moveItem}
+        setPages={setPages}
       />
 
       <FindReplaceModal

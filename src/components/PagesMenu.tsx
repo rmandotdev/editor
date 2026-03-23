@@ -1,98 +1,101 @@
 import type { JSX, Setter } from "solid-js";
-import { createSignal, For, Show } from "solid-js";
-
+import { createSignal, Show } from "solid-js";
+import {
+  findIndexInParent,
+  findItemInTree,
+  findParentItemAndArray,
+  findParentOf,
+  moveItemAfter,
+  moveItemBefore,
+  moveItemInto,
+} from "#lib/page-tree";
 import type { Page } from "#types";
-
+import TreeList from "./TreeList";
 import Button from "./ui/Button";
 import ContextMenu from "./ui/ContextMenu";
 import Divider from "./ui/Divider";
 
-const PageButton = (props: {
-  label: string;
-  isCurrentPage: boolean;
-  onClick: () => void;
-  onContextMenu: (e: MouseEvent) => void;
-}): JSX.Element => {
-  return (
-    <Button
-      label={props.label}
-      variant="page"
-      class={
-        props.isCurrentPage
-          ? "bg-[#ddd] dark:bg-[#333] border-blue-500"
-          : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818]"
-      }
-      onClick={props.onClick}
-      onMouseDown={(e) => {
-        if (e.button === 0) {
-          props.onClick();
-        }
-      }}
-      onContextMenu={props.onContextMenu}
-    />
-  );
-};
-
-type ContexMenuState = { x: number; y: number; pageIndex: number } | null;
-
-const PagesList = (props: {
-  pages: Page[];
-  currentPageIndex: number;
-  selectPage: (index: number) => void;
-  setContextMenu: Setter<ContexMenuState>;
-}) => (
-  <div class="max-h-[min(calc(100vh-150px),calc(38px*8))] overflow-y-auto">
-    <For each={props.pages}>
-      {(page, index) => (
-        <PageButton
-          isCurrentPage={props.currentPageIndex === index()}
-          onClick={() => props.selectPage(index())}
-          label={page.name}
-          onContextMenu={(e) => {
-            e.preventDefault();
-            props.setContextMenu({
-              x: e.pageX,
-              y: e.pageY,
-              pageIndex: index(),
-            });
-          }}
-        />
-      )}
-    </For>
-  </div>
-);
+type ContextMenuState = {
+  x: number;
+  y: number;
+  itemId: string;
+} | null;
 
 const Pages = (props: {
-  currentPageIndex: number;
   pages: Page[];
-  selectPage: (index: number) => void;
-  setContextMenu: Setter<ContexMenuState>;
+  currentPageId: string;
+  openFolders: Set<string>;
+  dragItemId: string | null;
+  dragOverItemId: string | null;
+  dragOverPosition: "before" | "after" | null;
+  onSelectPage: (pageId: string) => void;
+  onToggleFolder: (folderId: string) => void;
+  setContextMenu: Setter<ContextMenuState>;
+  onDragStart: (e: DragEvent, item: Page) => void;
+  onDragOver: (
+    e: DragEvent,
+    itemId: string,
+    position: "before" | "after",
+  ) => void;
+  onDragOverNestable: (e: DragEvent, folderId: string) => void;
+  onDragLeave: (e: DragEvent) => void;
+  onDragLeaveNestable: () => void;
+  onDrop: (e: DragEvent, item: Page, position: "before" | "after") => void;
+  onDropNestable: (e: DragEvent, folderId: string) => void;
+  onDragEnd: () => void;
   newPage: () => void;
 }): JSX.Element => (
   <div
-    class="
-    fixed border border-[#d8d8d8] dark:border-[#272727] bg-[#ededed] dark:bg-[#181818] p-2 rounded-md border-solid
-
-    z-20 w-57.5 left-4 top-15
-    "
+    class="fixed bg-[#ededed] dark:bg-[#181818] p-2 z-20 w-57.5 left-4 top-15"
     onClick={() => props.setContextMenu(null)}
   >
-    <PagesList
+    <TreeList
       pages={props.pages}
-      currentPageIndex={props.currentPageIndex}
-      selectPage={props.selectPage}
-      setContextMenu={props.setContextMenu}
+      currentPageId={props.currentPageId}
+      openFolders={props.openFolders}
+      dragItemId={props.dragItemId}
+      dragOverItemId={props.dragOverItemId}
+      dragOverPosition={props.dragOverPosition}
+      onSelectPage={props.onSelectPage}
+      onToggleFolder={props.onToggleFolder}
+      onContextMenu={(e, item) => {
+        e.preventDefault();
+        props.setContextMenu({
+          x: e.pageX,
+          y: e.pageY,
+          itemId: item.id,
+        });
+      }}
+      onDragStart={props.onDragStart}
+      onDragOver={props.onDragOver}
+      onDragOverNestable={props.onDragOverNestable}
+      onDragLeave={props.onDragLeave}
+      onDragLeaveNestable={props.onDragLeaveNestable}
+      onDrop={props.onDrop}
+      onDropNestable={props.onDropNestable}
+      onDragEnd={props.onDragEnd}
     />
     <Divider />
-    <Button label="New Page" onClick={props.newPage} />
+    <div class="flex gap-2">
+      <Button label="New Page" onClick={() => props.newPage()} />
+    </div>
   </div>
 );
 
 const PagesContextMenu = (props: {
-  contextMenu: () => ContexMenuState;
-  onRenamePage: () => void;
-  onDeletePage: () => void;
-  showDeleteButton: boolean;
+  contextMenu: () => ContextMenuState;
+  onRename: () => void;
+  onDelete: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  onMoveIn: () => void;
+  onMoveOut: () => void;
+  onCreateChild: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  canMoveIn: boolean;
+  canMoveOut: boolean;
+  canDelete: boolean;
 }) => (
   <Show when={props.contextMenu()}>
     {(contextMenu) => (
@@ -101,13 +104,27 @@ const PagesContextMenu = (props: {
         y={contextMenu().y}
         items={[
           {
-            label: "Rename",
-            onClick: props.onRenamePage,
+            label: "Create Child Page",
+            onClick: props.onCreateChild,
+            show: true,
+          },
+          { label: "Rename", onClick: props.onRename, show: true },
+          { label: "Delete", onClick: props.onDelete, show: props.canDelete },
+          { label: "Move Up", onClick: props.onMoveUp, show: props.canMoveUp },
+          {
+            label: "Move Down",
+            onClick: props.onMoveDown,
+            show: props.canMoveDown,
           },
           {
-            label: "Delete",
-            onClick: props.onDeletePage,
-            show: props.showDeleteButton,
+            label: "Move Into Page",
+            onClick: props.onMoveIn,
+            show: props.canMoveIn,
+          },
+          {
+            label: "Move Out of Page",
+            onClick: props.onMoveOut,
+            show: props.canMoveOut,
           },
         ]}
       />
@@ -118,55 +135,284 @@ const PagesContextMenu = (props: {
 const PagesMenu = (props: {
   isOpen: boolean;
   pages: Page[];
-  currentPageIndex: number;
-  newPage: () => void;
-  selectPage: (index: number) => void;
-  renamePage: (index: number, newName: string) => void;
-  deletePage: (index: number) => void;
+  currentPageId: string;
+  selectPageByTreeItem: (itemId: string) => void;
+  addPage: (parentFolderId?: string) => void;
+  renameItem: (itemId: string, newName: string) => void;
+  deleteItem: (itemId: string) => void;
+  moveItem: (itemId: string, direction: "up" | "down" | "in" | "out") => void;
+  setPages: (pages: Page[]) => void;
 }): JSX.Element => {
-  const [contextMenu, setContextMenu] = createSignal<ContexMenuState>(null);
+  const [contextMenu, setContextMenu] = createSignal<ContextMenuState>(null);
+  const [openFolders, setOpenFolders] = createSignal<Set<string>>(new Set());
+  const [dragItemId, setDragItemId] = createSignal<string | null>(null);
+  const [dragOverItemId, setDragOverItemId] = createSignal<string | null>(null);
+  const [dragOverPosition, setDragOverPosition] = createSignal<
+    "before" | "after" | null
+  >(null);
 
-  const onRenamePage = () => {
+  const toggleFolder = (folderId: string) => {
+    const newSet = new Set(openFolders());
+    if (newSet.has(folderId)) {
+      newSet.delete(folderId);
+    } else {
+      newSet.add(folderId);
+    }
+    setOpenFolders(newSet);
+  };
+
+  const onRename = () => {
     const c = contextMenu();
-    if (!c) {
-      throw new Error("BROKEN STATE");
-    }
-    const page = props.pages[c.pageIndex];
-    if (!page) {
-      throw new Error("BROKEN STATE");
-    }
-    const oldName = page.name;
-    const newName = prompt("Enter new name:", oldName);
+    if (!c) return;
+    const item = findItemInTree(props.pages, c.itemId);
+    if (!item) return;
+    const newName = prompt("Enter new name:", item.name);
     if (newName) {
-      props.renamePage(c.pageIndex, newName);
+      props.renameItem(c.itemId, newName);
     }
     setContextMenu(null);
   };
 
-  const onDeletePage = () => {
+  const onDelete = () => {
     const c = contextMenu();
-    if (!c) {
-      throw new Error("BROKEN STATE");
-    }
-    props.deletePage(c.pageIndex);
+    if (!c) return;
+    props.deleteItem(c.itemId);
     setContextMenu(null);
+  };
+
+  const getItemIndex = (itemId: string): number => {
+    const parent = findParentOf(props.pages, itemId);
+    if (!parent) return -1;
+    return findIndexInParent(parent, itemId);
+  };
+
+  const getPrevSibling = (itemId: string): Page | null => {
+    const parent = findParentOf(props.pages, itemId);
+    if (!parent) return null;
+    const idx = getItemIndex(itemId);
+    if (idx <= 0) return null;
+    return parent[idx - 1] ?? null;
+  };
+
+  const onMoveUp = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.moveItem(c.itemId, "up");
+    setContextMenu(null);
+  };
+
+  const onMoveDown = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.moveItem(c.itemId, "down");
+    setContextMenu(null);
+  };
+
+  const onMoveIn = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.moveItem(c.itemId, "in");
+    setContextMenu(null);
+  };
+
+  const onMoveOut = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.moveItem(c.itemId, "out");
+    setContextMenu(null);
+  };
+
+  const onCreateChild = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.addPage(c.itemId);
+    const newOpenFolders = new Set(openFolders());
+    newOpenFolders.add(c.itemId);
+    setOpenFolders(newOpenFolders);
+    setContextMenu(null);
+  };
+
+  const canMoveUp = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    return getItemIndex(c.itemId) > 0;
+  };
+
+  const canMoveDown = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    const parent = findParentOf(props.pages, c.itemId);
+    if (!parent) return false;
+    return getItemIndex(c.itemId) < parent.length - 1;
+  };
+
+  const canMoveIn = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    const prev = getPrevSibling(c.itemId);
+    return prev !== null;
+  };
+
+  const canMoveOut = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    return findParentItemAndArray(props.pages, c.itemId) !== null;
+  };
+
+  const canDelete = () => {
+    const c = contextMenu();
+    if (!c) return false;
+    const parent = findParentOf(props.pages, c.itemId);
+    if (parent !== props.pages) return true;
+    return props.pages.length > 1;
+  };
+
+  const handleDragStart = (e: DragEvent, item: Page) => {
+    setDragItemId(item.id);
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = "move";
+    }
+  };
+
+  const handleDragOver = (
+    e: DragEvent,
+    itemId: string,
+    position: "before" | "after",
+  ) => {
+    e.preventDefault();
+    setDragOverItemId(itemId);
+    setDragOverPosition(position);
+  };
+
+  const handleDragOverNestable = (e: DragEvent, folderId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverItemId(`nest-${folderId}`);
+    setDragOverPosition(null);
+  };
+
+  const handleDragLeave = (_e: DragEvent) => {
+    setTimeout(() => {
+      if (dragOverItemId() === dragItemId()) {
+        setDragOverItemId(null);
+        setDragOverPosition(null);
+      }
+    }, 50);
+  };
+
+  const handleDragLeaveNestable = () => {
+    setTimeout(() => {
+      if (dragOverItemId()?.startsWith("nest-")) {
+        setDragOverItemId(null);
+      }
+    }, 50);
+  };
+
+  const handleDrop = (
+    e: DragEvent,
+    targetItem: Page,
+    position: "before" | "after",
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const draggedId = dragItemId();
+    if (!draggedId || draggedId === targetItem.id) {
+      handleDragEnd();
+      return;
+    }
+
+    const draggedItem = findItemInTree(props.pages, draggedId);
+    if (!draggedItem) {
+      handleDragEnd();
+      return;
+    }
+
+    props.selectPageByTreeItem(draggedId);
+
+    const draggedParent = findParentOf(props.pages, draggedId);
+    const targetParent = findParentOf(props.pages, targetItem.id);
+
+    if (draggedParent === targetParent) {
+      const newPages =
+        position === "before"
+          ? moveItemBefore(props.pages, draggedId, targetItem.id)
+          : moveItemAfter(props.pages, draggedId, targetItem.id);
+      props.setPages(newPages);
+    } else {
+      const newPages =
+        position === "before"
+          ? moveItemBefore(props.pages, draggedId, targetItem.id)
+          : moveItemAfter(props.pages, draggedId, targetItem.id);
+      props.setPages(newPages);
+    }
+
+    handleDragEnd();
+  };
+
+  const handleDropNestable = (e: DragEvent, folderId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const draggedId = dragItemId();
+    if (!draggedId || draggedId === folderId) {
+      handleDragEnd();
+      return;
+    }
+
+    const draggedItem = findItemInTree(props.pages, draggedId);
+    if (!draggedItem) {
+      handleDragEnd();
+      return;
+    }
+
+    props.selectPageByTreeItem(draggedId);
+    const newPages = moveItemInto(props.pages, draggedId, folderId);
+    props.setPages(newPages);
+    handleDragEnd();
+  };
+
+  const handleDragEnd = () => {
+    setDragItemId(null);
+    setDragOverItemId(null);
+    setDragOverPosition(null);
   };
 
   return (
     <Show when={props.isOpen}>
       <Pages
-        currentPageIndex={props.currentPageIndex}
-        newPage={props.newPage}
-        selectPage={props.selectPage}
         pages={props.pages}
+        currentPageId={props.currentPageId}
+        openFolders={openFolders()}
+        dragItemId={dragItemId()}
+        dragOverItemId={dragOverItemId()}
+        dragOverPosition={dragOverPosition()}
+        onSelectPage={props.selectPageByTreeItem}
+        onToggleFolder={toggleFolder}
         setContextMenu={setContextMenu}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragOverNestable={handleDragOverNestable}
+        onDragLeave={handleDragLeave}
+        onDragLeaveNestable={handleDragLeaveNestable}
+        onDrop={handleDrop}
+        onDropNestable={handleDropNestable}
+        onDragEnd={handleDragEnd}
+        newPage={props.addPage}
       />
 
       <PagesContextMenu
         contextMenu={contextMenu}
-        onRenamePage={onRenamePage}
-        onDeletePage={onDeletePage}
-        showDeleteButton={props.pages.length > 1}
+        onRename={onRename}
+        onDelete={onDelete}
+        onMoveUp={onMoveUp}
+        onMoveDown={onMoveDown}
+        onMoveIn={onMoveIn}
+        onMoveOut={onMoveOut}
+        onCreateChild={onCreateChild}
+        canMoveUp={canMoveUp()}
+        canMoveDown={canMoveDown()}
+        canMoveIn={canMoveIn()}
+        canMoveOut={canMoveOut()}
+        canDelete={canDelete()}
       />
     </Show>
   );
