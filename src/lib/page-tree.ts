@@ -218,6 +218,7 @@ function moveItemOut(items: Page[], itemId: string): Page[] {
 export {
   findIndexInParent,
   findItemInTree,
+  findParentItemAndArray,
   findParentOf,
   moveItemAfter,
   moveItemBefore,

@@ -3,6 +3,7 @@ import { createSignal, Show } from "solid-js";
 import {
   findIndexInParent,
   findItemInTree,
+  findParentItemAndArray,
   findParentOf,
   moveItemAfter,
   moveItemBefore,
@@ -238,7 +239,7 @@ const PagesMenu = (props: {
   const canMoveOut = () => {
     const c = contextMenu();
     if (!c) return false;
-    return findParentOf(props.pages, c.itemId) !== null;
+    return findParentItemAndArray(props.pages, c.itemId) !== null;
   };
 
   const handleDragStart = (e: DragEvent, item: Page) => {
