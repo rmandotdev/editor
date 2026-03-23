@@ -7,7 +7,7 @@ const base = `cursor-pointer w-full text-left p-2 rounded-md hover:bg-[#ddd] dar
 
 const variants = {
   default: "",
-  "context-menu": `rounded bg-transparent`,
+  "context-menu": "rounded bg-transparent",
   page: "rounded border-2 border-solid",
   toolbar: "size-10",
 };
