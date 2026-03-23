@@ -41,6 +41,7 @@ type TreeItemProps = {
 
 const TreeItem = (props: TreeItemProps): JSX.Element => {
   const hasChildren = () => (props.item.children?.length ?? 0) > 0;
+  let isDragging = false;
 
   return (
     <div>
@@ -94,8 +95,14 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
           <div
             class="flex-1"
             draggable={true}
-            onDragStart={props.onDragStart}
-            onDragEnd={props.onDragEnd}
+            onDragStart={() => {
+              isDragging = true;
+              props.onDragStart(new DragEvent("dragstart"));
+            }}
+            onDragEnd={() => {
+              isDragging = false;
+              props.onDragEnd();
+            }}
           >
             <Button
               label={props.item.name}
@@ -105,9 +112,8 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
                   ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
                   : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
               }
-              onMouseDown={(e) => {
-                e.preventDefault();
-                if (e.button === 0) {
+              onMouseUp={(e) => {
+                if (e.button === 0 && !isDragging) {
                   props.onSelect();
                 }
               }}
