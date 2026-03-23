@@ -107,7 +107,8 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
             onMouseDown={(e) => {
               e.preventDefault();
               if (e.button === 0) {
-                if (hasChildren()) {
+                const hasModKey = e.ctrlKey || e.metaKey || e.shiftKey;
+                if (hasChildren() && !hasModKey) {
                   props.onToggle();
                 } else {
                   props.onSelect();

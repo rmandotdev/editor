@@ -205,25 +205,27 @@ export function usePages() {
 
   const deleteItem = (itemId: string) => {
     const currentId = currentPageId();
-    const isDescendantOrSelf = (items: Page[]): boolean => {
+    const findInSubtree = (targetId: string, items: Page[]): boolean => {
       for (const item of items) {
-        if (item.id === itemId) return true;
-        if (item.children && isDescendantOrSelf(item.children)) {
+        if (item.id === targetId) return true;
+        if (item.children && findInSubtree(targetId, item.children))
           return true;
-        }
       }
       return false;
     };
 
-    if (currentId === itemId || isDescendantOrSelf(pages())) {
+    if (
+      currentId === itemId ||
+      findInSubtree(currentId, findItemInTree(itemId)?.children ?? [])
+    ) {
       const survivingItems: Page[] = [];
       const collectSurviving = (items: Page[]) => {
         for (const item of items) {
           if (item.id !== itemId) {
             survivingItems.push(item);
-          }
-          if (item.children) {
-            collectSurviving(item.children);
+            if (item.children) {
+              collectSurviving(item.children);
+            }
           }
         }
       };
