@@ -152,7 +152,7 @@ function App() {
         pages={pages()}
         currentPageId={currentPageId()}
         selectPageByTreeItem={selectPageByTreeItem}
-        addPage={() => addPage()}
+        addPage={addPage}
         renameItem={renameItem}
         deleteItem={deleteItem}
         moveItem={moveItem}

@@ -90,6 +90,7 @@ const PagesContextMenu = (props: {
   onMoveDown: () => void;
   onMoveIn: () => void;
   onMoveOut: () => void;
+  onCreateChild: () => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
   canMoveIn: boolean;
@@ -101,6 +102,11 @@ const PagesContextMenu = (props: {
         x={contextMenu().x}
         y={contextMenu().y}
         items={[
+          {
+            label: "Create Child Page",
+            onClick: props.onCreateChild,
+            show: true,
+          },
           { label: "Rename", onClick: props.onRename, show: true },
           { label: "Delete", onClick: props.onDelete, show: true },
           { label: "Move Up", onClick: props.onMoveUp, show: props.canMoveUp },
@@ -130,7 +136,7 @@ const PagesMenu = (props: {
   pages: Page[];
   currentPageId: string;
   selectPageByTreeItem: (itemId: string) => void;
-  addPage: () => void;
+  addPage: (parentFolderId?: string) => void;
   renameItem: (itemId: string, newName: string) => void;
   deleteItem: (itemId: string) => void;
   moveItem: (itemId: string, direction: "up" | "down" | "in" | "out") => void;
@@ -212,6 +218,16 @@ const PagesMenu = (props: {
     const c = contextMenu();
     if (!c) return;
     props.moveItem(c.itemId, "out");
+    setContextMenu(null);
+  };
+
+  const onCreateChild = () => {
+    const c = contextMenu();
+    if (!c) return;
+    props.addPage(c.itemId);
+    const newOpenFolders = new Set(openFolders());
+    newOpenFolders.add(c.itemId);
+    setOpenFolders(newOpenFolders);
     setContextMenu(null);
   };
 
@@ -382,6 +398,7 @@ const PagesMenu = (props: {
         onMoveDown={onMoveDown}
         onMoveIn={onMoveIn}
         onMoveOut={onMoveOut}
+        onCreateChild={onCreateChild}
         canMoveUp={canMoveUp()}
         canMoveDown={canMoveDown()}
         canMoveIn={canMoveIn()}
