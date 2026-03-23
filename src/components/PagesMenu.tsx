@@ -232,7 +232,7 @@ const PagesMenu = (props: {
     const c = contextMenu();
     if (!c) return false;
     const prev = getPrevSibling(c.itemId);
-    return prev !== null && (prev.children?.length ?? 0) > 0;
+    return prev !== null;
   };
 
   const canMoveOut = () => {

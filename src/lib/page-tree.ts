@@ -65,15 +65,42 @@ function moveItemBefore(
   itemId: string,
   beforeItemId: string,
 ): Page[] {
+  if (itemId === beforeItemId) return structuredClone(items);
+
+  const findItem = (list: Page[], id: string): Page | null => {
+    for (const item of list) {
+      if (item.id === id) return item;
+      if (item.children) {
+        const found = findItem(item.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const movedItem = findItem(items, itemId);
+  if (movedItem?.children) {
+    const isInSubtree = (list: Page[], targetId: string): boolean => {
+      for (const item of list) {
+        if (item.id === targetId) return true;
+        if (item.children && isInSubtree(item.children, targetId)) return true;
+      }
+      return false;
+    };
+    if (isInSubtree(movedItem.children, beforeItemId))
+      return structuredClone(items);
+  }
+
   const newItems = structuredClone(items);
-  const item = removeItemFromTree(newItems, itemId);
-  if (!item) return newItems;
 
   const targetParent = findParentOf(newItems, beforeItemId);
   if (!targetParent) return newItems;
 
   const insertIdx = findIndexInParent(targetParent, beforeItemId);
   if (insertIdx < 0) return newItems;
+
+  const item = removeItemFromTree(newItems, itemId);
+  if (!item) return newItems;
 
   targetParent.splice(insertIdx, 0, item);
   return newItems;
@@ -84,6 +111,32 @@ function moveItemAfter(
   itemId: string,
   afterItemId: string,
 ): Page[] {
+  if (itemId === afterItemId) return structuredClone(items);
+
+  const findItem = (list: Page[], id: string): Page | null => {
+    for (const item of list) {
+      if (item.id === id) return item;
+      if (item.children) {
+        const found = findItem(item.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const movedItem = findItem(items, itemId);
+  if (movedItem?.children) {
+    const isInSubtree = (list: Page[], targetId: string): boolean => {
+      for (const item of list) {
+        if (item.id === targetId) return true;
+        if (item.children && isInSubtree(item.children, targetId)) return true;
+      }
+      return false;
+    };
+    if (isInSubtree(movedItem.children, afterItemId))
+      return structuredClone(items);
+  }
+
   const newItems = structuredClone(items);
 
   const targetParent = findParentOf(newItems, afterItemId);
@@ -104,13 +157,39 @@ function moveItemInto(
   itemId: string,
   intoItemId: string,
 ): Page[] {
-  const newItems = structuredClone(items);
+  if (itemId === intoItemId) return structuredClone(items);
 
-  const target = findItemInTree(newItems, intoItemId);
-  if (!target) return newItems;
+  const findItem = (list: Page[], id: string): Page | null => {
+    for (const item of list) {
+      if (item.id === id) return item;
+      if (item.children) {
+        const found = findItem(item.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const movedItem = findItem(items, itemId);
+  if (movedItem?.children) {
+    const isInSubtree = (list: Page[], targetId: string): boolean => {
+      for (const item of list) {
+        if (item.id === targetId) return true;
+        if (item.children && isInSubtree(item.children, targetId)) return true;
+      }
+      return false;
+    };
+    if (isInSubtree(movedItem.children, intoItemId))
+      return structuredClone(items);
+  }
+
+  const newItems = structuredClone(items);
 
   const item = removeItemFromTree(newItems, itemId);
   if (!item) return newItems;
+
+  const target = findItemInTree(newItems, intoItemId);
+  if (!target) return newItems;
 
   if (!target.children) target.children = [];
   target.children.push(item);

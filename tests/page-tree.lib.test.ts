@@ -168,6 +168,41 @@ describe("moveItemInto", () => {
     const b = result.find((i) => i.id === "b") as Page;
     expect(b.children?.map((i) => i.id)).toEqual(["a"]);
   });
+
+  it("should not move item into itself", () => {
+    const tree = [
+      {
+        id: "a",
+        name: "A",
+        content: "",
+        children: [{ id: "b", name: "B", content: "" }],
+      },
+    ];
+
+    const result = moveItemInto(structuredClone(tree), "a", "a");
+    expect(result).toEqual(tree);
+  });
+
+  it("should not move item into its descendant", () => {
+    const tree = [
+      {
+        id: "a",
+        name: "A",
+        content: "",
+        children: [
+          {
+            id: "b",
+            name: "B",
+            content: "",
+            children: [{ id: "c", name: "C", content: "" }],
+          },
+        ],
+      },
+    ];
+
+    const result = moveItemInto(structuredClone(tree), "a", "c");
+    expect(result).toEqual(tree);
+  });
 });
 
 describe("moveItemOut", () => {

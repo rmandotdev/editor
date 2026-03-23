@@ -18,10 +18,11 @@ type ButtonVariants<TVariant extends Variant> = {
   variant?: TVariant;
 };
 
-type ButtonProps<TVariant extends Variant> = ButtonAttributes & {
-  label?: string;
-  children?: JSX.Element;
-} & ButtonVariants<TVariant>;
+type ButtonProps<TVariant extends Variant> =
+  | ({ label: string; children?: never } & ButtonAttributes &
+      ButtonVariants<TVariant>)
+  | ({ children: JSX.Element; label?: never } & ButtonAttributes &
+      ButtonVariants<TVariant>);
 
 function Button<TVariant extends Variant>(props: ButtonProps<TVariant>) {
   const [local, rest] = splitProps(props, [

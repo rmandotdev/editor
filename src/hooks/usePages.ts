@@ -1,5 +1,5 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-
+import { moveItemOut } from "#lib/page-tree";
 import type { Page } from "#types";
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -121,10 +121,25 @@ export function usePages() {
     if (storedPages) {
       const parsedPages = JSON.parse(storedPages) as Page[];
       setPages(parsedPages.length > 0 ? parsedPages : [DEFAULT_PAGE]);
-    }
 
-    if (storedCurrentPage) {
-      setCurrentPageId(storedCurrentPage);
+      if (storedCurrentPage) {
+        const findIdInPages = (items: Page[], targetId: string): boolean => {
+          for (const item of items) {
+            if (item.id === targetId) return true;
+            if (item.children && findIdInPages(item.children, targetId)) {
+              return true;
+            }
+          }
+          return false;
+        };
+        if (findIdInPages(parsedPages, storedCurrentPage)) {
+          setCurrentPageId(storedCurrentPage);
+        } else if (parsedPages.length > 0 && parsedPages[0]) {
+          setCurrentPageId(parsedPages[0].id);
+        }
+      } else if (parsedPages.length > 0 && parsedPages[0]) {
+        setCurrentPageId(parsedPages[0].id);
+      }
     }
 
     window.addEventListener("storage", (event) => {
@@ -132,7 +147,19 @@ export function usePages() {
       if (event.key === "pages") {
         setPages(JSON.parse(event.newValue));
       } else if (event.key === "currentPageId") {
-        setCurrentPageId(event.newValue);
+        const newId = event.newValue;
+        const findIdInPages = (items: Page[], targetId: string): boolean => {
+          for (const item of items) {
+            if (item.id === targetId) return true;
+            if (item.children && findIdInPages(item.children, targetId)) {
+              return true;
+            }
+          }
+          return false;
+        };
+        if (findIdInPages(pages(), newId)) {
+          setCurrentPageId(newId);
+        }
       }
     });
 
@@ -143,6 +170,10 @@ export function usePages() {
 
   createEffect(() => {
     localStorage.setItem("pages", JSON.stringify(pages()));
+  });
+
+  createEffect(() => {
+    localStorage.setItem("currentPageId", currentPageId());
   });
 
   const addPage = (parentFolderId?: string) => {
@@ -173,21 +204,32 @@ export function usePages() {
   };
 
   const deleteItem = (itemId: string) => {
-    if (currentPageId() === itemId) {
-      const allItems: Page[] = [];
-      const collectIds = (items: Page[]) => {
+    const currentId = currentPageId();
+    const isDescendantOrSelf = (items: Page[]): boolean => {
+      for (const item of items) {
+        if (item.id === itemId) return true;
+        if (item.children && isDescendantOrSelf(item.children)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (currentId === itemId || isDescendantOrSelf(pages())) {
+      const survivingItems: Page[] = [];
+      const collectSurviving = (items: Page[]) => {
         for (const item of items) {
           if (item.id !== itemId) {
-            allItems.push(item);
+            survivingItems.push(item);
           }
           if (item.children) {
-            collectIds(item.children);
+            collectSurviving(item.children);
           }
         }
       };
-      collectIds(pages());
-      if (allItems.length > 0 && allItems[0]) {
-        setCurrentPageId(allItems[0].id);
+      collectSurviving(pages());
+      if (survivingItems.length > 0 && survivingItems[0]) {
+        setCurrentPageId(survivingItems[0].id);
       }
     }
 
@@ -198,8 +240,15 @@ export function usePages() {
     itemId: string,
     direction: "up" | "down" | "in" | "out",
   ) => {
-    const parentItems = findPageParent(pages(), itemId);
-    if (!parentItems) return;
+    let parentItems = findPageParent(pages(), itemId);
+
+    if (direction === "out") {
+      if (!parentItems) return;
+    } else {
+      if (!parentItems) {
+        parentItems = pages();
+      }
+    }
 
     const currentIndex = findPageIndex(parentItems, itemId);
     if (currentIndex < 0) return;
@@ -249,25 +298,7 @@ export function usePages() {
         }
       }
     } else if (direction === "out") {
-      const itemCopy = structuredClone(item);
-      removeFromTree(itemId);
-
-      const newPages = structuredClone(pages());
-      const findAndInsert = (items: Page[]): boolean => {
-        for (let i = 0; i < items.length; i++) {
-          const currentItem = items[i];
-          const parentFirst = parentItems[0];
-          if (currentItem && parentFirst && currentItem.id === parentFirst.id) {
-            items.splice(i + 1, 0, itemCopy);
-            return true;
-          }
-          if (currentItem?.children) {
-            if (findAndInsert(currentItem.children)) return true;
-          }
-        }
-        return false;
-      };
-      findAndInsert(newPages);
+      const newPages = moveItemOut(pages(), itemId);
       setPages(newPages);
     }
   };
@@ -279,15 +310,17 @@ export function usePages() {
       for (let i = 0; i < items.length; i++) {
         const it = items[i];
         if (it && oldFirst && it.id === oldFirst.id) {
-          if (it.children) {
-            it.children = newSiblings;
-          } else {
-            for (let j = 0; j < newSiblings.length; j++) {
-              const sibling = newSiblings[j];
-              if (sibling !== undefined) {
-                items[j] = sibling;
-              }
+          for (let j = 0; j < newSiblings.length; j++) {
+            const sibling = newSiblings[j];
+            if (sibling !== undefined) {
+              items[i + j] = sibling;
             }
+          }
+          if (newSiblings.length < oldSiblings.length) {
+            items.splice(
+              i + newSiblings.length,
+              oldSiblings.length - newSiblings.length,
+            );
           }
           return true;
         }

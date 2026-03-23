@@ -104,8 +104,8 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
                 ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
                 : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
             }
-            onClick={hasChildren() ? props.onToggle : props.onSelect}
             onMouseDown={(e) => {
+              e.preventDefault();
               if (e.button === 0) {
                 if (hasChildren()) {
                   props.onToggle();
