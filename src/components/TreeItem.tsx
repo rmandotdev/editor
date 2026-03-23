@@ -4,22 +4,6 @@ import { Show } from "solid-js";
 import type { Page } from "#types";
 import Button from "./ui/Button";
 
-const DragHandleIcon = (): JSX.Element => (
-  <svg
-    class="w-4 h-4 cursor-grab text-gray-400 hover:text-gray-600 shrink-0"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-label="Drag handle"
-  >
-    <circle cx="9" cy="6" r="1.5" />
-    <circle cx="15" cy="6" r="1.5" />
-    <circle cx="9" cy="12" r="1.5" />
-    <circle cx="15" cy="12" r="1.5" />
-    <circle cx="9" cy="18" r="1.5" />
-    <circle cx="15" cy="18" r="1.5" />
-  </svg>
-);
-
 const ChevronSvgIcon = (props: { isOpen: boolean }): JSX.Element => (
   <svg
     class="w-4 h-4 shrink-0 transition-transform"
@@ -91,38 +75,45 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
         </Show>
         <div
           class={`flex items-center gap-1 ${props.isDragOver && !props.isDragOverNestable ? "opacity-50" : ""}`}
-          draggable={true}
-          onDragStart={props.onDragStart}
-          onDragEnd={props.onDragEnd}
         >
-          <DragHandleIcon />
-          <Button
-            label={props.item.name}
-            variant="page"
-            class={
-              props.isSelected
-                ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
-                : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
-            }
-            onMouseDown={(e) => {
-              e.preventDefault();
-              if (e.button === 0) {
-                const hasModKey = e.ctrlKey || e.metaKey || e.shiftKey;
-                if (hasChildren() && !hasModKey) {
+          <Show when={hasChildren()}>
+            <button
+              type="button"
+              class="w-6 h-6 flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#ddd] dark:hover:bg-[#333] rounded"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.button === 0) {
                   props.onToggle();
-                } else {
+                }
+              }}
+            >
+              <ChevronSvgIcon isOpen={props.isOpen} />
+            </button>
+          </Show>
+          <div
+            class="flex-1"
+            draggable={true}
+            onDragStart={props.onDragStart}
+            onDragEnd={props.onDragEnd}
+          >
+            <Button
+              label={props.item.name}
+              variant="page"
+              class={
+                props.isSelected
+                  ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
+                  : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
+              }
+              onMouseDown={(e) => {
+                e.preventDefault();
+                if (e.button === 0) {
                   props.onSelect();
                 }
-              }
-            }}
-            onContextMenu={props.onContextMenu}
-          >
-            <Show when={hasChildren()}>
-              <div class="flex items-center gap-1">
-                <ChevronSvgIcon isOpen={props.isOpen} />
-              </div>
-            </Show>
-          </Button>
+              }}
+              onContextMenu={props.onContextMenu}
+            />
+          </div>
         </div>
       </div>
       <Show when={hasChildren()}>
