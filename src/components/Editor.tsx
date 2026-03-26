@@ -74,6 +74,14 @@ function Editor(props: EditorProps): JSX.Element {
     props.onChange(text);
   };
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    // Handle Enter key - insert line break
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      document.execCommand("insertLineBreak");
+    }
+  };
+
   createEffect(() => {
     if (!editorRef) return;
     const selection = window.getSelection();
@@ -122,6 +130,7 @@ function Editor(props: EditorProps): JSX.Element {
         contentEditable={true}
         spellcheck={props.settings.spellcheck}
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
         class="w-full absolute h-screen overflow-y-auto overflow-x-hidden
                [word-break:break-word] text-black dark:text-white caret-blue-500
                bg-transparent [scrollbar-width:thin] scroll-smooth
