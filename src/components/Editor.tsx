@@ -1,4 +1,5 @@
 import { Editor as TiptapEditor } from "@tiptap/core";
+import Highlight from "@tiptap/extension-highlight";
 import StarterKit from "@tiptap/starter-kit";
 import { type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
@@ -6,6 +7,7 @@ import type { EditorSettings } from "#types";
 interface EditorProps {
   content: string;
   onChange(content: string): void;
+  onEditorReady(editor: TiptapEditor): void;
   settings: EditorSettings;
 }
 
@@ -18,7 +20,7 @@ function Editor(props: EditorProps): JSX.Element {
 
     editor = new TiptapEditor({
       element: elementRef,
-      extensions: [StarterKit],
+      extensions: [StarterKit, Highlight],
       content: props.content,
       editorProps: {
         attributes: {
@@ -32,6 +34,8 @@ function Editor(props: EditorProps): JSX.Element {
         props.onChange(editor.getHTML());
       },
     });
+
+    props.onEditorReady(editor);
   });
 
   onCleanup(() => {

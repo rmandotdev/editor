@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@tiptap/core": "^3.21.0",
+    "@tiptap/extension-highlight": "^3.21.0",
     "@tiptap/pm": "^3.21.0",
     "@tiptap/starter-kit": "^3.21.0",
     "astro": "^6.0.8",

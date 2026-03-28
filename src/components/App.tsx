@@ -1,8 +1,8 @@
+import type { Editor as TiptapEditor } from "@tiptap/core";
 import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 import { usePages } from "#hooks/usePages";
 import { useEditorSettings } from "#hooks/useSettings";
-import { getMatches } from "#lib/get-matches";
 import Editor from "./Editor";
 import type { Direction } from "./FindReplaceModal";
 import FindReplaceModal from "./FindReplaceModal";
@@ -29,6 +29,9 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = createSignal(false);
   const [isPagesMenuOpen, setIsPagesMenuOpen] = createSignal(false);
   const [isSearchOpen, setIsSearchOpen] = createSignal(false);
+  const [editorInstance, setEditorInstance] = createSignal<TiptapEditor | null>(
+    null,
+  );
 
   const [searchTerm, setSearchTerm] = createSignal("");
   const [currentMatchIndex, setCurrentMatchIndex] = createSignal(0);
@@ -42,9 +45,81 @@ function App() {
 
   const content = () => currentPage()?.content ?? "";
 
-  const matches = createMemo(() =>
-    getMatches(content(), searchTerm(), caseSensitive()),
-  );
+  const matches = createMemo(() => {
+    const editor = editorInstance();
+    const term = searchTerm();
+    if (!editor || !term) return [];
+
+    const results: { from: number; to: number }[] = [];
+    const doc = editor.state.doc;
+    const searchText = caseSensitive() ? term : term.toLowerCase();
+
+    doc.descendants((node, pos) => {
+      if (!node.isText || !node.text) return;
+      const text = caseSensitive() ? node.text : node.text.toLowerCase();
+      let idx = text.indexOf(searchText);
+      while (idx !== -1) {
+        results.push({
+          from: pos + idx,
+          to: pos + idx + term.length,
+        });
+        idx = text.indexOf(searchText, idx + 1);
+      }
+    });
+
+    return results;
+  });
+
+  const highlightMatches = () => {
+    const editor = editorInstance();
+    if (!editor) return;
+
+    clearHighlights();
+
+    const allMatches = matches();
+    if (allMatches.length === 0) return;
+
+    const { tr } = editor.state;
+    const highlightMark = editor.schema.marks.highlight;
+    if (!highlightMark) return;
+
+    for (const match of allMatches) {
+      tr.addMark(match.from, match.to, highlightMark.create());
+    }
+
+    editor.view.dispatch(tr);
+  };
+
+  const clearHighlights = () => {
+    const editor = editorInstance();
+    if (!editor) return;
+
+    const { tr } = editor.state;
+    const highlightMark = editor.schema.marks.highlight;
+    if (!highlightMark) return;
+
+    tr.doc.descendants((node, pos) => {
+      if (node.marks.some((m) => m.type.name === "highlight")) {
+        tr.removeMark(pos, pos + node.nodeSize, highlightMark);
+      }
+    });
+    editor.view.dispatch(tr);
+  };
+
+  const selectMatch = (index: number) => {
+    const editor = editorInstance();
+    const allMatches = matches();
+    if (!editor || allMatches.length === 0) return;
+
+    const match = allMatches[index];
+    if (!match) return;
+
+    editor
+      .chain()
+      .focus()
+      .setTextSelection({ from: match.from, to: match.to })
+      .run();
+  };
 
   const handleNavigate = (direction: Direction) => {
     const matchCount = matches().length;
@@ -57,42 +132,59 @@ function App() {
       newIndex = (newIndex - 1 + matchCount) % matchCount;
     }
     setCurrentMatchIndex(newIndex);
+    selectMatch(newIndex);
+  };
+
+  const handleEditorReady = (editor: TiptapEditor) => {
+    setEditorInstance(editor);
   };
 
   const handleReplace = (replacement: string) => {
+    const editor = editorInstance();
     const matchPositions = matches();
-    if (matchPositions.length === 0 || !searchTerm()) return;
+    if (!editor || matchPositions.length === 0 || !searchTerm()) return;
 
     const idx = currentMatchIndex();
-    const pos = matchPositions[idx]?.start;
-    if (pos === undefined) return;
+    const match = matchPositions[idx];
+    if (!match) return;
 
-    const text = content();
-    const newContent =
-      text.slice(0, pos) + replacement + text.slice(pos + searchTerm().length);
-    updatePageContent(newContent);
+    editor
+      .chain()
+      .focus()
+      .setTextSelection({ from: match.from, to: match.to })
+      .insertContent(replacement)
+      .run();
 
-    const newMatches = getMatches(newContent, searchTerm(), caseSensitive());
-    if (newMatches.length > 0) {
-      setCurrentMatchIndex(Math.min(idx, newMatches.length - 1));
-    }
+    setCurrentMatchIndex(Math.min(idx, matchPositions.length - 2));
+    highlightMatches();
   };
 
   const handleReplaceAll = (replacement: string) => {
-    if (!searchTerm()) return;
-    const text = content();
-    const flags = caseSensitive() ? "g" : "gi";
-    const newContent = text.replace(
-      new RegExp(RegExp.escape(searchTerm()), flags),
-      replacement,
-    );
-    updatePageContent(newContent);
+    const editor = editorInstance();
+    if (!editor || !searchTerm()) return;
+
+    const allMatches = matches();
+    if (allMatches.length === 0) return;
+
+    const sortedMatches = [...allMatches].sort((a, b) => b.from - a.from);
+
+    for (const match of sortedMatches) {
+      editor
+        .chain()
+        .focus()
+        .setTextSelection({ from: match.from, to: match.to })
+        .insertContent(replacement)
+        .run();
+    }
+
+    clearHighlights();
     setCurrentMatchIndex(0);
   };
 
   const handleSearchTermChange = (term: string) => {
     setSearchTerm(term);
     setCurrentMatchIndex(0);
+    highlightMatches();
   };
 
   const handleOpenSearch = () => {
@@ -102,6 +194,7 @@ function App() {
   };
 
   const handleCloseSearch = () => {
+    clearHighlights();
     setIsSearchOpen(false);
     setSearchTerm("");
     setCurrentMatchIndex(0);
@@ -177,6 +270,7 @@ function App() {
       <Editor
         content={content()}
         settings={settings()}
+        onEditorReady={handleEditorReady}
         onChange={(newContent) => {
           updatePageContent(newContent);
           if (newContent) {
