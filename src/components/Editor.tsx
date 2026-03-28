@@ -1,18 +1,6 @@
-import { createEffect, createSignal, type JSX, onMount } from "solid-js";
-import {
-  createModel,
-  deleteBackward,
-  getCursor,
-  getCursorOffset,
-  getText,
-  insertAtCursor,
-  moveCursor,
-  redo,
-  setCursor,
-  setText,
-  undo,
-} from "#lib/editor-model";
-import { escapeHtml } from "#lib/escape-html";
+import { Editor } from "@tiptap/core";
+import StarterKit from "@tiptap/starter-kit";
+import { type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
@@ -25,288 +13,38 @@ interface EditorProps {
   isSearchOpen?: boolean;
 }
 
-function Editor(props: EditorProps): JSX.Element {
-  let textareaRef: HTMLTextAreaElement | undefined;
-  let displayRef: HTMLDivElement | undefined;
-  let cursorRef: HTMLDivElement | undefined;
-  let containerRef: HTMLDivElement | undefined;
-
-  const [model] = createSignal(createModel(""));
-  const [displayText, setDisplayText] = createSignal("");
-  const [displayCursor, setDisplayCursor] = createSignal({
-    line: 1,
-    column: 1,
-    offset: 0,
-  });
-
-  const renderContent = (): string => {
-    const text = displayText();
-    if (!props.searchTerm || !text) return escapeHtml(text);
-
-    const escaped = escapeHtml(text);
-    const searchEscaped = RegExp.escape(escapeHtml(props.searchTerm));
-    const flags = props.caseSensitive ? "" : "i";
-    const regex = new RegExp(`(${searchEscaped})`, `g${flags}`);
-
-    return escaped.replace(
-      regex,
-      '<mark class="bg-yellow-300 dark:bg-yellow-600 rounded px-0.5">$1</mark>',
-    );
-  };
-
-  const getLineHeight = (): number => {
-    return props.settings.fontSize * 1.5;
-  };
-
-  const getCharWidth = (): number => {
-    return props.settings.fontSize * 0.55;
-  };
-
-  const getEditorOffset = (): { top: number; left: number } => {
-    return { top: 0, left: 0 };
-  };
-
-  const updateCursorPosition = () => {
-    if (!cursorRef || !textareaRef) return;
-
-    const cursor = displayCursor();
-    const lineHeight = getLineHeight();
-    const charWidth = getCharWidth();
-    const offset = getEditorOffset();
-
-    const top = offset.top + (cursor.line - 1) * lineHeight;
-    const left = offset.left + (cursor.column - 1) * charWidth;
-
-    cursorRef.style.top = `${top}px`;
-    cursorRef.style.left = `${left}px`;
-  };
-
-  const syncDisplay = () => {
-    const modelInstance = model();
-    setDisplayText(getText(modelInstance));
-    setDisplayCursor({ ...getCursor(modelInstance) });
-    updateCursorPosition();
-  };
-
-  const handleInput = () => {
-    if (!textareaRef) return;
-    const newText = textareaRef.value;
-    const currentOffset = textareaRef.selectionStart;
-    const modelInstance = model();
-
-    setText(modelInstance, newText);
-    setCursor(modelInstance, currentOffset);
-
-    props.onChange(newText);
-    syncDisplay();
-  };
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const modelInstance = model();
-
-    if (e.ctrlKey && e.key === "a") {
-      return;
-    }
-
-    if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
-      e.preventDefault();
-      undo(modelInstance);
-      if (textareaRef) {
-        textareaRef.value = getText(modelInstance);
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      props.onChange(getText(modelInstance));
-      syncDisplay();
-      return;
-    }
-
-    if (e.ctrlKey && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
-      e.preventDefault();
-      redo(modelInstance);
-      if (textareaRef) {
-        textareaRef.value = getText(modelInstance);
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      props.onChange(getText(modelInstance));
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "Enter") {
-      e.preventDefault();
-      insertAtCursor(modelInstance, "\n");
-      if (textareaRef) {
-        textareaRef.value = getText(modelInstance);
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      props.onChange(getText(modelInstance));
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "Backspace") {
-      e.preventDefault();
-      deleteBackward(modelInstance);
-      if (textareaRef) {
-        textareaRef.value = getText(modelInstance);
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      props.onChange(getText(modelInstance));
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      moveCursor(modelInstance, "left");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      moveCursor(modelInstance, "right");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      moveCursor(modelInstance, "up");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      moveCursor(modelInstance, "down");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "Home") {
-      e.preventDefault();
-      moveCursor(modelInstance, "home");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-
-    if (e.key === "End") {
-      e.preventDefault();
-      moveCursor(modelInstance, "end");
-      if (textareaRef) {
-        const offset = getCursorOffset(modelInstance);
-        textareaRef.setSelectionRange(offset, offset);
-      }
-      syncDisplay();
-      return;
-    }
-  };
-
-  const handleScroll = () => {
-    if (!textareaRef || !displayRef || !cursorRef) return;
-    displayRef.scrollTop = textareaRef.scrollTop;
-    displayRef.scrollLeft = textareaRef.scrollLeft;
-    updateCursorPosition();
-  };
+function TiptapEditor(props: EditorProps): JSX.Element {
+  let elementRef: HTMLDivElement | undefined;
+  let editor: Editor | undefined;
 
   onMount(() => {
-    if (textareaRef) {
-      textareaRef.value = props.content || "";
-      setText(model(), props.content || "");
-      setCursor(model(), props.content?.length || 0);
-      syncDisplay();
+    if (!elementRef) return;
 
-      setTimeout(() => {
-        updateCursorPosition();
-      }, 100);
-    }
+    editor = new Editor({
+      element: elementRef,
+      extensions: [StarterKit],
+      content: props.content,
+      editorProps: {
+        attributes: {
+          class:
+            "w-full h-screen outline-none overflow-y-auto text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
+          style: `font-size: ${props.settings.fontSize}px; font-family: ${props.settings.fontFamily}; text-align: ${props.settings.textAlign}; padding: calc(min(1em,20vh)+72px) max(-372px+50vw,1em) min(5em,15vh); word-break: break-word; white-space: pre-wrap; line-height: 1.5;`,
+          spellcheck: props.settings.spellcheck.toString(),
+        },
+      },
+      onUpdate: ({ editor }) => {
+        props.onChange(editor.getText());
+      },
+    });
   });
 
-  createEffect(() => {
-    if (!textareaRef) return;
-    const newContent = props.content;
-    const currentContent = textareaRef.value;
-
-    if (newContent !== currentContent) {
-      textareaRef.value = newContent;
-      setText(model(), newContent);
-      const offset = Math.min(textareaRef.selectionStart, newContent.length);
-      setCursor(model(), offset);
-      syncDisplay();
-    }
+  onCleanup(() => {
+    editor?.destroy();
   });
 
   return (
-    <main
-      ref={containerRef}
-      class="w-full overflow-hidden"
-      style={{ "margin-top": "72px" }}
-    >
-      <div
-        ref={displayRef}
-        class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none"
-        style={{
-          "font-size": `${props.settings.fontSize}px`,
-          "font-family": props.settings.fontFamily,
-          "text-align": props.settings.textAlign,
-          "white-space": "pre-wrap",
-          "word-break": "break-word",
-          padding:
-            "calc(min(1em,20vh)+72px) max(-372px+50vw,1em) min(5em,15vh)",
-          "line-height": "1.5",
-        }}
-        innerHTML={`${renderContent()}<br/>`}
-      />
-      <div
-        ref={cursorRef}
-        class="absolute w-0.5 bg-blue-500 pointer-events-none"
-        style={{
-          height: `${props.settings.fontSize * 1.5}px`,
-          "z-index": 10,
-        }}
-      />
-      <textarea
-        ref={textareaRef}
-        class="absolute inset-0 w-full opacity-0 resize-none outline-none"
-        style={{
-          "font-size": `${props.settings.fontSize}px`,
-          "font-family": props.settings.fontFamily,
-          "text-align": props.settings.textAlign,
-          "line-height": "1.5",
-          padding:
-            "calc(min(1em,20vh)+72px) max(-372px+50vw,1em) min(5em,15vh)",
-          "caret-color": "transparent",
-        }}
-        spellcheck={props.settings.spellcheck}
-        onInput={handleInput}
-        onKeyDown={handleKeyDown}
-        onScroll={handleScroll}
-      />
+    <main>
+      <div ref={elementRef} />
       <style>{`
         mark {
           background-color: #fde047;
@@ -320,9 +58,19 @@ function Editor(props: EditorProps): JSX.Element {
             background-color: #ca8a04;
           }
         }
+        .ProseMirror {
+          min-height: 100%;
+        }
+        .ProseMirror p.is-editor-empty:first-child::before {
+          content: attr(data-placeholder);
+          float: left;
+          color: #999;
+          pointer-events: none;
+          height: 0;
+        }
       `}</style>
     </main>
   );
 }
 
-export default Editor;
+export default TiptapEditor;

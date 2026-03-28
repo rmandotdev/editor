@@ -19,6 +19,9 @@
     "dev": "astro dev"
   },
   "dependencies": {
+    "@tiptap/core": "^3.21.0",
+    "@tiptap/pm": "^3.21.0",
+    "@tiptap/starter-kit": "^3.21.0",
     "astro": "^6.0.8",
     "solid-js": "^1.9.11",
     "tailwindcss": "^4.2.2"
