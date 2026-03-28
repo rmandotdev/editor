@@ -62,12 +62,10 @@ function Editor(props: EditorProps): JSX.Element {
     return props.settings.fontSize * 0.55;
   };
 
-  const measurePadding = (): { top: number; left: number } => {
+  const getEditorOffset = (): { top: number; left: number } => {
     if (!containerRef) return { top: 0, left: 0 };
-    const styles = getComputedStyle(containerRef);
-    const paddingTop = parseFloat(styles.paddingTop) || 0;
-    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
-    return { top: paddingTop, left: paddingLeft };
+    const containerRect = containerRef.getBoundingClientRect();
+    return { top: containerRect.top, left: containerRect.left };
   };
 
   const updateCursorPosition = () => {
@@ -76,13 +74,10 @@ function Editor(props: EditorProps): JSX.Element {
     const cursor = displayCursor();
     const lineHeight = getLineHeight();
     const charWidth = getCharWidth();
-    const padding = measurePadding();
+    const offset = getEditorOffset();
 
-    const scrollTop = textareaRef.scrollTop;
-    const scrollLeft = textareaRef.scrollLeft;
-
-    const top = padding.top + (cursor.line - 1) * lineHeight - scrollTop;
-    const left = padding.left + (cursor.column - 1) * charWidth - scrollLeft;
+    const top = offset.top + (cursor.line - 1) * lineHeight;
+    const left = offset.left + (cursor.column - 1) * charWidth;
 
     cursorRef.style.top = `${top}px`;
     cursorRef.style.left = `${left}px`;
