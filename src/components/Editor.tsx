@@ -29,7 +29,7 @@ function Editor(props: EditorProps): JSX.Element {
         },
       },
       onUpdate({ editor }) {
-        props.onChange(editor.getText());
+        props.onChange(editor.getHTML());
       },
     });
   });
