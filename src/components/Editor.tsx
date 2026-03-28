@@ -29,13 +29,18 @@ function Editor(props: EditorProps): JSX.Element {
   let textareaRef: HTMLTextAreaElement | undefined;
   let displayRef: HTMLDivElement | undefined;
   let cursorRef: HTMLDivElement | undefined;
+  let containerRef: HTMLDivElement | undefined;
 
   const [model] = createSignal(createModel(""));
-  const [paddingTop, setPaddingTop] = createSignal(0);
-  const [paddingLeft, setPaddingLeft] = createSignal(0);
+  const [displayText, setDisplayText] = createSignal("");
+  const [displayCursor, setDisplayCursor] = createSignal({
+    line: 1,
+    column: 1,
+    offset: 0,
+  });
 
   const renderContent = (): string => {
-    const text = getText(model());
+    const text = displayText();
     if (!props.searchTerm || !text) return escapeHtml(text);
 
     const escaped = escapeHtml(text);
@@ -54,28 +59,40 @@ function Editor(props: EditorProps): JSX.Element {
   };
 
   const getCharWidth = (): number => {
-    return props.settings.fontSize * 0.6;
+    return props.settings.fontSize * 0.55;
+  };
+
+  const measurePadding = (): { top: number; left: number } => {
+    if (!containerRef) return { top: 0, left: 0 };
+    const styles = getComputedStyle(containerRef);
+    const paddingTop = parseFloat(styles.paddingTop) || 0;
+    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+    return { top: paddingTop, left: paddingLeft };
   };
 
   const updateCursorPosition = () => {
     if (!cursorRef || !textareaRef) return;
 
-    const cursor = getCursor(model());
+    const cursor = displayCursor();
     const lineHeight = getLineHeight();
     const charWidth = getCharWidth();
+    const padding = measurePadding();
 
-    const top = paddingTop() + (cursor.line - 1) * lineHeight;
-    const left = paddingLeft() + (cursor.column - 1) * charWidth;
+    const scrollTop = textareaRef.scrollTop;
+    const scrollLeft = textareaRef.scrollLeft;
+
+    const top = padding.top + (cursor.line - 1) * lineHeight - scrollTop;
+    const left = padding.left + (cursor.column - 1) * charWidth - scrollLeft;
 
     cursorRef.style.top = `${top}px`;
     cursorRef.style.left = `${left}px`;
   };
 
-  const measurePadding = () => {
-    if (!textareaRef) return;
-    const computed = getComputedStyle(textareaRef);
-    setPaddingTop(parseFloat(computed.paddingTop) || 0);
-    setPaddingLeft(parseFloat(computed.paddingLeft) || 0);
+  const syncDisplay = () => {
+    const modelInstance = model();
+    setDisplayText(getText(modelInstance));
+    setDisplayCursor({ ...getCursor(modelInstance) });
+    updateCursorPosition();
   };
 
   const handleInput = () => {
@@ -88,18 +105,13 @@ function Editor(props: EditorProps): JSX.Element {
     setCursor(modelInstance, currentOffset);
 
     props.onChange(newText);
-    updateCursorPosition();
+    syncDisplay();
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     const modelInstance = model();
 
     if (e.ctrlKey && e.key === "a") {
-      setTimeout(() => {
-        if (!textareaRef) return;
-        const start = textareaRef.selectionStart;
-        setCursor(modelInstance, start);
-      }, 0);
       return;
     }
 
@@ -112,7 +124,7 @@ function Editor(props: EditorProps): JSX.Element {
         textareaRef.setSelectionRange(offset, offset);
       }
       props.onChange(getText(modelInstance));
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -125,7 +137,7 @@ function Editor(props: EditorProps): JSX.Element {
         textareaRef.setSelectionRange(offset, offset);
       }
       props.onChange(getText(modelInstance));
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -138,7 +150,7 @@ function Editor(props: EditorProps): JSX.Element {
         textareaRef.setSelectionRange(offset, offset);
       }
       props.onChange(getText(modelInstance));
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -151,7 +163,7 @@ function Editor(props: EditorProps): JSX.Element {
         textareaRef.setSelectionRange(offset, offset);
       }
       props.onChange(getText(modelInstance));
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -162,7 +174,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -173,7 +185,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -184,7 +196,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -195,7 +207,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -206,7 +218,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
 
@@ -217,7 +229,7 @@ function Editor(props: EditorProps): JSX.Element {
         const offset = getCursorOffset(modelInstance);
         textareaRef.setSelectionRange(offset, offset);
       }
-      updateCursorPosition();
+      syncDisplay();
       return;
     }
   };
@@ -226,7 +238,7 @@ function Editor(props: EditorProps): JSX.Element {
     if (!textareaRef || !displayRef || !cursorRef) return;
     displayRef.scrollTop = textareaRef.scrollTop;
     displayRef.scrollLeft = textareaRef.scrollLeft;
-    cursorRef.style.top = `${paddingTop() + textareaRef.scrollTop}px`;
+    updateCursorPosition();
   };
 
   onMount(() => {
@@ -234,8 +246,11 @@ function Editor(props: EditorProps): JSX.Element {
       textareaRef.value = props.content || "";
       setText(model(), props.content || "");
       setCursor(model(), props.content?.length || 0);
-      measurePadding();
-      updateCursorPosition();
+      syncDisplay();
+
+      setTimeout(() => {
+        updateCursorPosition();
+      }, 100);
     }
   });
 
@@ -249,12 +264,12 @@ function Editor(props: EditorProps): JSX.Element {
       setText(model(), newContent);
       const offset = Math.min(textareaRef.selectionStart, newContent.length);
       setCursor(model(), offset);
-      updateCursorPosition();
+      syncDisplay();
     }
   });
 
   return (
-    <main class="relative w-full h-screen overflow-hidden">
+    <main ref={containerRef} class="relative w-full h-screen overflow-hidden">
       <div
         ref={displayRef}
         class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none"
