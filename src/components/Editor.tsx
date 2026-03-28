@@ -264,10 +264,10 @@ function Editor(props: EditorProps): JSX.Element {
   });
 
   return (
-    <main ref={containerRef} class="relative w-full h-screen overflow-hidden">
+    <main ref={containerRef} class="absolute inset-0 overflow-hidden">
       <div
         ref={displayRef}
-        class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none"
+        class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none h-screen"
         style={{
           "font-size": `${props.settings.fontSize}px`,
           "font-family": props.settings.fontFamily,
@@ -290,7 +290,7 @@ function Editor(props: EditorProps): JSX.Element {
       />
       <textarea
         ref={textareaRef}
-        class="absolute inset-0 w-full h-full opacity-0 resize-none outline-none"
+        class="absolute inset-0 w-full h-screen opacity-0 resize-none outline-none"
         style={{
           "font-size": `${props.settings.fontSize}px`,
           "font-family": props.settings.fontFamily,
