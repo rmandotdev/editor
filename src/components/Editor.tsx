@@ -20,7 +20,7 @@ function Editor(props: EditorProps): JSX.Element {
 
     editor = new TiptapEditor({
       element: elementRef,
-      extensions: [StarterKit, Highlight],
+      extensions: [StarterKit.configure({ heading: false }), Highlight],
       content: props.content,
       editorProps: {
         attributes: {
