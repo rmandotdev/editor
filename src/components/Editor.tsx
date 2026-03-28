@@ -46,11 +46,6 @@ function Editor(props: EditorProps): JSX.Element {
                bg-transparent [scrollbar-width:thin] scroll-smooth
                p-[calc(min(1em,20vh)+72px)_max(-372px+50vw,1em)_min(5em,15vh)]
                scroll-pb-0 left-0 top-0 outline-none whitespace-pre-wrap"
-        style={{
-          "font-size": `${props.settings.fontSize}px`,
-          "font-family": props.settings.fontFamily,
-          "text-align": props.settings.textAlign,
-        }}
         data-placeholder="Start writing..."
         ref={elementRef}
       />
@@ -68,6 +63,9 @@ function Editor(props: EditorProps): JSX.Element {
           }
         }
         .ProseMirror {
+          font-size: ${props.settings.fontSize}px;
+          font-family: ${props.settings.fontFamily};
+          text-align: ${props.settings.textAlign};
           min-height: 100%;
         }
         .ProseMirror p.is-editor-empty:first-child::before {
