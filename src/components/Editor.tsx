@@ -1,26 +1,22 @@
-import { Editor } from "@tiptap/core";
+import { Editor as TiptapEditor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
   content: string;
-  onChange: (content: string) => void;
+  onChange(content: string): void;
   settings: EditorSettings;
-  searchTerm?: string;
-  caseSensitive?: boolean;
-  currentMatchIndex?: number;
-  isSearchOpen?: boolean;
 }
 
-function TiptapEditor(props: EditorProps): JSX.Element {
+function Editor(props: EditorProps): JSX.Element {
   let elementRef: HTMLDivElement | undefined;
-  let editor: Editor | undefined;
+  let editor: TiptapEditor | undefined;
 
   onMount(() => {
     if (!elementRef) return;
 
-    editor = new Editor({
+    editor = new TiptapEditor({
       element: elementRef,
       extensions: [StarterKit],
       content: props.content,
@@ -73,4 +69,4 @@ function TiptapEditor(props: EditorProps): JSX.Element {
   );
 }
 
-export default TiptapEditor;
+export default Editor;

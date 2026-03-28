@@ -177,10 +177,6 @@ function App() {
       <Editor
         content={content()}
         settings={settings()}
-        searchTerm={searchTerm()}
-        caseSensitive={caseSensitive()}
-        currentMatchIndex={matches().length > 0 ? currentMatchIndex() : -1}
-        isSearchOpen={isSearchOpen()}
         onChange={(newContent) => {
           updatePageContent(newContent);
           if (newContent) {
