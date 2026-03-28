@@ -63,9 +63,7 @@ function Editor(props: EditorProps): JSX.Element {
   };
 
   const getEditorOffset = (): { top: number; left: number } => {
-    if (!containerRef) return { top: 0, left: 0 };
-    const containerRect = containerRef.getBoundingClientRect();
-    return { top: containerRect.top, left: containerRect.left };
+    return { top: 0, left: 0 };
   };
 
   const updateCursorPosition = () => {
@@ -264,10 +262,14 @@ function Editor(props: EditorProps): JSX.Element {
   });
 
   return (
-    <main ref={containerRef} class="absolute inset-0 overflow-hidden">
+    <main
+      ref={containerRef}
+      class="w-full overflow-hidden"
+      style={{ "margin-top": "72px" }}
+    >
       <div
         ref={displayRef}
-        class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none h-screen"
+        class="absolute inset-0 overflow-y-auto overflow-x-hidden pointer-events-none"
         style={{
           "font-size": `${props.settings.fontSize}px`,
           "font-family": props.settings.fontFamily,
@@ -290,7 +292,7 @@ function Editor(props: EditorProps): JSX.Element {
       />
       <textarea
         ref={textareaRef}
-        class="absolute inset-0 w-full h-screen opacity-0 resize-none outline-none"
+        class="absolute inset-0 w-full opacity-0 resize-none outline-none"
         style={{
           "font-size": `${props.settings.fontSize}px`,
           "font-family": props.settings.fontFamily,
