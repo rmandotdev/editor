@@ -9,6 +9,7 @@ import {
   moveCursor,
   redo,
   setCursor,
+  setText,
   undo,
 } from "#lib/editor-model";
 import { escapeHtml } from "#lib/escape-html";
@@ -30,7 +31,8 @@ function Editor(props: EditorProps): JSX.Element {
   let cursorRef: HTMLDivElement | undefined;
 
   const [model] = createSignal(createModel(""));
-  const [initialized, setInitialized] = createSignal(false);
+  const [paddingTop, setPaddingTop] = createSignal(0);
+  const [paddingLeft, setPaddingLeft] = createSignal(0);
 
   const renderContent = (): string => {
     const text = getText(model());
@@ -48,8 +50,7 @@ function Editor(props: EditorProps): JSX.Element {
   };
 
   const getLineHeight = (): number => {
-    const lineHeight = props.settings.fontSize * 1.5;
-    return lineHeight;
+    return props.settings.fontSize * 1.5;
   };
 
   const getCharWidth = (): number => {
@@ -63,33 +64,44 @@ function Editor(props: EditorProps): JSX.Element {
     const lineHeight = getLineHeight();
     const charWidth = getCharWidth();
 
-    const top = (cursor.line - 1) * lineHeight;
-    const left = (cursor.column - 1) * charWidth;
+    const top = paddingTop() + (cursor.line - 1) * lineHeight;
+    const left = paddingLeft() + (cursor.column - 1) * charWidth;
 
     cursorRef.style.top = `${top}px`;
     cursorRef.style.left = `${left}px`;
   };
 
+  const measurePadding = () => {
+    if (!textareaRef) return;
+    const computed = getComputedStyle(textareaRef);
+    setPaddingTop(parseFloat(computed.paddingTop) || 0);
+    setPaddingLeft(parseFloat(computed.paddingLeft) || 0);
+  };
+
   const handleInput = () => {
     if (!textareaRef) return;
-    const text = textareaRef.value;
+    const newText = textareaRef.value;
     const currentOffset = textareaRef.selectionStart;
     const modelInstance = model();
 
-    const modelText = getText(modelInstance);
-    if (text !== modelText) {
-      setCursor(modelInstance, currentOffset);
-      const inserted = text.slice(currentOffset - 1, currentOffset);
-      if (inserted) {
-        insertAtCursor(modelInstance, inserted);
-      }
-      props.onChange(getText(modelInstance));
-    }
+    setText(modelInstance, newText);
+    setCursor(modelInstance, currentOffset);
+
+    props.onChange(newText);
     updateCursorPosition();
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
     const modelInstance = model();
+
+    if (e.ctrlKey && e.key === "a") {
+      setTimeout(() => {
+        if (!textareaRef) return;
+        const start = textareaRef.selectionStart;
+        setCursor(modelInstance, start);
+      }, 0);
+      return;
+    }
 
     if (e.ctrlKey && e.key === "z" && !e.shiftKey) {
       e.preventDefault();
@@ -211,34 +223,32 @@ function Editor(props: EditorProps): JSX.Element {
   };
 
   const handleScroll = () => {
-    if (!textareaRef || !displayRef) return;
+    if (!textareaRef || !displayRef || !cursorRef) return;
     displayRef.scrollTop = textareaRef.scrollTop;
     displayRef.scrollLeft = textareaRef.scrollLeft;
+    cursorRef.style.top = `${paddingTop() + textareaRef.scrollTop}px`;
   };
 
   onMount(() => {
-    if (props.content) {
-      const modelInstance = model();
-      setCursor(modelInstance, 0);
-      modelInstance.state.text = props.content;
-      if (textareaRef) {
-        textareaRef.value = props.content;
-      }
-      setInitialized(true);
-    } else {
-      setInitialized(true);
+    if (textareaRef) {
+      textareaRef.value = props.content || "";
+      setText(model(), props.content || "");
+      setCursor(model(), props.content?.length || 0);
+      measurePadding();
+      updateCursorPosition();
     }
   });
 
   createEffect(() => {
-    if (!initialized()) return;
+    if (!textareaRef) return;
     const newContent = props.content;
-    const currentContent = getText(model());
-    if (newContent !== currentContent && textareaRef) {
-      const cursorOffset = textareaRef.selectionStart;
-      setCursor(model(), cursorOffset);
-      model().state.text = newContent;
+    const currentContent = textareaRef.value;
+
+    if (newContent !== currentContent) {
       textareaRef.value = newContent;
+      setText(model(), newContent);
+      const offset = Math.min(textareaRef.selectionStart, newContent.length);
+      setCursor(model(), offset);
       updateCursorPosition();
     }
   });
@@ -284,7 +294,6 @@ function Editor(props: EditorProps): JSX.Element {
         onInput={handleInput}
         onKeyDown={handleKeyDown}
         onScroll={handleScroll}
-        value={props.content}
       />
       <style>{`
         mark {
