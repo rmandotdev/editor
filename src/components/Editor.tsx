@@ -28,7 +28,7 @@ function Editor(props: EditorProps): JSX.Element {
           spellcheck: props.settings.spellcheck.toString(),
         },
       },
-      onUpdate: ({ editor }) => {
+      onUpdate({ editor }) {
         props.onChange(editor.getText());
       },
     });
@@ -40,7 +40,20 @@ function Editor(props: EditorProps): JSX.Element {
 
   return (
     <main>
-      <div ref={elementRef} />
+      <div
+        class="w-full absolute h-screen overflow-y-auto overflow-x-hidden
+               [word-break:break-word] text-black dark:text-white caret-blue-500
+               bg-transparent [scrollbar-width:thin] scroll-smooth
+               p-[calc(min(1em,20vh)+72px)_max(-372px+50vw,1em)_min(5em,15vh)]
+               scroll-pb-0 left-0 top-0 outline-none whitespace-pre-wrap"
+        style={{
+          "font-size": `${props.settings.fontSize}px`,
+          "font-family": props.settings.fontFamily,
+          "text-align": props.settings.textAlign,
+        }}
+        data-placeholder="Start writing..."
+        ref={elementRef}
+      />
       <style>{`
         mark {
           background-color: #fde047;
