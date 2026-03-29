@@ -28,7 +28,7 @@ function Editor(props: EditorProps): JSX.Element {
       editorProps: {
         attributes: {
           class:
-            "w-full h-screen outline-none overflow-y-auto text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
+            "w-full h-screen outline-none text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
           spellcheck: props.settings.spellcheck.toString(),
         },
       },
