@@ -1,7 +1,7 @@
 import { Editor as TiptapEditor } from "@tiptap/core";
 import Highlight from "@tiptap/extension-highlight";
 import StarterKit from "@tiptap/starter-kit";
-import { type JSX, onCleanup, onMount } from "solid-js";
+import { createEffect, type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
@@ -29,7 +29,6 @@ function Editor(props: EditorProps): JSX.Element {
         attributes: {
           class:
             "w-full h-screen outline-none overflow-y-auto text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
-          style: `font-size: ${props.settings.fontSize}px; font-family: ${props.settings.fontFamily}; text-align: ${props.settings.textAlign}; padding: calc(min(1em,20vh)+72px) max(-372px+50vw,1em) min(5em,15vh); word-break: break-word; white-space: pre-wrap; line-height: 1.5;`,
           spellcheck: props.settings.spellcheck.toString(),
         },
       },
@@ -39,6 +38,25 @@ function Editor(props: EditorProps): JSX.Element {
     });
 
     props.onEditorReady(editor);
+  });
+
+  createEffect(() => {
+    if (!editor || !elementRef) return;
+    const { fontSize, fontFamily, textAlign, spellcheck } = props.settings;
+
+    const proseMirror = elementRef.querySelector(".ProseMirror") as HTMLElement;
+    if (proseMirror) {
+      proseMirror.style.fontSize = `${fontSize}px`;
+      proseMirror.style.fontFamily = fontFamily;
+      proseMirror.style.textAlign = textAlign;
+    }
+
+    const editableElement = elementRef.querySelector(
+      '[contenteditable="true"]',
+    ) as HTMLElement;
+    if (editableElement) {
+      editableElement.spellcheck = spellcheck;
+    }
   });
 
   onCleanup(() => {
@@ -70,9 +88,6 @@ function Editor(props: EditorProps): JSX.Element {
           }
         }
         .ProseMirror {
-          font-size: ${props.settings.fontSize}px;
-          font-family: ${props.settings.fontFamily};
-          text-align: ${props.settings.textAlign};
           min-height: 100%;
         }
         .ProseMirror p.is-editor-empty:first-child::before {
