@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@astrojs/solid-js": "^6.0.1",
-    "@biomejs/biome": "2.4.8",
+    "@biomejs/biome": "2.4.10",
     "@gameroman/config": "^0.0.4",
     "@tailwindcss/vite": "^4.2.2",
     "typescript": "^5.9.3",
