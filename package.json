@@ -28,7 +28,7 @@
     "@biomejs/biome": "2.4.8",
     "@gameroman/config": "^0.0.4",
     "@tailwindcss/vite": "^4.2.2",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.0",
     "wrangler": "^4.76.0"
   },
   "overrides": {
