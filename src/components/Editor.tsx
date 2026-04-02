@@ -1,144 +1,80 @@
-import { createEffect, type JSX } from "solid-js";
-import { escapeHtml } from "#lib/escape-html";
-import { getMatches } from "#lib/get-matches";
+import { Editor as TiptapEditor } from "@tiptap/core";
+import Highlight from "@tiptap/extension-highlight";
+import StarterKit from "@tiptap/starter-kit";
+import { createEffect, type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
   content: string;
-  onChange: (content: string) => void;
+  onChange(content: string): void;
+  onEditorReady(editor: TiptapEditor): void;
   settings: EditorSettings;
-  searchTerm?: string;
-  caseSensitive?: boolean;
-  currentMatchIndex?: number;
-  isSearchOpen?: boolean;
-}
-
-function setCaretPosition(element: HTMLDivElement, position: number) {
-  const range = document.createRange();
-  const selection = window.getSelection();
-
-  let charCount = 0;
-  let found = false;
-
-  function traverseNodes(node: Node) {
-    if (found) return;
-
-    if (node.nodeType === Node.TEXT_NODE) {
-      const nextCount = charCount + (node.textContent?.length ?? 0);
-      if (position <= nextCount) {
-        range.setStart(node, position - charCount);
-        range.setEnd(node, position - charCount);
-        found = true;
-      }
-      charCount = nextCount;
-    } else {
-      for (const child of Array.from(node.childNodes)) {
-        traverseNodes(child);
-        if (found) return;
-      }
-    }
-  }
-
-  traverseNodes(element);
-
-  if (!found) {
-    range.selectNodeContents(element);
-    range.collapse(false);
-  }
-
-  selection?.removeAllRanges();
-  selection?.addRange(range);
 }
 
 function Editor(props: EditorProps): JSX.Element {
-  let editorRef: HTMLDivElement | undefined;
+  let elementRef: HTMLDivElement | undefined;
+  let editor: TiptapEditor | undefined;
 
-  const renderContent = (): string => {
-    const text = props.content;
-    if (!props.searchTerm || !text) return escapeHtml(text);
+  onMount(() => {
+    if (!elementRef) return;
 
-    const escaped = escapeHtml(text);
-    const searchEscaped = RegExp.escape(escapeHtml(props.searchTerm));
-    const flags = props.caseSensitive ? "" : "i";
-    const regex = new RegExp(`(${searchEscaped})`, `g${flags}`);
+    editor = new TiptapEditor({
+      element: elementRef,
+      extensions: [
+        StarterKit.configure({ heading: false, codeBlock: false, link: false }),
+        Highlight,
+      ],
+      content: props.content,
+      editorProps: {
+        attributes: {
+          class:
+            "w-full h-screen outline-none text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
+          spellcheck: props.settings.spellcheck.toString(),
+        },
+      },
+      onUpdate({ editor }) {
+        props.onChange(editor.getHTML());
+      },
+    });
 
-    return escaped.replace(
-      regex,
-      '<mark class="bg-yellow-300 dark:bg-yellow-600 rounded px-0.5">$1</mark>',
-    );
-  };
-
-  const handleInput = () => {
-    if (!editorRef) return;
-    const text = editorRef.innerText;
-    props.onChange(text);
-  };
-
-  createEffect(() => {
-    if (!editorRef) return;
-    const selection = window.getSelection();
-    let savedOffset = 0;
-    let hadSelection = false;
-
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(editorRef);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-      savedOffset = preCaretRange.toString().length;
-      hadSelection = true;
-    }
-
-    const html = renderContent();
-    if (html !== editorRef.innerHTML) {
-      editorRef.innerHTML = html;
-    }
-
-    if (document.activeElement === editorRef && hadSelection) {
-      setCaretPosition(editorRef, savedOffset);
-    }
+    props.onEditorReady(editor);
   });
 
   createEffect(() => {
-    if (editorRef && props.searchTerm) {
-      const matches = getMatches(
-        props.content,
-        props.searchTerm,
-        props.caseSensitive,
-      );
-      if (matches.length > 0 && props.currentMatchIndex !== undefined) {
-        const match = matches[props.currentMatchIndex];
-        if (match && document.activeElement === editorRef) {
-          setCaretPosition(editorRef, match.start);
-        }
-      }
+    if (!editor || !elementRef) return;
+    const { fontSize, fontFamily, textAlign, spellcheck } = props.settings;
+
+    const proseMirror = elementRef.querySelector(".ProseMirror") as HTMLElement;
+    if (proseMirror) {
+      proseMirror.style.fontSize = `${fontSize}px`;
+      proseMirror.style.fontFamily = fontFamily;
+      proseMirror.style.textAlign = textAlign;
     }
+
+    const editableElement = elementRef.querySelector(
+      '[contenteditable="true"]',
+    ) as HTMLElement;
+    if (editableElement) {
+      editableElement.spellcheck = spellcheck;
+    }
+  });
+
+  onCleanup(() => {
+    editor?.destroy();
   });
 
   return (
     <main>
       <div
-        ref={editorRef}
-        contentEditable={true}
-        spellcheck={props.settings.spellcheck}
-        onInput={handleInput}
         class="w-full absolute h-screen overflow-y-auto overflow-x-hidden
                [word-break:break-word] text-black dark:text-white caret-blue-500
                bg-transparent [scrollbar-width:thin] scroll-smooth
                p-[calc(min(1em,20vh)+72px)_max(-372px+50vw,1em)_min(5em,15vh)]
                scroll-pb-0 left-0 top-0 outline-none whitespace-pre-wrap"
-        style={{
-          "font-size": `${props.settings.fontSize}px`,
-          "font-family": props.settings.fontFamily,
-          "text-align": props.settings.textAlign,
-        }}
         data-placeholder="Start writing..."
+        ref={elementRef}
       />
       <style>{`
-        [contenteditable]:empty:before {
-          content: attr(data-placeholder);
-          color: #999;
-        }
         mark {
           background-color: #fde047;
           border-radius: 2px;
@@ -150,6 +86,16 @@ function Editor(props: EditorProps): JSX.Element {
           mark {
             background-color: #ca8a04;
           }
+        }
+        .ProseMirror {
+          min-height: 100%;
+        }
+        .ProseMirror p.is-editor-empty:first-child::before {
+          content: attr(data-placeholder);
+          float: left;
+          color: #999;
+          pointer-events: none;
+          height: 0;
         }
       `}</style>
     </main>
