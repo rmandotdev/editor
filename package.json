@@ -19,21 +19,21 @@
     "dev": "astro dev"
   },
   "dependencies": {
-    "@tiptap/core": "^3.21.0",
-    "@tiptap/extension-highlight": "^3.21.0",
-    "@tiptap/pm": "^3.21.0",
-    "@tiptap/starter-kit": "^3.21.0",
-    "astro": "^6.0.8",
-    "solid-js": "^1.9.11",
+    "@tiptap/core": "^3.22.0",
+    "@tiptap/extension-highlight": "^3.22.0",
+    "@tiptap/pm": "^3.22.0",
+    "@tiptap/starter-kit": "^3.22.0",
+    "astro": "^6.1.3",
+    "solid-js": "^1.9.12",
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@astrojs/solid-js": "^6.0.1",
-    "@biomejs/biome": "2.4.8",
-    "@gameroman/config": "^0.0.4",
+    "@biomejs/biome": "2.4.10",
+    "@gameroman/config": "^0.0.6",
     "@tailwindcss/vite": "^4.2.2",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.76.0"
+    "typescript": "^6.0.2",
+    "wrangler": "^4.79.0"
   },
   "overrides": {
     "esbuild": "^0.27.3"
