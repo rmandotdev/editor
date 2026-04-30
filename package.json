@@ -30,7 +30,7 @@
   "devDependencies": {
     "@astrojs/solid-js": "^6.0.1",
     "@biomejs/biome": "2.4.10",
-    "@gameroman/config": "^0.0.6",
+    "@gameroman/config": "^0.1.0",
     "@tailwindcss/vite": "^4.2.2",
     "typescript": "^6.0.2",
     "wrangler": "^4.79.0"
