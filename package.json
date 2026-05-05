@@ -19,23 +19,28 @@
     "dev": "astro dev"
   },
   "dependencies": {
-    "@tiptap/core": "^3.22.0",
-    "@tiptap/extension-highlight": "^3.22.0",
-    "@tiptap/pm": "^3.22.0",
-    "@tiptap/starter-kit": "^3.22.0",
-    "astro": "^6.1.3",
-    "solid-js": "^1.9.12",
-    "tailwindcss": "^4.2.2"
+    "@tiptap/core": "3.22.5",
+    "@tiptap/extension-highlight": "3.22.5",
+    "@tiptap/pm": "3.22.5",
+    "@tiptap/starter-kit": "3.22.5",
+    "astro": "6.2.2",
+    "solid-js": "1.9.12",
+    "tailwindcss": "4.2.4"
   },
   "devDependencies": {
-    "@astrojs/solid-js": "^6.0.1",
-    "@biomejs/biome": "2.4.10",
-    "@gameroman/config": "^0.1.0",
-    "@tailwindcss/vite": "^4.2.2",
-    "typescript": "^6.0.2",
-    "wrangler": "^4.79.0"
+    "@astrojs/solid-js": "6.0.1",
+    "@biomejs/biome": "2.4.14",
+    "@gameroman/config": "0.1.0",
+    "@tailwindcss/vite": "4.2.4",
+    "@types/bun": "1.3.13",
+    "typescript": "6.0.3",
+    "wrangler": "4.88.0"
   },
   "overrides": {
-    "esbuild": "^0.27.3"
+    "@babel/helper-module-imports": "7.28.6",
+    "esbuild": "0.28.0",
+    "is-docker": "4.0.0",
+    "semver": "7.7.4",
+    "unstorage": "2.0.0-alpha.7"
   }
 }
