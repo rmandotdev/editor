@@ -34,7 +34,7 @@
     "@tailwindcss/vite": "4.2.4",
     "@types/bun": "1.3.13",
     "typescript": "6.0.3",
-    "wrangler": "4.88.0"
+    "wrangler": "4.91.0"
   },
   "overrides": {
     "@babel/helper-module-imports": "7.28.6",
