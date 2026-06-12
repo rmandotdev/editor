@@ -23,7 +23,7 @@
     "@tiptap/extension-highlight": "3.24.0",
     "@tiptap/pm": "3.24.0",
     "@tiptap/starter-kit": "3.24.0",
-    "astro": "6.4.4",
+    "astro": "6.4.6",
     "solid-js": "1.9.13",
     "tailwindcss": "4.3.0"
   },
