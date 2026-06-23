@@ -28,7 +28,7 @@
     "tailwindcss": "4.3.0"
   },
   "devDependencies": {
-    "@astrojs/solid-js": "6.0.1",
+    "@astrojs/solid-js": "7.0.0",
     "@biomejs/biome": "2.4.16",
     "@gameroman/config": "0.1.0",
     "@tailwindcss/vite": "4.3.0",
