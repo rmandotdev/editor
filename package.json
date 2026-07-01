@@ -23,12 +23,12 @@
     "@tiptap/extension-highlight": "3.24.0",
     "@tiptap/pm": "3.24.0",
     "@tiptap/starter-kit": "3.24.0",
-    "astro": "6.4.8",
+    "astro": "7.0.4",
     "solid-js": "1.9.13",
     "tailwindcss": "4.3.1"
   },
   "devDependencies": {
-    "@astrojs/solid-js": "6.0.1",
+    "@astrojs/solid-js": "7.0.0",
     "@biomejs/biome": "2.4.16",
     "@gameroman/config": "0.1.0",
     "@tailwindcss/vite": "4.3.1",
