@@ -24,7 +24,7 @@
     "@tiptap/pm": "3.24.0",
     "@tiptap/starter-kit": "3.24.0",
     "astro": "6.4.8",
-    "solid-js": "1.9.13",
+    "solid-js": "1.9.14",
     "tailwindcss": "4.3.2"
   },
   "devDependencies": {
