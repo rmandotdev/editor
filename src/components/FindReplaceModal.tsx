@@ -17,41 +17,45 @@ interface FindReplaceModalProps {
   onCaseSensitiveChange: (value: boolean) => void;
 }
 
-const SearchIcon = (): JSX.Element => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="size-4"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-label="Search"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.3-4.3" />
-  </svg>
-);
+function SearchIcon(): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="size-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-label="Search"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
+  );
+}
 
-const CloseIcon = (): JSX.Element => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="size-4"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-label="Close"
-  >
-    <path d="M18 6 6 18" />
-    <path d="m6 6 12 12" />
-  </svg>
-);
+function CloseIcon(): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="size-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-label="Close"
+    >
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
+    </svg>
+  );
+}
 
-const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
+function FindReplaceModal(props: FindReplaceModalProps): JSX.Element {
   const [replaceText, setReplaceText] = createSignal("");
   let findInputRef: HTMLInputElement | undefined;
 
@@ -215,7 +219,7 @@ const FindReplaceModal = (props: FindReplaceModalProps): JSX.Element => {
       </div>
     </Show>
   );
-};
+}
 
 export type { Direction };
 export default FindReplaceModal;

@@ -6,60 +6,62 @@ import type { EditorSettings } from "#types";
 
 import SettingsGroup from "./SettingsGroup";
 
-const SettingsForm = (props: {
+function SettingsForm(props: {
   settings: EditorSettings;
   updateSettings: (settings: Partial<EditorSettings>) => void;
-}): JSX.Element => (
-  <form class="flex flex-col gap-5 p-6" method="dialog">
-    <SettingsGroup
-      variant="checkbox"
-      key="spellcheck"
-      label="Text Spellcheck"
-      value={props.settings.spellcheck}
-      updateValue={(spellcheck) => props.updateSettings({ spellcheck })}
-    />
+}): JSX.Element {
+  return (
+    <form class="flex flex-col gap-5 p-6" method="dialog">
+      <SettingsGroup
+        variant="checkbox"
+        key="spellcheck"
+        label="Text Spellcheck"
+        value={props.settings.spellcheck}
+        updateValue={(spellcheck) => props.updateSettings({ spellcheck })}
+      />
 
-    <SettingsGroup
-      variant="number"
-      label="Font Size"
-      value={props.settings.fontSize}
-      updateValue={(fontSize) => props.updateSettings({ fontSize })}
-    />
+      <SettingsGroup
+        variant="number"
+        label="Font Size"
+        value={props.settings.fontSize}
+        updateValue={(fontSize) => props.updateSettings({ fontSize })}
+      />
 
-    <SettingsGroup<EditorSettings.FontFamily>
-      variant="select"
-      label="Font Family"
-      value={props.settings.fontFamily}
-      options={[
-        { value: "Cousine" },
-        { value: "Arial" },
-        { value: "Times New Roman" },
-        { value: "Courier New" },
-      ]}
-      updateValue={(fontFamily) => props.updateSettings({ fontFamily })}
-    />
+      <SettingsGroup<EditorSettings.FontFamily>
+        variant="select"
+        label="Font Family"
+        value={props.settings.fontFamily}
+        options={[
+          { value: "Cousine" },
+          { value: "Arial" },
+          { value: "Times New Roman" },
+          { value: "Courier New" },
+        ]}
+        updateValue={(fontFamily) => props.updateSettings({ fontFamily })}
+      />
 
-    <SettingsGroup<EditorSettings.TextAlign>
-      variant="select"
-      label="Text Alignment"
-      value={props.settings.textAlign}
-      options={[
-        { value: "left", label: "Left" },
-        { value: "center", label: "Center" },
-        { value: "right", label: "Right" },
-        { value: "justify", label: "Justify" },
-      ]}
-      updateValue={(textAlign) => props.updateSettings({ textAlign })}
-    />
-  </form>
-);
+      <SettingsGroup<EditorSettings.TextAlign>
+        variant="select"
+        label="Text Alignment"
+        value={props.settings.textAlign}
+        options={[
+          { value: "left", label: "Left" },
+          { value: "center", label: "Center" },
+          { value: "right", label: "Right" },
+          { value: "justify", label: "Justify" },
+        ]}
+        updateValue={(textAlign) => props.updateSettings({ textAlign })}
+      />
+    </form>
+  );
+}
 
-const SettingsModal = (props: {
+function SettingsModal(props: {
   isOpen: boolean;
   settings: EditorSettings;
   updateSettings: (settings: Partial<EditorSettings>) => void;
   closeSettingsModal: () => void;
-}): JSX.Element => {
+}): JSX.Element {
   let dialogRef: HTMLDialogElement | undefined;
 
   createEffect(() => {
@@ -92,6 +94,6 @@ const SettingsModal = (props: {
       />
     </dialog>
   );
-};
+}
 
 export default SettingsModal;

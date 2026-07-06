@@ -4,33 +4,39 @@ import type { Page } from "#types";
 import Button from "./ui/Button";
 import SvgIcon from "./ui/SvgIcon";
 
-const PagesSvgIcon = (): JSX.Element => (
-  <SvgIcon stroke-width={20} stroke-linecap="round">
-    <path d="M20 70v100M60 50v140" />
-    <rect width="120" height="180" x="100" y="30" rx="20" />
-  </SvgIcon>
-);
+function PagesSvgIcon(): JSX.Element {
+  return (
+    <SvgIcon stroke-width={20} stroke-linecap="round">
+      <path d="M20 70v100M60 50v140" />
+      <rect width="120" height="180" x="100" y="30" rx="20" />
+    </SvgIcon>
+  );
+}
 
-const SettingsSvgIcon = (): JSX.Element => (
-  <SvgIcon stroke-width={25} stroke-linecap="round" stroke-linejoin="round">
-    <path d="M122.2 20h-4.4a20 20 0 0 0-20 20v1.8a20 20 0 0 1-10 17.3l-4.3 2.5a20 20 0 0 1-20 0l-1.5-.8a20 20 0 0 0-27.3 7.3l-2.2 3.8a20 20 0 0 0 7.3 27.3l1.5 1a20 20 0 0 1 10 17.2v5.1a20 20 0 0 1-10 17.4l-1.5.9a20 20 0 0 0-7.3 27.3l2.2 3.8a20 20 0 0 0 27.3 7.3l1.5-.8a20 20 0 0 1 20 0l4.3 2.5a20 20 0 0 1 10 17.3v1.8a20 20 0 0 0 20 20h4.4a20 20 0 0 0 20-20v-1.8a20 20 0 0 1 10-17.3l4.3-2.5a20 20 0 0 1 20 0l1.5.8a20 20 0 0 0 27.3-7.3l2.2-3.9a20 20 0 0 0-7.3-27.3l-1.5-.8a20 20 0 0 1-10-17.4v-5a20 20 0 0 1 10-17.4l1.5-.9a20 20 0 0 0 7.3-27.3l-2.2-3.8a20 20 0 0 0-27.3-7.3l-1.5.8a20 20 0 0 1-20 0l-4.3-2.5a20 20 0 0 1-10-17.3V40a20 20 0 0 0-20-20" />
-    <circle cx="120" cy="120" r="30" />
-  </SvgIcon>
-);
+function SettingsSvgIcon(): JSX.Element {
+  return (
+    <SvgIcon stroke-width={25} stroke-linecap="round" stroke-linejoin="round">
+      <path d="M122.2 20h-4.4a20 20 0 0 0-20 20v1.8a20 20 0 0 1-10 17.3l-4.3 2.5a20 20 0 0 1-20 0l-1.5-.8a20 20 0 0 0-27.3 7.3l-2.2 3.8a20 20 0 0 0 7.3 27.3l1.5 1a20 20 0 0 1 10 17.2v5.1a20 20 0 0 1-10 17.4l-1.5.9a20 20 0 0 0-7.3 27.3l2.2 3.8a20 20 0 0 0 27.3 7.3l1.5-.8a20 20 0 0 1 20 0l4.3 2.5a20 20 0 0 1 10 17.3v1.8a20 20 0 0 0 20 20h4.4a20 20 0 0 0 20-20v-1.8a20 20 0 0 1 10-17.3l4.3-2.5a20 20 0 0 1 20 0l1.5.8a20 20 0 0 0 27.3-7.3l2.2-3.9a20 20 0 0 0-7.3-27.3l-1.5-.8a20 20 0 0 1-10-17.4v-5a20 20 0 0 1 10-17.4l1.5-.9a20 20 0 0 0 7.3-27.3l-2.2-3.8a20 20 0 0 0-27.3-7.3l-1.5.8a20 20 0 0 1-20 0l-4.3-2.5a20 20 0 0 1-10-17.3V40a20 20 0 0 0-20-20" />
+      <circle cx="120" cy="120" r="30" />
+    </SvgIcon>
+  );
+}
 
-const ToolbarLeft = (props: { onPagesClick: () => void }): JSX.Element => (
-  <div>
-    <Button variant="toolbar" onClick={props.onPagesClick}>
-      <PagesSvgIcon />
-    </Button>
-  </div>
-);
+function ToolbarLeft(props: { onPagesClick: () => void }): JSX.Element {
+  return (
+    <div>
+      <Button variant="toolbar" onClick={props.onPagesClick}>
+        <PagesSvgIcon />
+      </Button>
+    </div>
+  );
+}
 
-const PageTitle = (props: {
+function PageTitle(props: {
   currentPageTitle: string;
   renameItem: (itemId: string, newName: string) => void;
   currentPageId: string;
-}): JSX.Element => {
+}): JSX.Element {
   const makeEditable = (span: HTMLSpanElement) => {
     span.contentEditable = "true";
   };
@@ -58,51 +64,57 @@ const PageTitle = (props: {
       {props.currentPageTitle}
     </span>
   );
-};
+}
 
-const ToolbarCenter = (props: {
+function ToolbarCenter(props: {
   currentPageTitle: string;
   currentPageId: string;
   renameItem: (itemId: string, newName: string) => void;
-}): JSX.Element => (
-  <div
-    class={`text-center content-center flex-1 text-black dark:text-white font-["Cousine",monospace]`}
-  >
-    <PageTitle
-      currentPageId={props.currentPageId}
-      currentPageTitle={props.currentPageTitle}
-      renameItem={props.renameItem}
-    />
-  </div>
-);
+}): JSX.Element {
+  return (
+    <div
+      class={`text-center content-center flex-1 text-black dark:text-white font-["Cousine",monospace]`}
+    >
+      <PageTitle
+        currentPageId={props.currentPageId}
+        currentPageTitle={props.currentPageTitle}
+        renameItem={props.renameItem}
+      />
+    </div>
+  );
+}
 
-const SearchSvgIcon = (): JSX.Element => (
-  <SvgIcon
-    stroke-width={2}
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    viewBox="0 0 24 24"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.3-4.3" />
-  </SvgIcon>
-);
+function SearchSvgIcon(): JSX.Element {
+  return (
+    <SvgIcon
+      stroke-width={2}
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      viewBox="0 0 24 24"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </SvgIcon>
+  );
+}
 
-const ToolbarRight = (props: {
+function ToolbarRight(props: {
   onSettingsClick: () => void;
   onSearchClick: () => void;
-}): JSX.Element => (
-  <div class="flex gap-2">
-    <Button variant="toolbar" onClick={props.onSearchClick}>
-      <SearchSvgIcon />
-    </Button>
-    <Button variant="toolbar" onClick={props.onSettingsClick}>
-      <SettingsSvgIcon />
-    </Button>
-  </div>
-);
+}): JSX.Element {
+  return (
+    <div class="flex gap-2">
+      <Button variant="toolbar" onClick={props.onSearchClick}>
+        <SearchSvgIcon />
+      </Button>
+      <Button variant="toolbar" onClick={props.onSettingsClick}>
+        <SettingsSvgIcon />
+      </Button>
+    </div>
+  );
+}
 
-const Toolbar = (props: {
+function Toolbar(props: {
   opacity: number;
   currentPageTitle: string;
   currentPageId: string;
@@ -112,7 +124,7 @@ const Toolbar = (props: {
   onSettingsClick: () => void;
   onSearchClick: () => void;
   renameItem: (itemId: string, newName: string) => void;
-}): JSX.Element => {
+}): JSX.Element {
   return (
     <div
       class="justify-between flex absolute z-10 w-[calc(100%-10px)] opacity-0 transition-opacity duration-500 p-4 hover:opacity-100;"
@@ -133,6 +145,6 @@ const Toolbar = (props: {
       />
     </div>
   );
-};
+}
 
 export default Toolbar;

@@ -1,6 +1,6 @@
 import type { JSX } from "solid-js";
 
-const SvgIcon = (props: {
+function SvgIcon(props: {
   "stroke-width"?: number | undefined;
   "stroke-linecap"?: "round" | "butt" | "square" | "inherit" | undefined;
   "stroke-linejoin"?:
@@ -13,20 +13,22 @@ const SvgIcon = (props: {
     | undefined;
   viewBox?: string;
   children: JSX.Element;
-}): JSX.Element => (
-  <svg
-    class="size-6 bg-transparent stroke-black dark:stroke-white"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox={props.viewBox ?? "0 0 240 240"}
-    fill="none"
-    stroke="currentColor"
-    stroke-width={props["stroke-width"]}
-    stroke-linecap={props["stroke-linecap"]}
-    stroke-linejoin={props["stroke-linejoin"]}
-    aria-hidden="true"
-  >
-    {props.children}
-  </svg>
-);
+}): JSX.Element {
+  return (
+    <svg
+      class="size-6 bg-transparent stroke-black dark:stroke-white"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={props.viewBox ?? "0 0 240 240"}
+      fill="none"
+      stroke="currentColor"
+      stroke-width={props["stroke-width"]}
+      stroke-linecap={props["stroke-linecap"]}
+      stroke-linejoin={props["stroke-linejoin"]}
+      aria-hidden="true"
+    >
+      {props.children}
+    </svg>
+  );
+}
 
 export default SvgIcon;

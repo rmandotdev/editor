@@ -29,7 +29,7 @@ type TreeListProps = {
   isRoot?: boolean;
 };
 
-const TreeList = (props: TreeListProps): JSX.Element => {
+function TreeList(props: TreeListProps): JSX.Element {
   const wrapper = (children: JSX.Element) =>
     props.isRoot !== false ? (
       <div class="max-h-[min(calc(100vh-150px),calc(38px*8))] overflow-y-auto">
@@ -93,6 +93,6 @@ const TreeList = (props: TreeListProps): JSX.Element => {
       )}
     </For>,
   );
-};
+}
 
 export default TreeList;
