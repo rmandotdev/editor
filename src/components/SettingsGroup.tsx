@@ -29,9 +29,9 @@ type SettingGroupPropsMap<TSelectValue extends string> = {
 type SettingGroupProps<TSelectValue extends string> =
   SettingGroupPropsMap<TSelectValue>[SettingGroupConfigVariant];
 
-const SettingsGroup = <TSelectValue extends string>(
+function SettingsGroup<TSelectValue extends string>(
   props: SettingGroupProps<TSelectValue>,
-): JSX.Element => {
+): JSX.Element {
   return (
     <div
       class={`flex flex-col gap-2
@@ -90,6 +90,6 @@ const SettingsGroup = <TSelectValue extends string>(
       </Switch>
     </div>
   );
-};
+}
 
 export default SettingsGroup;

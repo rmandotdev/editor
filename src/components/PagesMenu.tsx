@@ -21,7 +21,7 @@ type ContextMenuState = {
   itemId: string;
 } | null;
 
-const Pages = (props: {
+function Pages(props: {
   pages: Page[];
   currentPageId: string;
   openFolders: Set<string>;
@@ -44,45 +44,47 @@ const Pages = (props: {
   onDropNestable: (e: DragEvent, folderId: string) => void;
   onDragEnd: () => void;
   newPage: () => void;
-}): JSX.Element => (
-  <div
-    class="fixed bg-[#ededed] dark:bg-[#181818] p-2 z-20 w-57.5 left-4 top-15"
-    onClick={() => props.setContextMenu(null)}
-  >
-    <TreeList
-      pages={props.pages}
-      currentPageId={props.currentPageId}
-      openFolders={props.openFolders}
-      dragItemId={props.dragItemId}
-      dragOverItemId={props.dragOverItemId}
-      dragOverPosition={props.dragOverPosition}
-      onSelectPage={props.onSelectPage}
-      onToggleFolder={props.onToggleFolder}
-      onContextMenu={(e, item) => {
-        e.preventDefault();
-        props.setContextMenu({
-          x: e.pageX,
-          y: e.pageY,
-          itemId: item.id,
-        });
-      }}
-      onDragStart={props.onDragStart}
-      onDragOver={props.onDragOver}
-      onDragOverNestable={props.onDragOverNestable}
-      onDragLeave={props.onDragLeave}
-      onDragLeaveNestable={props.onDragLeaveNestable}
-      onDrop={props.onDrop}
-      onDropNestable={props.onDropNestable}
-      onDragEnd={props.onDragEnd}
-    />
-    <Divider />
-    <div class="flex gap-2">
-      <Button label="New Page" onClick={() => props.newPage()} />
+}): JSX.Element {
+  return (
+    <div
+      class="fixed bg-[#ededed] dark:bg-[#181818] p-2 z-20 w-57.5 left-4 top-15"
+      onClick={() => props.setContextMenu(null)}
+    >
+      <TreeList
+        pages={props.pages}
+        currentPageId={props.currentPageId}
+        openFolders={props.openFolders}
+        dragItemId={props.dragItemId}
+        dragOverItemId={props.dragOverItemId}
+        dragOverPosition={props.dragOverPosition}
+        onSelectPage={props.onSelectPage}
+        onToggleFolder={props.onToggleFolder}
+        onContextMenu={(e, item) => {
+          e.preventDefault();
+          props.setContextMenu({
+            x: e.pageX,
+            y: e.pageY,
+            itemId: item.id,
+          });
+        }}
+        onDragStart={props.onDragStart}
+        onDragOver={props.onDragOver}
+        onDragOverNestable={props.onDragOverNestable}
+        onDragLeave={props.onDragLeave}
+        onDragLeaveNestable={props.onDragLeaveNestable}
+        onDrop={props.onDrop}
+        onDropNestable={props.onDropNestable}
+        onDragEnd={props.onDragEnd}
+      />
+      <Divider />
+      <div class="flex gap-2">
+        <Button label="New Page" onClick={() => props.newPage()} />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const PagesContextMenu = (props: {
+function PagesContextMenu(props: {
   contextMenu: () => ContextMenuState;
   onRename: () => void;
   onDelete: () => void;
@@ -96,43 +98,49 @@ const PagesContextMenu = (props: {
   canMoveIn: boolean;
   canMoveOut: boolean;
   canDelete: boolean;
-}) => (
-  <Show when={props.contextMenu()}>
-    {(contextMenu) => (
-      <ContextMenu
-        x={contextMenu().x}
-        y={contextMenu().y}
-        items={[
-          {
-            label: "Create Child Page",
-            onClick: props.onCreateChild,
-            show: true,
-          },
-          { label: "Rename", onClick: props.onRename, show: true },
-          { label: "Delete", onClick: props.onDelete, show: props.canDelete },
-          { label: "Move Up", onClick: props.onMoveUp, show: props.canMoveUp },
-          {
-            label: "Move Down",
-            onClick: props.onMoveDown,
-            show: props.canMoveDown,
-          },
-          {
-            label: "Move Into Page",
-            onClick: props.onMoveIn,
-            show: props.canMoveIn,
-          },
-          {
-            label: "Move Out of Page",
-            onClick: props.onMoveOut,
-            show: props.canMoveOut,
-          },
-        ]}
-      />
-    )}
-  </Show>
-);
+}) {
+  return (
+    <Show when={props.contextMenu()}>
+      {(contextMenu) => (
+        <ContextMenu
+          x={contextMenu().x}
+          y={contextMenu().y}
+          items={[
+            {
+              label: "Create Child Page",
+              onClick: props.onCreateChild,
+              show: true,
+            },
+            { label: "Rename", onClick: props.onRename, show: true },
+            { label: "Delete", onClick: props.onDelete, show: props.canDelete },
+            {
+              label: "Move Up",
+              onClick: props.onMoveUp,
+              show: props.canMoveUp,
+            },
+            {
+              label: "Move Down",
+              onClick: props.onMoveDown,
+              show: props.canMoveDown,
+            },
+            {
+              label: "Move Into Page",
+              onClick: props.onMoveIn,
+              show: props.canMoveIn,
+            },
+            {
+              label: "Move Out of Page",
+              onClick: props.onMoveOut,
+              show: props.canMoveOut,
+            },
+          ]}
+        />
+      )}
+    </Show>
+  );
+}
 
-const PagesMenu = (props: {
+function PagesMenu(props: {
   isOpen: boolean;
   pages: Page[];
   currentPageId: string;
@@ -142,7 +150,7 @@ const PagesMenu = (props: {
   deleteItem: (itemId: string) => void;
   moveItem: (itemId: string, direction: "up" | "down" | "in" | "out") => void;
   setPages: (pages: Page[]) => void;
-}): JSX.Element => {
+}): JSX.Element {
   const [contextMenu, setContextMenu] = createSignal<ContextMenuState>(null);
   const [openFolders, setOpenFolders] = createSignal<Set<string>>(new Set());
   const [dragItemId, setDragItemId] = createSignal<string | null>(null);
@@ -416,6 +424,6 @@ const PagesMenu = (props: {
       />
     </Show>
   );
-};
+}
 
 export default PagesMenu;

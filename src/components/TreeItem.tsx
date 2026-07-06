@@ -4,19 +4,21 @@ import { Show } from "solid-js";
 import type { Page } from "#types";
 import Button from "./ui/Button";
 
-const ChevronSvgIcon = (props: { isOpen: boolean }): JSX.Element => (
-  <svg
-    class="w-4 h-4 shrink-0 transition-transform"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    style={{ transform: props.isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
-  >
-    <title>Expand</title>
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
+function ChevronSvgIcon(props: { isOpen: boolean }): JSX.Element {
+  return (
+    <svg
+      class="w-4 h-4 shrink-0 transition-transform"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      style={{ transform: props.isOpen ? "rotate(90deg)" : "rotate(0deg)" }}
+    >
+      <title>Expand</title>
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  );
+}
 
 type TreeItemProps = {
   item: Page;
@@ -39,7 +41,7 @@ type TreeItemProps = {
   children?: JSX.Element;
 };
 
-const TreeItem = (props: TreeItemProps): JSX.Element => {
+function TreeItem(props: TreeItemProps): JSX.Element {
   const hasChildren = () => (props.item.children?.length ?? 0) > 0;
   let isDragging = false;
 
@@ -134,6 +136,6 @@ const TreeItem = (props: TreeItemProps): JSX.Element => {
       </Show>
     </div>
   );
-};
+}
 
 export default TreeItem;
