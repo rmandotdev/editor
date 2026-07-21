@@ -46,6 +46,7 @@ function App() {
   const [caseSensitive, setCaseSensitive] = createSignal(false);
 
   const [toolbarOpacity, setToolbarOpacity] = createSignal(1);
+  const [syncVersion, setSyncVersion] = createSignal(0);
 
   const currentPage = () => getCurrentPage();
 
@@ -53,10 +54,8 @@ function App() {
 
   const content = () => currentPage()?.content ?? "";
 
-  const [docVersion, setDocVersion] = createSignal(0);
-
   const matches = createMemo(() => {
-    docVersion();
+    syncVersion();
     const editor = editorInstance();
     const term = searchTerm();
     if (!editor || !term) return [];
@@ -71,16 +70,20 @@ function App() {
     return findMatches(segments, term, caseSensitive());
   });
 
-  const setSearchOptions = (term: string, cs: boolean) => {
+  const setSearchOptions = (term: string, cs: boolean, idx: number) => {
     const editor = editorInstance();
     if (!editor) return;
     const tr = editor.state.tr;
-    tr.setMeta(highlightPluginKey, { searchTerm: term, caseSensitive: cs });
+    tr.setMeta(highlightPluginKey, {
+      searchTerm: term,
+      caseSensitive: cs,
+      currentMatchIndex: idx,
+    });
     editor.view.dispatch(tr);
   };
 
   createEffect(() => {
-    setSearchOptions(searchTerm(), caseSensitive());
+    setSearchOptions(searchTerm(), caseSensitive(), currentMatchIndex());
   });
 
   const selectMatch = (index: number) => {
@@ -91,11 +94,11 @@ function App() {
     const match = allMatches[index];
     if (!match) return;
 
-    editor
-      .chain()
-      .focus()
-      .setTextSelection({ from: match.from, to: match.to })
-      .run();
+    const { node } = editor.view.domAtPos(match.from);
+    const el = (
+      node.nodeType === Node.TEXT_NODE ? node.parentElement : node
+    ) as HTMLElement;
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
   };
 
   const handleNavigate = (direction: Direction) => {
@@ -244,9 +247,9 @@ function App() {
         content={content()}
         settings={settings()}
         onEditorReady={handleEditorReady}
+        onContentSynced={() => setSyncVersion((v) => v + 1)}
         onChange={(newContent) => {
           updatePageContent(newContent);
-          setDocVersion((v) => v + 1);
           if (newContent) {
             setToolbarOpacity(0);
           } else {

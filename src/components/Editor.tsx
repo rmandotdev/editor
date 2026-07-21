@@ -19,6 +19,7 @@ interface EditorProps {
   content: string;
   onChange(content: string): void;
   onEditorReady(editor: TiptapEditor): void;
+  onContentSynced?(): void;
   settings: EditorSettings;
 }
 
@@ -71,6 +72,7 @@ function Editor(props: EditorProps): JSX.Element {
     const editorContent = editor.getHTML();
     if (editorContent !== content) {
       editor.commands.setContent(content, { emitUpdate: false });
+      props.onContentSynced?.();
     }
   });
 
@@ -115,9 +117,15 @@ function Editor(props: EditorProps): JSX.Element {
           box-decoration-break: clone;
           -webkit-box-decoration-break: clone;
         }
+        .search-highlight-current {
+          background-color: #60a5fa;
+        }
         @media (prefers-color-scheme: dark) {
           .search-highlight {
             background-color: #ca8a04;
+          }
+          .search-highlight-current {
+            background-color: #3b82f6;
           }
         }
         .ProseMirror {

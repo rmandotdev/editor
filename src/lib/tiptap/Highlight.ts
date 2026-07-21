@@ -6,6 +6,7 @@ import { findMatches } from "#lib/search";
 export const highlightPluginKey = new PluginKey<{
   searchTerm: string;
   caseSensitive: boolean;
+  currentMatchIndex: number;
 }>("highlight");
 
 export const Highlight = Extension.create({
@@ -17,7 +18,11 @@ export const Highlight = Extension.create({
         key: highlightPluginKey,
         state: {
           init() {
-            return { searchTerm: "", caseSensitive: false };
+            return {
+              searchTerm: "",
+              caseSensitive: false,
+              currentMatchIndex: 0,
+            };
           },
           apply(tr, prev) {
             const meta = tr.getMeta(highlightPluginKey);
@@ -32,7 +37,8 @@ export const Highlight = Extension.create({
               return DecorationSet.empty;
             }
 
-            const { searchTerm, caseSensitive } = pluginState;
+            const { searchTerm, caseSensitive, currentMatchIndex } =
+              pluginState;
 
             const segments: { text: string; pos: number }[] = [];
             state.doc.descendants((node, pos) => {
@@ -42,9 +48,12 @@ export const Highlight = Extension.create({
             });
 
             const matches = findMatches(segments, searchTerm, caseSensitive);
-            const decorations = matches.map((match) =>
+            const decorations = matches.map((match, i) =>
               Decoration.inline(match.from, match.to, {
-                class: "search-highlight",
+                class:
+                  i === currentMatchIndex
+                    ? "search-highlight search-highlight-current"
+                    : "search-highlight",
               }),
             );
 
