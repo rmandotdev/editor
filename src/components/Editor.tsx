@@ -30,6 +30,9 @@ function Editor(props: EditorProps): JSX.Element {
           class:
             "w-full h-screen outline-none text-black dark:text-white caret-blue-500 bg-transparent scroll-smooth",
           spellcheck: props.settings.spellcheck.toString(),
+          role: "textbox",
+          "aria-multiline": "true",
+          "aria-label": "Editor",
         },
       },
       onUpdate({ editor }) {
@@ -68,11 +71,11 @@ function Editor(props: EditorProps): JSX.Element {
       <div
         class="w-full absolute h-screen overflow-y-auto overflow-x-hidden
                [word-break:break-word] text-black dark:text-white caret-blue-500
-               bg-transparent [scrollbar-width:thin] scroll-smooth
+               bg-transparent scrollbar-thin scroll-smooth
                p-[calc(min(1em,20vh)+72px)_max(-372px+50vw,1em)_min(5em,15vh)]
                scroll-pb-0 left-0 top-0 outline-none whitespace-pre-wrap"
         data-placeholder="Start writing..."
-        ref={elementRef}
+        ref={(ref) => (elementRef = ref)}
       />
       <style>{`
         mark {
