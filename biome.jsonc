@@ -1,15 +1,5 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["@gameroman/config/biome"],
-  "linter": {
-    "rules": {
-      "a11y": {
-        "recommended": true,
-        "noStaticElementInteractions": "off",
-        "useKeyWithClickEvents": "off"
-      },
-      "complexity": { "noVoid": "error" }
-    }
-  },
-  "css": { "parser": { "tailwindDirectives": true } }
+  "extends": ["@gameroman/config/biome", "@gameroman/config/biome/tailwind"],
+  "linter": { "rules": { "complexity": { "noVoid": "error" } } }
 }
