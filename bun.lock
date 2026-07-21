@@ -25,6 +25,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "astro@7.0.7": "patches/astro@7.0.7.patch",
+  },
   "overrides": {
     "@babel/core": "7.29.7",
     "@babel/generator": "7.29.7",
