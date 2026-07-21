@@ -1,6 +1,16 @@
 import { Editor as TiptapEditor } from "@tiptap/core";
-import Highlight from "@tiptap/extension-highlight";
-import StarterKit from "@tiptap/starter-kit";
+import { Bold } from "@tiptap/extension-bold";
+import { Document } from "@tiptap/extension-document";
+import { Dropcursor } from "@tiptap/extension-dropcursor";
+import { Gapcursor } from "@tiptap/extension-gapcursor";
+import { HardBreak } from "@tiptap/extension-hard-break";
+import { Highlight } from "@tiptap/extension-highlight";
+import { Italic } from "@tiptap/extension-italic";
+import { Paragraph } from "@tiptap/extension-paragraph";
+import { Strike } from "@tiptap/extension-strike";
+import { Text } from "@tiptap/extension-text";
+import { Underline } from "@tiptap/extension-underline";
+import { TrailingNode, UndoRedo } from "@tiptap/extensions";
 import { createEffect, type JSX, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
@@ -21,7 +31,18 @@ function Editor(props: EditorProps): JSX.Element {
     editor = new TiptapEditor({
       element: elementRef,
       extensions: [
-        StarterKit.configure({ heading: false, codeBlock: false, link: false }),
+        Document,
+        Paragraph,
+        Text,
+        Bold,
+        Italic,
+        Strike,
+        Underline,
+        HardBreak,
+        Dropcursor,
+        Gapcursor,
+        TrailingNode,
+        UndoRedo,
         Highlight,
       ],
       content: props.content,
