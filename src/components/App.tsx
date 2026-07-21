@@ -1,9 +1,16 @@
 import type { Editor as TiptapEditor } from "@tiptap/core";
-import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 
 import { usePages } from "#hooks/usePages";
 import { useEditorSettings } from "#hooks/useSettings";
 import { findMatches } from "#lib/search";
+import { highlightPluginKey } from "#lib/tiptap/Highlight";
 import Editor from "./Editor";
 import type { Direction } from "./FindReplaceModal";
 import FindReplaceModal from "./FindReplaceModal";
@@ -46,7 +53,10 @@ function App() {
 
   const content = () => currentPage()?.content ?? "";
 
+  const [docVersion, setDocVersion] = createSignal(0);
+
   const matches = createMemo(() => {
+    docVersion();
     const editor = editorInstance();
     const term = searchTerm();
     if (!editor || !term) return [];
@@ -61,41 +71,17 @@ function App() {
     return findMatches(segments, term, caseSensitive());
   });
 
-  const highlightMatches = () => {
+  const setSearchOptions = (term: string, cs: boolean) => {
     const editor = editorInstance();
     if (!editor) return;
-
-    clearHighlights();
-
-    const allMatches = matches();
-    if (allMatches.length === 0) return;
-
-    const { tr } = editor.state;
-    const highlightMark = editor.schema.marks.highlight;
-    if (!highlightMark) return;
-
-    for (const match of allMatches) {
-      tr.addMark(match.from, match.to, highlightMark.create());
-    }
-
+    const tr = editor.state.tr;
+    tr.setMeta(highlightPluginKey, { searchTerm: term, caseSensitive: cs });
     editor.view.dispatch(tr);
   };
 
-  const clearHighlights = () => {
-    const editor = editorInstance();
-    if (!editor) return;
-
-    const { tr } = editor.state;
-    const highlightMark = editor.schema.marks.highlight;
-    if (!highlightMark) return;
-
-    tr.doc.descendants((node, pos) => {
-      if (node.marks.some((m) => m.type.name === "highlight")) {
-        tr.removeMark(pos, pos + node.nodeSize, highlightMark);
-      }
-    });
-    editor.view.dispatch(tr);
-  };
+  createEffect(() => {
+    setSearchOptions(searchTerm(), caseSensitive());
+  });
 
   const selectMatch = (index: number) => {
     const editor = editorInstance();
@@ -147,7 +133,6 @@ function App() {
       .run();
 
     setCurrentMatchIndex(Math.min(idx, matchPositions.length - 2));
-    highlightMatches();
   };
 
   const handleReplaceAll = (replacement: string) => {
@@ -168,14 +153,12 @@ function App() {
         .run();
     }
 
-    clearHighlights();
     setCurrentMatchIndex(0);
   };
 
   const handleSearchTermChange = (term: string) => {
     setSearchTerm(term);
     setCurrentMatchIndex(0);
-    highlightMatches();
   };
 
   const handleOpenSearch = () => {
@@ -185,7 +168,6 @@ function App() {
   };
 
   const handleCloseSearch = () => {
-    clearHighlights();
     setIsSearchOpen(false);
     setSearchTerm("");
     setCurrentMatchIndex(0);
@@ -264,6 +246,7 @@ function App() {
         onEditorReady={handleEditorReady}
         onChange={(newContent) => {
           updatePageContent(newContent);
+          setDocVersion((v) => v + 1);
           if (newContent) {
             setToolbarOpacity(0);
           } else {

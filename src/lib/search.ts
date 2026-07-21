@@ -43,5 +43,5 @@ function findMatches(
   return results;
 }
 
-export type { Match, TextSegment };
+export type { TextSegment };
 export { findMatches };

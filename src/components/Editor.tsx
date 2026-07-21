@@ -4,7 +4,6 @@ import { Document } from "@tiptap/extension-document";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
 import { Gapcursor } from "@tiptap/extension-gapcursor";
 import { HardBreak } from "@tiptap/extension-hard-break";
-import { Highlight } from "@tiptap/extension-highlight";
 import { Italic } from "@tiptap/extension-italic";
 import { Paragraph } from "@tiptap/extension-paragraph";
 import { Strike } from "@tiptap/extension-strike";
@@ -13,6 +12,7 @@ import { Underline } from "@tiptap/extension-underline";
 import { TrailingNode, UndoRedo } from "@tiptap/extensions";
 import type { JSX } from "solid-js";
 import { createEffect, onCleanup, onMount } from "solid-js";
+import { Highlight as SearchHighlight } from "#lib/tiptap/Highlight";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
@@ -44,7 +44,7 @@ function Editor(props: EditorProps): JSX.Element {
         Gapcursor,
         TrailingNode,
         UndoRedo,
-        Highlight,
+        SearchHighlight,
       ],
       content: props.content,
       editorProps: {
@@ -68,7 +68,8 @@ function Editor(props: EditorProps): JSX.Element {
   createEffect(() => {
     if (!editor || !elementRef) return;
     const content = props.content;
-    if (editor.getHTML() !== content) {
+    const editorContent = editor.getHTML();
+    if (editorContent !== content) {
       editor.commands.setContent(content, { emitUpdate: false });
     }
   });
@@ -108,14 +109,14 @@ function Editor(props: EditorProps): JSX.Element {
         ref={(ref) => (elementRef = ref)}
       />
       <style>{`
-        mark {
+        .search-highlight {
           background-color: #fde047;
           border-radius: 2px;
           box-decoration-break: clone;
           -webkit-box-decoration-break: clone;
         }
         @media (prefers-color-scheme: dark) {
-          mark {
+          .search-highlight {
             background-color: #ca8a04;
           }
         }
