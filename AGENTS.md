@@ -3,8 +3,10 @@
 ## Avaliable commands
 
 ```bash
-bun lint
+# Formats and lints code
 bun format
+
+# Runs tests, not needed if you did not touch /src/lib
 bun run test
 ```
 

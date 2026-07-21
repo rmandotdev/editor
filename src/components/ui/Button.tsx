@@ -14,15 +14,11 @@ const variants = {
 
 type Variant = keyof typeof variants;
 
-type ButtonVariants<TVariant extends Variant> = {
+type ButtonProps<TVariant extends Variant> = ButtonAttributes & {
+  label: string;
+  children?: JSX.Element;
   variant?: TVariant;
 };
-
-type ButtonProps<TVariant extends Variant> =
-  | ({ label: string; children?: never } & ButtonAttributes &
-      ButtonVariants<TVariant>)
-  | ({ children: JSX.Element; label?: never } & ButtonAttributes &
-      ButtonVariants<TVariant>);
 
 function Button<TVariant extends Variant>(props: ButtonProps<TVariant>) {
   const [local, rest] = splitProps(props, [
@@ -37,9 +33,10 @@ function Button<TVariant extends Variant>(props: ButtonProps<TVariant>) {
       class={`${base} ${variants[local.variant ?? "default"]} ${
         local.class ?? ""
       }`}
+      aria-label={local.children ? local.label : undefined}
       {...rest}
     >
-      {local.label ?? local.children}
+      {local.children ?? local.label}
     </button>
   );
 }

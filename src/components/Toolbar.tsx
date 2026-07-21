@@ -25,7 +25,7 @@ function SettingsSvgIcon(): JSX.Element {
 function ToolbarLeft(props: { onPagesClick: () => void }): JSX.Element {
   return (
     <div>
-      <Button variant="toolbar" onClick={props.onPagesClick}>
+      <Button variant="toolbar" onClick={props.onPagesClick} label="Pages">
         <PagesSvgIcon />
       </Button>
     </div>
@@ -104,10 +104,14 @@ function ToolbarRight(props: {
 }): JSX.Element {
   return (
     <div class="flex gap-2">
-      <Button variant="toolbar" onClick={props.onSearchClick}>
+      <Button variant="toolbar" onClick={props.onSearchClick} label="Search">
         <SearchSvgIcon />
       </Button>
-      <Button variant="toolbar" onClick={props.onSettingsClick}>
+      <Button
+        variant="toolbar"
+        onClick={props.onSettingsClick}
+        label="Settings"
+      >
         <SettingsSvgIcon />
       </Button>
     </div>
