@@ -1,20 +1,21 @@
-import { createEffect, createSignal, type JSX, Show } from "solid-js";
+import type { JSX } from "solid-js";
+import { createEffect, createSignal, onCleanup, Show } from "solid-js";
 
 type Direction = "next" | "prev";
 
 interface FindReplaceModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose(): void;
   content: string;
   searchTerm: string;
-  onSearchTermChange: (term: string) => void;
-  onNavigate: (direction: Direction) => void;
-  onReplace: (replacement: string) => void;
-  onReplaceAll: (replacement: string) => void;
+  onSearchTermChange(term: string): void;
+  onNavigate(direction: Direction): void;
+  onReplace(replacement: string): void;
+  onReplaceAll(replacement: string): void;
   matchCount: number;
   currentMatchIndex: number;
   caseSensitive: boolean;
-  onCaseSensitiveChange: (value: boolean) => void;
+  onCaseSensitiveChange(value: boolean): void;
 }
 
 function SearchIcon(): JSX.Element {
@@ -81,10 +82,16 @@ function FindReplaceModal(props: FindReplaceModalProps): JSX.Element {
   };
 
   createEffect(() => {
-    if (props.isOpen && findInputRef) {
-      findInputRef.focus();
-      findInputRef.select();
-    }
+    if (!props.isOpen) return;
+
+    findInputRef?.focus();
+    findInputRef?.select();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    onCleanup(() => window.removeEventListener("keydown", handleKeyDown));
   });
 
   return (
@@ -120,7 +127,7 @@ function FindReplaceModal(props: FindReplaceModalProps): JSX.Element {
                   <SearchIcon />
                 </span>
                 <input
-                  ref={findInputRef}
+                  ref={(ref) => (findInputRef = ref)}
                   id="find-input"
                   type="text"
                   value={props.searchTerm}

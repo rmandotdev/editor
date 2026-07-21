@@ -1,4 +1,5 @@
-import { type JSX, Match, Switch } from "solid-js";
+import type { JSX } from "solid-js";
+import { Match, Switch } from "solid-js";
 
 type SettingGroupConfigMap<SelectVal extends string = string> = {
   checkbox: { value: boolean; key: string };

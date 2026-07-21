@@ -3,6 +3,7 @@ import { createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 import { usePages } from "#hooks/usePages";
 import { useEditorSettings } from "#hooks/useSettings";
+import { findMatches } from "#lib/search";
 import Editor from "./Editor";
 import type { Direction } from "./FindReplaceModal";
 import FindReplaceModal from "./FindReplaceModal";
@@ -50,24 +51,14 @@ function App() {
     const term = searchTerm();
     if (!editor || !term) return [];
 
-    const results: { from: number; to: number }[] = [];
-    const doc = editor.state.doc;
-    const searchText = caseSensitive() ? term : term.toLowerCase();
-
-    doc.descendants((node, pos) => {
-      if (!node.isText || !node.text) return;
-      const text = caseSensitive() ? node.text : node.text.toLowerCase();
-      let idx = text.indexOf(searchText);
-      while (idx !== -1) {
-        results.push({
-          from: pos + idx,
-          to: pos + idx + term.length,
-        });
-        idx = text.indexOf(searchText, idx + 1);
+    const segments: { text: string; pos: number }[] = [];
+    editor.state.doc.descendants((node, pos) => {
+      if (node.isText && node.text) {
+        segments.push({ text: node.text, pos });
       }
     });
 
-    return results;
+    return findMatches(segments, term, caseSensitive());
   });
 
   const highlightMatches = () => {

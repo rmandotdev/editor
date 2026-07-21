@@ -49,8 +49,12 @@ function PageTitle(props: {
   };
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: contentEditable inline rename is intentional
     <span
       class="text-2xl"
+      role="textbox"
+      tabIndex={0}
+      aria-label="Page title"
       onMouseEnter={(e) => makeEditable(e.currentTarget)}
       onClick={(e) => makeEditable(e.currentTarget)}
       onFocusOut={(e) => handleRenameEnd(e.currentTarget)}
@@ -130,10 +134,12 @@ function Toolbar(props: {
   renameItem: (itemId: string, newName: string) => void;
 }): JSX.Element {
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: toolbar revealed via mouse move and focusin
     <div
       class="justify-between flex absolute z-10 w-[calc(100%-10px)] opacity-0 transition-opacity duration-500 p-4 hover:opacity-100;"
       style={{ opacity: props.opacity }}
       onMouseMove={props.onMouseMove}
+      onFocusIn={props.onMouseMove}
     >
       <ToolbarLeft onPagesClick={props.onPagesClick} />
 

@@ -1,5 +1,15 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@gameroman/config/biome", "@gameroman/config/biome/tailwind"],
-  "linter": { "rules": { "complexity": { "noVoid": "error" } } }
+  "linter": {
+    "rules": {
+      "complexity": { "noVoid": "error" },
+      "style": {
+        "useImportType": {
+          "level": "error",
+          "options": { "style": "separatedType" }
+        }
+      }
+    }
+  }
 }

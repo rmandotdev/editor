@@ -33,7 +33,7 @@ function Button<TVariant extends Variant>(props: ButtonProps<TVariant>) {
       class={`${base} ${variants[local.variant ?? "default"]} ${
         local.class ?? ""
       }`}
-      aria-label={local.children ? local.label : undefined}
+      aria-label={local.label}
       {...rest}
     >
       {local.children ?? local.label}

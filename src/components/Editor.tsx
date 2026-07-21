@@ -11,7 +11,8 @@ import { Strike } from "@tiptap/extension-strike";
 import { Text } from "@tiptap/extension-text";
 import { Underline } from "@tiptap/extension-underline";
 import { TrailingNode, UndoRedo } from "@tiptap/extensions";
-import { createEffect, type JSX, onCleanup, onMount } from "solid-js";
+import type { JSX } from "solid-js";
+import { createEffect, onCleanup, onMount } from "solid-js";
 import type { EditorSettings } from "#types";
 
 interface EditorProps {
@@ -66,6 +67,14 @@ function Editor(props: EditorProps): JSX.Element {
 
   createEffect(() => {
     if (!editor || !elementRef) return;
+    const content = props.content;
+    if (editor.getHTML() !== content) {
+      editor.commands.setContent(content, { emitUpdate: false });
+    }
+  });
+
+  createEffect(() => {
+    if (!editor || !elementRef) return;
     const { fontSize, fontFamily, textAlign, spellcheck } = props.settings;
 
     const proseMirror = elementRef.querySelector(".ProseMirror") as HTMLElement;
@@ -102,9 +111,8 @@ function Editor(props: EditorProps): JSX.Element {
         mark {
           background-color: #fde047;
           border-radius: 2px;
-          padding: 0 2px;
-          margin: 0 -1px;
           box-decoration-break: clone;
+          -webkit-box-decoration-break: clone;
         }
         @media (prefers-color-scheme: dark) {
           mark {
