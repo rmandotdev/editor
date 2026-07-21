@@ -14,8 +14,10 @@
     "build": "astro build",
     "deploy": "wrangler deploy",
     "dev": "astro dev",
-    "format": "biome check --fix --linter-enabled=false",
+    "format": "biome check --fix",
+    "knip": "knip",
     "lint": "biome check",
+    "preview": "astro preivew",
     "test": "bun test"
   },
   "overrides": {
@@ -28,6 +30,7 @@
     "esbuild": "0.28.1",
     "is-docker": "4.0.0",
     "semver": "7.8.5",
+    "smol-toml": "npm:neotoml@0.0.1",
     "unstorage": "2.0.0-alpha.7"
   },
   "dependencies": {
@@ -45,6 +48,7 @@
     "@gameroman/config": "0.2.5",
     "@tailwindcss/vite": "4.3.3",
     "@types/bun": "1.3.14",
+    "knip": "6.27.0",
     "typescript": "6.0.3",
     "wrangler": "4.110.0"
   }

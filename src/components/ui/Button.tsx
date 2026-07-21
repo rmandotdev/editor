@@ -3,7 +3,7 @@ import { splitProps } from "solid-js";
 
 type ButtonAttributes = JSX.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const base = `cursor-pointer w-full text-left p-2 rounded-md hover:bg-[#ddd] dark:hover:bg-[#333] text-black dark:text-white`;
+const base = `cursor-pointer touch-manipulation w-full text-left p-2 rounded-md hover:bg-[#ddd] dark:hover:bg-[#333] text-black dark:text-white`;
 
 const variants = {
   default: "",

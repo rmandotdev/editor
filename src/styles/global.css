@@ -11,5 +11,5 @@
 }
 
 @theme {
-  --font-cousine: "Cousine";
+  --font-cousine: var(--font-cousine);
 }
