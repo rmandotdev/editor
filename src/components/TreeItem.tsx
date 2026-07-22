@@ -49,6 +49,8 @@ function TreeItem(props: TreeItemProps): JSX.Element {
     <div>
       <div
         class="relative"
+        role="treeitem"
+        tabIndex={-1}
         onDragOver={(e) => {
           e.preventDefault();
           const rect = e.currentTarget.getBoundingClientRect();
@@ -94,8 +96,14 @@ function TreeItem(props: TreeItemProps): JSX.Element {
               <ChevronSvgIcon isOpen={props.isOpen} />
             </button>
           </Show>
-          <div
-            class="flex-1"
+          <Button
+            label={props.item.name}
+            variant="page"
+            class={
+              props.isSelected
+                ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
+                : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
+            }
             draggable={true}
             onDragStart={() => {
               isDragging = true;
@@ -105,26 +113,17 @@ function TreeItem(props: TreeItemProps): JSX.Element {
               isDragging = false;
               props.onDragEnd();
             }}
-          >
-            <Button
-              label={props.item.name}
-              variant="page"
-              class={
-                props.isSelected
-                  ? "bg-[#ddd] dark:bg-[#333] border-blue-500 flex-1"
-                  : "bg-[#ededed] dark:bg-[#181818] border-[#ededed] dark:border-[#181818] flex-1"
+            onMouseUp={(e) => {
+              if (e.button === 0 && !isDragging) {
+                props.onSelect();
               }
-              onMouseUp={(e) => {
-                if (e.button === 0 && !isDragging) {
-                  props.onSelect();
-                }
-              }}
-              onContextMenu={props.onContextMenu}
-            />
-          </div>
+            }}
+            onContextMenu={props.onContextMenu}
+          />
         </div>
       </div>
       <Show when={hasChildren()}>
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: drop target for nesting items into folder */}
         <div
           class={`ml-4 mt-1 min-h-2 rounded ${props.isDragOverNestable ? "bg-blue-100 dark:bg-blue-900 border-2 border-dashed border-blue-400" : ""}`}
           onDragOver={props.onDragOverNestable}

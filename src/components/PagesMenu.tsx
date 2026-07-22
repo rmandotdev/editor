@@ -46,6 +46,8 @@ function Pages(props: {
   newPage: () => void;
 }): JSX.Element {
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: content panel, dismisses context menu on click
+    // biome-ignore lint/a11y/useKeyWithClickEvents: keyboard dismiss handled by ContextMenu component
     <div
       class="fixed bg-[#ededed] dark:bg-[#181818] p-2 z-20 w-57.5 left-4 top-15"
       onClick={() => props.setContextMenu(null)}

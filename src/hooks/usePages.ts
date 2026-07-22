@@ -162,10 +162,6 @@ export function usePages() {
         }
       }
     });
-
-    window.addEventListener("unload", () => {
-      localStorage.setItem("currentPageId", currentPageId());
-    });
   });
 
   createEffect(() => {

@@ -1,5 +1,6 @@
 ---
 import "#styles";
+import { Font } from "astro:assets";
 
 interface Props {
   title: string;
@@ -16,10 +17,7 @@ const { title, description } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -33,12 +31,7 @@ const { title, description } = Astro.props;
 
     <link rel="canonical" href={canonical} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cousine&display=swap"
-      rel="stylesheet"
-    />
+    <Font cssVariable="--font-cousine" preload />
   </head>
 
   <body class="font-cousine bg-white dark:bg-[#121212]">
