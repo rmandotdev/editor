@@ -184,11 +184,14 @@ function App() {
 
   onMount(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === "F3" ||
-        (e.ctrlKey && e.key === "f") ||
-        (e.ctrlKey && e.key === "h")
-      ) {
+      if (e.key === "F3") {
+        e.preventDefault();
+        if (isSearchOpen()) {
+          handleNavigate(e.shiftKey ? "prev" : "next");
+        } else {
+          handleOpenSearch();
+        }
+      } else if (e.ctrlKey && (e.key === "f" || e.key === "h")) {
         e.preventDefault();
         handleOpenSearch();
       }
