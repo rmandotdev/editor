@@ -98,11 +98,17 @@ function App() {
     const match = allMatches[index];
     if (!match) return;
 
-    const { node } = editor.view.domAtPos(match.from);
-    const el = (
-      node.nodeType === Node.TEXT_NODE ? node.parentElement : node
-    ) as HTMLElement;
-    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const coords = editor.view.coordsAtPos(match.from);
+    const container = editor.view.dom.parentElement;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const targetTop =
+      coords.top -
+      containerRect.top +
+      container.scrollTop -
+      containerRect.height / 2;
+    container.scrollTo({ top: targetTop, behavior: "smooth" });
   };
 
   const handleNavigate = (direction: Direction) => {
