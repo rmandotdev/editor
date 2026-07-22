@@ -255,6 +255,7 @@ function App() {
         onContentSynced={() => setSyncVersion((v) => v + 1)}
         onChange={(newContent) => {
           updatePageContent(newContent);
+          setSyncVersion((v) => v + 1);
           if (newContent) {
             setToolbarOpacity(0);
           } else {
