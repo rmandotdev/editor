@@ -83,7 +83,11 @@ function App() {
   };
 
   createEffect(() => {
-    setSearchOptions(searchTerm(), caseSensitive(), currentMatchIndex());
+    if (isSearchOpen()) {
+      setSearchOptions(searchTerm(), caseSensitive(), currentMatchIndex());
+    } else {
+      setSearchOptions("", false, 0);
+    }
   });
 
   const selectMatch = (index: number) => {
@@ -166,13 +170,11 @@ function App() {
 
   const handleOpenSearch = () => {
     setIsSearchOpen(true);
-    setSearchTerm("");
     setCurrentMatchIndex(0);
   };
 
   const handleCloseSearch = () => {
     setIsSearchOpen(false);
-    setSearchTerm("");
     setCurrentMatchIndex(0);
   };
 
