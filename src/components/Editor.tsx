@@ -1,14 +1,10 @@
 import { Editor as TiptapEditor } from "@tiptap/core";
-import { Bold } from "@tiptap/extension-bold";
 import { Document } from "@tiptap/extension-document";
 import { Dropcursor } from "@tiptap/extension-dropcursor";
 import { Gapcursor } from "@tiptap/extension-gapcursor";
 import { HardBreak } from "@tiptap/extension-hard-break";
-import { Italic } from "@tiptap/extension-italic";
 import { Paragraph } from "@tiptap/extension-paragraph";
-import { Strike } from "@tiptap/extension-strike";
 import { Text } from "@tiptap/extension-text";
-import { Underline } from "@tiptap/extension-underline";
 import { TrailingNode, UndoRedo } from "@tiptap/extensions";
 import type { JSX } from "solid-js";
 import { createEffect, onCleanup, onMount } from "solid-js";
@@ -36,10 +32,6 @@ function Editor(props: EditorProps): JSX.Element {
         Document,
         Paragraph,
         Text,
-        Bold,
-        Italic,
-        Strike,
-        Underline,
         HardBreak,
         Dropcursor,
         Gapcursor,
