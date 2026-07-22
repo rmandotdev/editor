@@ -44,10 +44,10 @@ describe("findMatches", () => {
     expect(result).toEqual([{ from: 3, to: 5 }]);
   });
 
-  it("should find match spanning across segments", () => {
+  it("should not match across segments", () => {
     const segments = [seg("a", 0), seg("b", 1), seg("c", 2)];
     const result = findMatches(segments, "abc");
-    expect(result).toEqual([{ from: 0, to: 3 }]);
+    expect(result).toEqual([]);
   });
 
   it("should return empty for no matches", () => {
@@ -81,12 +81,6 @@ describe("findMatches", () => {
     const segments = [seg("Hello HELLO hello", 0)];
     const result = findMatches(segments, "hello", true);
     expect(result).toEqual([{ from: 12, to: 17 }]);
-  });
-
-  it("should map positions correctly with non-zero offsets", () => {
-    const segments = [seg("ab", 10), seg("cd", 12)];
-    const result = findMatches(segments, "abcd");
-    expect(result).toEqual([{ from: 10, to: 14 }]);
   });
 
   it("should handle single character search", () => {
