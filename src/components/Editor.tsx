@@ -102,10 +102,9 @@ function Editor(props: EditorProps): JSX.Element {
   return (
     <main>
       <div
-        class="w-full absolute h-screen overflow-y-auto overflow-x-hidden
+        class="w-full absolute overflow-y-auto overflow-x-hidden
                [word-break:break-word] text-black dark:text-white caret-blue-500
-               bg-transparent scrollbar-thin scroll-smooth
-               p-[calc(min(1em,20vh)+72px)_max(-372px+50vw,1em)_min(5em,15vh)]
+               bg-transparent scrollbar-thin scroll-smooth scrollbar-gutter-stable
                scroll-pb-0 left-0 top-0 outline-none whitespace-pre-wrap"
         data-placeholder="Start writing..."
         ref={(ref) => (elementRef = ref)}
@@ -129,7 +128,12 @@ function Editor(props: EditorProps): JSX.Element {
           }
         }
         .ProseMirror {
-          min-height: 100%;
+          padding: calc(min(1em, 20vh) + 72px) max(-372px + 50vw, 1em) min(5em, 15vh);
+        }
+        .ProseMirror::after {
+          content: "";
+          display: block;
+          min-height: 50vh;
         }
         .ProseMirror p.is-editor-empty:first-child::before {
           content: attr(data-placeholder);
