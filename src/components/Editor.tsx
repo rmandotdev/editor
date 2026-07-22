@@ -57,6 +57,21 @@ function Editor(props: EditorProps): JSX.Element {
           "aria-multiline": "true",
           "aria-label": "Editor",
         },
+        handlePaste(_, event) {
+          const text = event.clipboardData?.getData("text/plain");
+          if (text) {
+            editor?.chain().focus().insertContent(text).run();
+            return true;
+          }
+          return false;
+        },
+        clipboardTextSerializer(slice) {
+          const blocks: string[] = [];
+          slice.content.forEach((node) => {
+            blocks.push(node.textBetween(0, node.content.size, "\n"));
+          });
+          return blocks.join("\n");
+        },
       },
       onUpdate({ editor }) {
         props.onChange(editor.getHTML());
