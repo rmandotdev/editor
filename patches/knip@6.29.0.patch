@@ -1,0 +1,12 @@
+diff --git a/dist/util/fs.js b/dist/util/fs.js
+index b8eab119d988d7052c4c43999c98734afc0e19be..67a5b8debeffd7e0157cec17f76182d340dfb687 100644
+--- a/dist/util/fs.js
++++ b/dist/util/fs.js
+@@ -1,6 +1,6 @@
+ import { existsSync, readdirSync, realpathSync, statSync } from 'node:fs';
+ import { readFile } from 'node:fs/promises';
+-import { parse as parseYAMLContents } from 'yaml';
++import { load as parseYAMLContents } from 'yaml';
+ import { parse as parseTOML } from 'smol-toml';
+ import stripJsonComments from 'strip-json-comments';
+ import { LoaderError } from './errors.js';
