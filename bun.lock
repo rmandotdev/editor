@@ -1015,20 +1015,6 @@
 
     "dom-serializer/entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 
-    "prosemirror-commands/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-gapcursor/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-schema-list/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-state/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-tables/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-transform/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
-    "prosemirror-view/prosemirror-model": ["prosemirror-model@1.25.9", "", { "dependencies": { "orderedmap": "^2.0.0" } }, "sha512-pRTklkDDMMRopyoAcrr9wV/8g/RYgrLHBuJAb5hlEuYZRdm5yqmPjWId83fpBwPpSFqEdja0H7Dfd7z1X/npcA=="],
-
     "rolldown/@oxc-project/types": ["@oxc-project/types@0.138.0", "", {}, "sha512-1a7ZKmrRTCoN1XMZ4L0PyyqrMnrNlLyPuOkdSX2MZg7IiIGRUyurNhAm73ptDOraoBcIordsIGKNPKUzy3ZmfA=="],
 
     "csso/css-tree/mdn-data": ["mdn-data@2.0.28", "", {}, "sha512-aylIc7Z9y4yzHYAJNuESG3hfhC+0Ibp/MAMiaOZgNv4pmEdFyfZhhhny4MNiAfWdBQ1RQ2mfDWmM1x8SvGyp8g=="],
