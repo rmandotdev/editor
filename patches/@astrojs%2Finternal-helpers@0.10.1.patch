@@ -1,0 +1,10 @@
+diff --git a/dist/frontmatter.js b/dist/frontmatter.js
+index 163f4009a1fb727e0a88d248d5b815ddb11a736b..d2e0fe9baef8ea7340b4b7821e4bc76f1c9be6bc 100644
+--- a/dist/frontmatter.js
++++ b/dist/frontmatter.js
+@@ -1,4 +1,4 @@
+-import yaml from "js-yaml";
++import * as yaml from "js-yaml";
+ import * as toml from "smol-toml";
+ function isFrontmatterValid(frontmatter) {
+   try {
