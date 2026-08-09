@@ -58,9 +58,7 @@ export function usePages() {
           items[i] = updater(item);
           return true;
         }
-        if (item?.children) {
-          if (update(item.children)) return true;
-        }
+        if (item?.children && update(item.children)) return true;
       }
       return false;
     };
@@ -79,9 +77,7 @@ export function usePages() {
           items.splice(i, 1);
           return true;
         }
-        if (item?.children) {
-          if (remove(item.children)) return true;
-        }
+        if (item?.children && remove(item.children)) return true;
       }
       return false;
     };
@@ -104,9 +100,7 @@ export function usePages() {
           it.children.push(item);
           return true;
         }
-        if (it.children) {
-          if (add(it.children)) return true;
-        }
+        if (it.children && add(it.children)) return true;
       }
       return false;
     };
@@ -242,10 +236,8 @@ export function usePages() {
 
     if (direction === "out") {
       if (!parentItems) return;
-    } else {
-      if (!parentItems) {
-        parentItems = pages();
-      }
+    } else if (!parentItems) {
+      parentItems = pages();
     }
 
     const currentIndex = findPageIndex(parentItems, itemId);
@@ -285,9 +277,7 @@ export function usePages() {
                 it.children.push(removed);
                 return true;
               }
-              if (it.children) {
-                if (add(it.children)) return true;
-              }
+              if (it.children && add(it.children)) return true;
             }
             return false;
           };
@@ -322,9 +312,7 @@ export function usePages() {
           }
           return true;
         }
-        if (it?.children) {
-          if (update(it.children)) return true;
-        }
+        if (it?.children && update(it.children)) return true;
       }
       return false;
     };
