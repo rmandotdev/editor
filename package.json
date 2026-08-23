@@ -28,7 +28,7 @@
     "@babel/types": "7.29.8",
     "@jridgewell/trace-mapping": "0.3.31",
     "esbuild": "0.28.2",
-    "find-process": "npm:find-proc@0.0.1",
+    "find-process": "npm:find-proc@0.1.0",
     "js-yaml": "npm:neoyaml@0.1.1",
     "sax": "npm:es-sax@0.1.2",
     "semver": "7.8.5",
