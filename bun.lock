@@ -41,7 +41,7 @@
     "@babel/types": "7.29.8",
     "@jridgewell/trace-mapping": "0.3.31",
     "esbuild": "0.28.2",
-    "find-process": "npm:find-proc@0.0.1",
+    "find-process": "npm:find-proc@0.1.0",
     "js-yaml": "npm:neoyaml@0.1.1",
     "sax": "npm:es-sax@0.1.2",
     "semver": "7.8.5",
@@ -660,7 +660,7 @@
 
     "fdir": ["fdir@6.5.0", "", { "peerDependencies": { "picomatch": "^3 || ^4" }, "optionalPeers": ["picomatch"] }, "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg=="],
 
-    "find-process": ["find-proc@0.0.1", "", {}, "sha512-Eb6Sqo09Fk1Q0mXfjE67By9uO49/bTWKayz+roRJiShN5lsqWw9ySAfm3y+zeV0PP8mWnAholWo2vv7zME0X3Q=="],
+    "find-process": ["find-proc@0.1.0", "", {}, "sha512-OaOpEYv2PiQ7SQ5LIrl+deA1XaWcxEjnpM6VuWXTUvn+teIXxeFTLDmu18/zDQpFmHN4o3oDBX+BT0AGwEhemg=="],
 
     "flattie": ["flattie@1.1.1", "", {}, "sha512-9UbaD6XdAL97+k/n+N7JwX46K/M6Zc6KcFYskrYL8wbBV/Uyk0CTAMY0VT+qiK5PM7AIc9aTWYtq65U7T+aCNQ=="],
 
