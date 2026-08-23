@@ -28,6 +28,7 @@
     "@babel/types": "7.29.8",
     "@jridgewell/trace-mapping": "0.3.31",
     "esbuild": "0.28.2",
+    "find-process": "npm:find-proc@0.0.1",
     "js-yaml": "npm:neoyaml@0.1.1",
     "sax": "npm:es-sax@0.1.2",
     "semver": "7.8.5",
@@ -45,7 +46,7 @@
     "@tiptap/extension-text": "3.30.2",
     "@tiptap/extensions": "3.30.2",
     "@tiptap/pm": "3.30.2",
-    "astro": "7.0.7",
+    "astro": "7.2.4",
     "solid-js": "1.9.15",
     "tailwindcss": "4.3.3"
   },
@@ -60,8 +61,6 @@
     "wrangler": "4.125.0"
   },
   "patchedDependencies": {
-    "@astrojs/internal-helpers@0.10.1": "patches/@astrojs%2Finternal-helpers@0.10.1.patch",
-    "astro@7.0.7": "patches/astro@7.0.7.patch",
     "knip@6.32.0": "patches/knip@6.32.0.patch"
   }
 }
