@@ -45,7 +45,7 @@
     "@tiptap/extension-text": "3.31.1",
     "@tiptap/extensions": "3.31.1",
     "@tiptap/pm": "3.31.1",
-    "astro": "7.2.8",
+    "astro": "7.3.0",
     "solid-js": "1.9.15",
     "tailwindcss": "4.3.3"
   },
