@@ -7,7 +7,7 @@ import Button from "./ui/Button";
 function ChevronSvgIcon(props: { isOpen: boolean }): JSX.Element {
   return (
     <svg
-      class="w-4 h-4 shrink-0 transition-transform"
+      class="size-4 shrink-0 transition-transform"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -67,7 +67,7 @@ function TreeItem(props: TreeItemProps): JSX.Element {
             props.dragOverPosition === "before"
           }
         >
-          <div class="absolute top-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
+          <div class="absolute top-0 inset-x-0 h-0.5 bg-blue-500 z-10" />
         </Show>
         <Show
           when={
@@ -76,7 +76,7 @@ function TreeItem(props: TreeItemProps): JSX.Element {
             props.dragOverPosition === "after"
           }
         >
-          <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 z-10" />
+          <div class="absolute bottom-0 inset-x-0 h-0.5 bg-blue-500 z-10" />
         </Show>
         <div
           class={`flex items-center gap-1 ${props.isDragOver && !props.isDragOverNestable ? "opacity-50" : ""}`}
@@ -84,7 +84,7 @@ function TreeItem(props: TreeItemProps): JSX.Element {
           <Show when={hasChildren()}>
             <button
               type="button"
-              class="w-6 h-6 flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#ddd] dark:hover:bg-[#333] rounded"
+              class="size-6 flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#ddd] dark:hover:bg-[#333] rounded"
               onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

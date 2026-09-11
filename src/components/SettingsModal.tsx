@@ -82,7 +82,7 @@ function SettingsModal(props: {
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: dialog handles Escape natively via onClose
     <dialog
-      class="fixed -translate-x-2/4 -translate-y-2/4 bg-[#ededed] dark:bg-[#181818] text-black dark:text-white
+      class="fixed -translate-2/4 bg-[#ededed] dark:bg-[#181818] text-black dark:text-white
             border border-[#d8d8d8] dark:border-[#272727] min-w-75 shadow-[0_2px_10px_rgba(0,0,0,0.1)]
             rounded-lg border-solid left-2/4 top-2/4 backdrop:[background:rgba(0,0,0,0.5)]"
       ref={dialogRef}
