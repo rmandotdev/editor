@@ -57,7 +57,7 @@
     "@gameroman/config": "0.3.0",
     "@tailwindcss/vite": "4.3.3",
     "@types/bun": "1.4.2",
-    "knip": "6.35.1",
+    "knip": "6.38.0",
     "typescript": "7.0.2",
     "wrangler": "4.131.1"
   }
