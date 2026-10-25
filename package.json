@@ -56,7 +56,7 @@
     "@biomejs/biome": "2.6.2",
     "@gameroman/config": "0.3.0",
     "@tailwindcss/vite": "4.3.3",
-    "@types/bun": "1.4.3",
+    "@types/bun": "1.4.4",
     "knip": "6.43.0",
     "typescript": "7.0.2",
     "wrangler": "4.151.3"
