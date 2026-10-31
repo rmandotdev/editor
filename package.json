@@ -47,12 +47,12 @@
     "@tiptap/extension-text": "3.32.1",
     "@tiptap/extensions": "3.32.1",
     "@tiptap/pm": "3.32.1",
-    "astro": "7.3.3",
+    "astro": "7.4.4",
     "solid-js": "1.9.18",
     "tailwindcss": "4.3.3"
   },
   "devDependencies": {
-    "@astrojs/solid-js": "7.0.2",
+    "@astrojs/solid-js": "7.1.2",
     "@biomejs/biome": "2.6.4",
     "@gameroman/config": "0.3.0",
     "@tailwindcss/vite": "4.3.3",
