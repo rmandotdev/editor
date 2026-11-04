@@ -49,13 +49,13 @@
     "@tiptap/pm": "3.32.2",
     "astro": "7.3.3",
     "solid-js": "1.9.18",
-    "tailwindcss": "4.3.3"
+    "tailwindcss": "4.3.4"
   },
   "devDependencies": {
     "@astrojs/solid-js": "7.0.2",
     "@biomejs/biome": "2.6.4",
     "@gameroman/config": "0.3.0",
-    "@tailwindcss/vite": "4.3.3",
+    "@tailwindcss/vite": "4.3.4",
     "@types/bun": "1.4.4",
     "knip": "6.44.1",
     "typescript": "7.0.2",
